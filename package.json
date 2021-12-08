@@ -12,6 +12,7 @@
   "activationEvents": [
     "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter"
+    "onCommand:pwa-studio-serviceWorker"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -23,6 +24,8 @@
       {
         "command": "pwa-studio.newPwaStarter",
         "title": "PWA Studio: New PWA Starter App"
+        "command": "pwa-studio.serviceWorker",
+        "title": "PWABuilder: Add a Service Worker to your app"
       }
     ]
   },
@@ -49,5 +52,6 @@
   },
   "dependencies": {
     "shelljs": "^0.8.4"
+    "workbox-build": "^6.4.2"
   }
 }
