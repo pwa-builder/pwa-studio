@@ -23,7 +23,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let newPwaStarterCommand = vscode.commands.registerCommand('pwa-studio.newPwaStarter', setUpLocalPwaStarterRepository);
 
-	context.subscriptions.push(disposable);
 	context.subscriptions.push(newPwaStarterCommand);
 	context.subscriptions.push(addServiceWorker);
 }
