@@ -20,12 +20,18 @@ export async function setUpLocalPwaStarterRepository(): Promise<void>
 
     if(repositoryName !== undefined)
     {
-        vsTerminal.show();
-        tryCloneFromGithub();
-        tryNpmInstall();
+        initStarterRepository();
         openRepositoryWithCode();
     }
     
+}
+function initStarterRepository(): void
+{
+    vsTerminal.show();
+    if(tryCloneFromGithub())
+    {
+        tryNpmInstall();
+    }
 }
 
 function changeDirectory(pathToDirectory: string | undefined): void
@@ -33,23 +39,26 @@ function changeDirectory(pathToDirectory: string | undefined): void
     vsTerminal.sendText(`cd ${pathToDirectory}`);
 }
 
-function tryNpmInstall(): void 
+function tryNpmInstall(): boolean
 {
+    var didNpmInstall: boolean = true;
     if(isNpmInstalled())
     {
-        changeDirectory(repositoryName);
-        npmInstall();
-        changeDirectory("..");
+        npmInstall();    
     }
     else
     {
         noNpmInstalledWarning();
+        didNpmInstall = false;
     }
+    return didNpmInstall;
 }
 
 function npmInstall(): void
 {
+    changeDirectory(repositoryName);
     vsTerminal.sendText("npm install");
+    changeDirectory("..");
 }
 
 function isNpmInstalled(): boolean
@@ -64,8 +73,9 @@ function isNpmInstalled(): boolean
     return isNpmInstalled;
 }
 
-function tryCloneFromGithub(): void
-{
+function tryCloneFromGithub(): boolean
+{   
+    var wasCloned: boolean = true;
     if(isGitInstalled())
     {
         cloneFromGithub();
@@ -73,7 +83,10 @@ function tryCloneFromGithub(): void
     else
     {
         noGitInstalledWarning();
+        wasCloned = false;
     }
+
+    return wasCloned;
 }
 
 function cloneFromGithub(): void
@@ -91,11 +104,6 @@ function isGitInstalled(): boolean
     }
 
     return isGitInstalled;
-}
-
-async function isRepoCloned(): Promise<boolean>
-{
-    return (await vscode.workspace.findFiles(`${repositoryName}/package.json`)).length > 0;
 }
 
 async function getRepositoryNameFromInputBox(): Promise<void> 
