@@ -25,6 +25,20 @@ export async function setUpLocalPwaStarterRepository(): Promise<void>
     }
     
 }
+
+async function getRepositoryNameFromInputBox(): Promise<void> 
+{
+    repositoryName = await vscode.window.showInputBox({
+        prompt: repositoryInputPrompt,
+        placeHolder: repositoryInputPlaceholder
+    });
+
+    if(repositoryName === undefined)
+    {
+        inputCanelledWarning();
+    }
+}
+
 function initStarterRepository(): void
 {
     vsTerminal.show();
@@ -34,9 +48,9 @@ function initStarterRepository(): void
     }
 }
 
-function changeDirectory(pathToDirectory: string | undefined): void
+function openRepositoryWithCode(): void
 {
-    vsTerminal.sendText(`cd ${pathToDirectory}`);
+    vsTerminal.sendText(`code ${repositoryName}`);
 }
 
 function tryNpmInstall(): boolean
@@ -59,6 +73,11 @@ function npmInstall(): void
     changeDirectory(repositoryName);
     vsTerminal.sendText("npm install");
     changeDirectory("..");
+}
+
+function changeDirectory(pathToDirectory: string | undefined): void
+{
+    vsTerminal.sendText(`cd ${pathToDirectory}`);
 }
 
 function isNpmInstalled(): boolean
@@ -106,27 +125,9 @@ function isGitInstalled(): boolean
     return isGitInstalled;
 }
 
-async function getRepositoryNameFromInputBox(): Promise<void> 
-{
-    repositoryName = await vscode.window.showInputBox({
-        prompt: repositoryInputPrompt,
-        placeHolder: repositoryInputPlaceholder
-    });
-
-    if(repositoryName === undefined)
-    {
-        inputCanelledWarning();
-    }
-}
-
 function cloneCommand(): string
 {
     return `git clone ${starterRepositoryURI} ${repositoryName}`;
-}
-
-function openRepositoryWithCode(): void
-{
-    vsTerminal.sendText(`code ${repositoryName}`);
 }
 
 function inputCanelledWarning(): void 
