@@ -22,7 +22,7 @@
       },
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "PWA Studio: Clone The PWA Starter"
+        "title": "PWA Studio: New PWA Starter App"
       }
     ]
   },
