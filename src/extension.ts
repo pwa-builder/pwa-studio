@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { setUpLocalPwaStarterRepository } from './services/StarterService';
 import { handleServiceWorkerCommand } from './services/service-worker';
+import { getWebviewContent } from './services/manifest-content';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -23,9 +24,25 @@ export function activate(context: vscode.ExtensionContext) {
 
 	let newPwaStarterCommand = vscode.commands.registerCommand('pwa-studio.newPwaStarter', setUpLocalPwaStarterRepository);
 
-	context.subscriptions.push(disposable);
+	
+
+	let manifestCommand = vscode.commands.registerCommand('pwa-studio.manifest', () => {
+		// Create and show a new webview
+		const panel = vscode.window.createWebviewPanel(
+		  'pwa-studio', // Identifies the type of the webview. Used internally
+		  'PWA Studio', // Title of the panel displayed to the user
+		  vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+		  {} // Webview options. More on these later.
+		);
+
+		// And set its HTML content
+		panel.webview.html = getWebviewContent();
+	});
+
+	//context.subscriptions.push(disposable);
 	context.subscriptions.push(newPwaStarterCommand);
 	context.subscriptions.push(addServiceWorker);
+	context.subscriptions.push(manifestCommand);
 }
 
 // this method is called when your extension is deactivated
