@@ -1,5 +1,5 @@
 {
-  "name": "pwa-studio",
+	"name": "pwa-studio",
 	"displayName": "PWA Studio",
 	"description": "PWABuilder in your VSCode!",
 	"version": "0.0.1",
@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-        "onCommand:pwa-studio.helloWorld"
+		"onCommand:pwa-studio.helloWorld"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
