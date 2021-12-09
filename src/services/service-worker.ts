@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 const workboxBuild = require("workbox-build");
 
-export async function handleServiceWorkerCommand() {
+export async function handleServiceWorkerCommand(): Promise<void> {
   vscode.window.showInformationMessage(
     "Your build directory is where your code is compiled to. With most setups this will be either `dist` or `build`. Check the documentation for your framework for more information."
   );
@@ -47,7 +47,7 @@ export async function handleServiceWorkerCommand() {
   }
 }
 
-async function runWorkboxTool(buildDir: string, fileName: string) {
+async function runWorkboxTool(buildDir: string, fileName: string): Promise<unknown> {
   return new Promise(async (resolve, reject) => {
     try {
       const data = await workboxBuild.generateSW({
@@ -56,7 +56,6 @@ async function runWorkboxTool(buildDir: string, fileName: string) {
         inlineWorkboxRuntime: true,
         swDest: `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/${fileName}`,
       });
-      console.log(data);
       resolve(data);
     } catch (err) {
       reject(err);
@@ -64,7 +63,7 @@ async function runWorkboxTool(buildDir: string, fileName: string) {
   });
 }
 
-async function handleAddingToIndex() {
+async function handleAddingToIndex(): Promise<void> {
   const indexFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
@@ -76,7 +75,7 @@ async function handleAddingToIndex() {
   });
 
   if (indexFile) {
-    const document = await vscode.workspace.openTextDocument(indexFile[0]);
+    await vscode.workspace.openTextDocument(indexFile[0]);
 
     await vscode.window.showInformationMessage(
       "Finish adding your service worker by adding the following code to your index.html: `navigator.serviceWorker.register('/service-worker.js');`",
