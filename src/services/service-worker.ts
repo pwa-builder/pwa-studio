@@ -3,6 +3,10 @@ import * as vscode from "vscode";
 const workboxBuild = require("workbox-build");
 
 export async function handleServiceWorkerCommand() {
+  vscode.window.showInformationMessage(
+    "Your build directory is where your code is compiled to. With most setups this will be either `dist` or `build`. Check the documentation for your framework for more information."
+  );
+
   const buildDir = await vscode.window.showOpenDialog({
     canSelectFiles: false,
     canSelectFolders: true,
@@ -13,13 +17,12 @@ export async function handleServiceWorkerCommand() {
   if (buildDir) {
     const serviceWorkerFileName = await vscode.window.showInputBox({
       title: "Service Worker File Name",
-      value: "serviceWorkerFileName",
+      value: "service-worker.js",
       prompt: "What would you like your service worker file to be called?",
       placeHolder: "service-worker.js",
     });
 
     if (serviceWorkerFileName) {
-      console.log("here");
       try {
         vscode.window.withProgress(
           {
@@ -74,8 +77,6 @@ async function handleAddingToIndex() {
 
   if (indexFile) {
     const document = await vscode.workspace.openTextDocument(indexFile[0]);
-    console.log(document);
-    await vscode.window.showTextDocument(document);
 
     await vscode.window.showInformationMessage(
       "Finish adding your service worker by adding the following code to your index.html: `navigator.serviceWorker.register('/service-worker.js');`",
