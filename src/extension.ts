@@ -47,7 +47,6 @@ export function activate(context: vscode.ExtensionContext) {
 			  switch (message.command) {
 				case 'prompt':
 					manifestObject = message.manifestObject;
-
 					void vscode.window.showSaveDialog({
 						defaultUri: vscode.Uri.file("manifest-test.json"),
 					}).then((uri: vscode.Uri | undefined) => {
