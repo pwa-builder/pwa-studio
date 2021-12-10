@@ -188,7 +188,7 @@ export function getWebviewContent() {
 
                 console.log("good here");
 
-                /* let maniObj = {
+                let maniObj = {
                     "dir": dir,
                     "display": display,
                     "name": name,
@@ -203,13 +203,13 @@ export function getWebviewContent() {
                 } 
 
                 console.log("good here 2");
-				*/
+
                 const vscode = acquireVsCodeApi();
                 vscode.postMessage({
                     command: 'prompt',
-                    text: "Your manifest has been created and added to your project."
-                    
-                }); 
+                    text: "Your manifest has been created and added to your project.",
+                    manifestObject: maniObj 
+                });
             }
         </script>
 	</body>
