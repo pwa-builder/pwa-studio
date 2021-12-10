@@ -37,7 +37,11 @@ export function getWebviewContent() {
 			  <div class="six">
 				<label for="dir">Dir:</label>
 				<div class="input-area">
-				  <input type="text" name="dir" id="dir" value="auto" required/>
+				  <select name="dir" id="dir" required>
+					<option value="auto" selected>auto</option>
+					<option value="ltr">ltr</option>
+					<option value="rtl">rtl</option>
+				</select>
 				  <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir" target="_blank" rel="noopener">
 					<ion-icon name="information-circle-outline"></ion-icon>              
 					<p class="toolTip">Click for more info on the dir option in your manifest.</p>
@@ -48,7 +52,7 @@ export function getWebviewContent() {
 			  <div class="six">
 				<label for="display">Display:</label>
 				<div class="input-area">
-				  <select type="text" name="display" id="display" required>
+				  <select name="display" id="display" required>
 					<option value="fullscreen">fullscreen</option>
 					<option value="standalone" selected>standalone</option>
 					<option value="minimal-ui">minimal-ui</option>
