@@ -32,7 +32,7 @@ export function getWebviewContent() {
 	  </head>
 	  <body>
 		<div id="central">
-            <form id="manifest-options">
+            <form id="manifest-options" onsubmit="handleSubmit()">
                 <div id="first-six">
                     <div class="six">
                         <label for="dir">Dir:</label>
