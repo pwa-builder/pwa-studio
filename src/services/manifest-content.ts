@@ -32,7 +32,7 @@ export function getWebviewContent() {
 	  </head>
 	  <body>
 		<div id="central">
-            <form id="manifest-options" onsubmit="handleSubmit()">
+            <form id="manifest-options" onsubmit="handleSubmit(event)">
                 <div id="first-six">
                     <div class="six">
                         <label for="dir">Dir:</label>
@@ -210,6 +210,7 @@ export function getWebviewContent() {
                     text: "Your manifest has been created and added to your project.",
                     manifestObject: maniObj 
                 });
+                event.preventDefault();
             }
         </script>
 	</body>
