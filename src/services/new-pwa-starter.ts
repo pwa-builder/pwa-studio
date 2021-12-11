@@ -3,9 +3,9 @@ const shell = require("shelljs");
 
 const repositoryInputPrompt: string = "Enter the name you would like to use for your PWA's repository.";
 const repositoryInputPlaceholder: string = "Enter your repository name here.";
-const noNameSelectedWarning: string = "No repository name provided. New PWA Starter process cancelled.";
-const noGitWarning: string = "This command requires git. Install git at https://git-scm.com/";
-const noNpmWarning: string = "This command requires npm. Install git at https://www.npmjs.com/";
+const noNameSelectedWarningMessage: string = "No repository name provided. New PWA Starter process cancelled.";
+const noGitWarningMessage: string = "This command requires git. Install git at https://git-scm.com/";
+const noNpmWarningMessage: string = "This command requires npm. Install git at https://www.npmjs.com/";
 const starterRepositoryURI: string = "https://github.com/pwa-builder/pwa-starter.git";
 
 var repositoryName: string | undefined = undefined;
@@ -128,15 +128,15 @@ function cloneCommand(): string
 
 function inputCanelledWarning(): void 
 {
-    vscode.window.showWarningMessage(noNameSelectedWarning);
+    vscode.window.showWarningMessage(noNameSelectedWarningMessage);
 }
 
 function noGitInstalledWarning(): void
 {
-    vscode.window.showWarningMessage(noGitWarning);
+    vscode.window.showWarningMessage(noGitWarningMessage);
 }
 
 function noNpmInstalledWarning(): void
 {
-    vscode.window.showWarningMessage(noNpmWarning);
+    vscode.window.showWarningMessage(noNpmWarningMessage);
 }

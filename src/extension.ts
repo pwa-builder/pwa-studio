@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { setUpLocalPwaStarterRepository } from './services/new-pwa-starter';
 import { handleServiceWorkerCommand } from './services/service-worker';
+import { packageApp } from './services/package-app';
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -22,9 +23,11 @@ export function activate(context: vscode.ExtensionContext) {
 	});
 
 	let newPwaStarterCommand = vscode.commands.registerCommand('pwa-studio.newPwaStarter', setUpLocalPwaStarterRepository);
+	let packageAppCommand = vscode.commands.registerCommand('pwa-studio.packageApp', packageApp);
 
 	context.subscriptions.push(newPwaStarterCommand);
 	context.subscriptions.push(addServiceWorker);
+	context.subscriptions.push(packageAppCommand);
 }
 
 // this method is called when your extension is deactivated

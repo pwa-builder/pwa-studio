@@ -1,5 +1,6 @@
 import fetch from "node-fetch";
 import { Headers } from "node-fetch";
+import { MsixInfo } from '../interfaces';
 
 export async function packageForWindows(options: any) {
   const response = await fetch(
@@ -14,12 +15,12 @@ export async function packageForWindows(options: any) {
   return response;
 }
 
-export function getSimpleMsix(url: string, name: string) {
+export function getSimpleMsixFromArray(...args: string[]): MsixInfo {
   // This creates an unsigned package. Should be considered the bare minimum.
   return {
-    name,
+    url: args[0],
+    name: args[1],
     packageId: "com.example.pwa",
-    url,
     version: "1.0.1",
     allowSigning: true,
     classicPackage: {
@@ -29,28 +30,21 @@ export function getSimpleMsix(url: string, name: string) {
   };
 }
 
-export function getPublisherMsix(
-  url: string,
-  name: string,
-  packageId: string,
-  version: string,
-  classicVersion: string,
-  displayName: string,
-  publisherId: string
-) {
+export function getPublisherMsixFromArray(...args: string[]): MsixInfo 
+{
   return {
-    name,
-    packageId,
-    url,
-    version: version || "1.0.1",
+    url: args[0],
+    name: args[1],
+    packageId: args[2],
+    version: args[3] || "1.0.1",
     allowSigning: true,
     classicPackage: {
       generate: true,
-      version: classicVersion,
+      version: args[4],
     },
     publisher: {
-      displayName,
-      commonName: publisherId,
+      displayName: args[5],
+      commonName: args[6],
     },
   };
 }
