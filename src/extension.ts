@@ -1,8 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
-import * as vscode from "vscode";
-import { setUpLocalPwaStarterRepository } from "./services/StarterService";
-import { handleServiceWorkerCommand } from "./services/service-worker";
+import * as vscode from 'vscode';
+import { setUpLocalPwaStarterRepository } from './services/new-pwa-starter';
+import { handleServiceWorkerCommand } from './services/service-worker';
+import { packageApp } from './services/package-app';
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
@@ -25,6 +26,8 @@ export function activate(context: vscode.ExtensionContext) {
 
   myStatusBarItem.command = serviceWorkerCommandId;
 
+	let packageAppCommand = vscode.commands.registerCommand('pwa-studio.packageApp', packageApp);
+
   let newPwaStarterCommand = vscode.commands.registerCommand(
     newPWAStarterCommandId,
     setUpLocalPwaStarterRepository
@@ -33,6 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
   context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(packageAppCommand);
 }
 
 export function deactivate() {}
