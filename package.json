@@ -23,11 +23,12 @@
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWABuilder: Add a Service Worker to your app"
+         "title": "PWA Studio: Add a Service Worker to your app"
       },
       {
         "command": "pwa-studio.packageApp",
         "title": "PWA Studio: Package Your PWA"
+
       }
     ]
   },

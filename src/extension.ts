@@ -5,30 +5,38 @@ import { setUpLocalPwaStarterRepository } from './services/new-pwa-starter';
 import { handleServiceWorkerCommand } from './services/service-worker';
 import { packageApp } from './services/package-app';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+const serviceWorkerCommandId = "pwa-studio.serviceWorker";
+const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
+
 export function activate(context: vscode.ExtensionContext) {
-	
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "pwa-studio" is now active!');
+  const myStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Right,
+    100
+  );
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
+  myStatusBarItem.text = "Update Service Worker";
 
-	const addServiceWorker = vscode.commands.registerCommand('pwa-studio.serviceWorker', async () => {
-		console.log("doing stuff! ");
-		await handleServiceWorkerCommand();
-	});
+  const addServiceWorker = vscode.commands.registerCommand(
+    serviceWorkerCommandId,
+    async () => {
+      await handleServiceWorkerCommand();
+	  myStatusBarItem.show();
+    }
+  );
 
-	let newPwaStarterCommand = vscode.commands.registerCommand('pwa-studio.newPwaStarter', setUpLocalPwaStarterRepository);
+  myStatusBarItem.command = serviceWorkerCommandId;
+
 	let packageAppCommand = vscode.commands.registerCommand('pwa-studio.packageApp', packageApp);
 
-	context.subscriptions.push(newPwaStarterCommand);
-	context.subscriptions.push(addServiceWorker);
-	context.subscriptions.push(packageAppCommand);
+  let newPwaStarterCommand = vscode.commands.registerCommand(
+    newPWAStarterCommandId,
+    setUpLocalPwaStarterRepository
+  );
+
+  context.subscriptions.push(newPwaStarterCommand);
+  context.subscriptions.push(addServiceWorker);
+  context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(packageAppCommand);
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
