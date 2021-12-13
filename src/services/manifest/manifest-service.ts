@@ -1,4 +1,4 @@
-import { writeFile } from "fs/promises";
+import { copyFile, mkdir, writeFile } from "fs/promises";
 import * as vscode from "vscode";
 import { getWebviewContent } from "./manifest-content";
 
@@ -24,7 +24,9 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
           manifestObject = message.manifestObject;
 
           const uri = await vscode.window.showSaveDialog({
-            defaultUri: vscode.Uri.file("manifest.json"),
+            defaultUri: vscode.Uri.file(
+              `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}}/manifest.json`
+            ),
           });
 
           if (uri) {
@@ -43,6 +45,8 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
               );
             }
 
+            await handleIcons();
+
             await handleAddingManiToIndex();
           }
 
@@ -54,41 +58,69 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
   );
 }
 
-async function handleAddingManiToIndex() {
-    const indexFile = await vscode.window.showOpenDialog({
-      canSelectFiles: true,
-      canSelectFolders: false,
-      canSelectMany: false,
-      title: "Select your index.html",
-      filters: {
-        HTML: ["html"],
-      },
-    });
-  
-    if (indexFile) {
-      const document = await vscode.workspace.openTextDocument(indexFile[0]);
-      await vscode.window.showTextDocument(document);
-  
-      await vscode.window.showInformationMessage(
-        "Finish adding your service worker by adding the following code to your index.html: <link rel='manifest' href='manifest.json'>",
-        {},
-        {
-          title: "Copy to clipboard",
-          action: async () => {
-            try {
-              await vscode.env.clipboard.writeText(
-                "<link rel='manifest' href='manifest.json'>"
-              );
-            } catch (err) {
-              vscode.window.showErrorMessage(
-                err && (err as Error).message
-                  ? (err as Error).message
-                  : "There was an issue adding your manifest to your index.html"
-              );
-            }
-          },
-        }
+async function handleIcons() {
+  const iconFile = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    title: "Select a 512x512 icon",
+    filters: {
+      Image: ["png", "jpg", "jpeg", "gif"],
+    },
+  });
+
+  if (iconFile) {
+    try {
+      await mkdir(
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/pwabuilder-icons`,
+        { recursive: true }
       );
+
+      await copyFile(
+        iconFile[0].fsPath,
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/pwabuilder-icons/512x512.png`
+      );
+
+    } catch (err) {
+      console.log(err);
     }
   }
-  
+}
+
+async function handleAddingManiToIndex() {
+  const indexFile = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    title: "Select your index.html",
+    filters: {
+      HTML: ["html"],
+    },
+  });
+
+  if (indexFile) {
+    const document = await vscode.workspace.openTextDocument(indexFile[0]);
+    await vscode.window.showTextDocument(document);
+
+    await vscode.window.showInformationMessage(
+      "Finish adding your service worker by adding the following code to your index.html: <link rel='manifest' href='manifest.json'>",
+      {},
+      {
+        title: "Copy to clipboard",
+        action: async () => {
+          try {
+            await vscode.env.clipboard.writeText(
+              "<link rel='manifest' href='manifest.json'>"
+            );
+          } catch (err) {
+            vscode.window.showErrorMessage(
+              err && (err as Error).message
+                ? (err as Error).message
+                : "There was an issue adding your manifest to your index.html"
+            );
+          }
+        },
+      }
+    );
+  }
+}

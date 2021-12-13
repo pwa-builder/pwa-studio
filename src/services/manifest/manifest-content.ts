@@ -3,30 +3,16 @@ export function getWebviewContent() {
 	<!DOCTYPE html>
 	<html lang="en">
 	  <head>
-		<!--
-		  This is the page head - it contains info the browser uses to display the page
-		  You won't see what's in the head in the page
-		  Scroll down to the body element for the page content
-		-->
 	
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<link rel="icon" href="https://glitch.com/favicon.ico" />
 	
-		<!-- 
-		  This is an HTML comment
-		  You can write text in a comment and the content won't be visible in the page
-		-->
 	
 		<title>PWA VSCode Extension Manifest Form</title>
 	
-		<!-- Import the webpage's stylesheet -->
-		<link rel="stylesheet" href="/style.css" />
-	
-		<!-- Import the webpage's javascript file -->
-		<script src="/script.js" defer></script>
 		
-		<!-- Ionic Import -->
+		<!-- Ionicons Import -->
 		<script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
 	
 	  </head>
@@ -119,17 +105,6 @@ export function getWebviewContent() {
                             </a>
                         </div>
                     </div>
-                
-                    <div id="icon-box">
-                        <label for="icon">512x512 Icon:</label>
-                        <div class="input-area">
-                            <input type="file" name="icon" id="icon" required/>
-                            <a href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir" target="_blank" rel="noopener">
-                                <ion-icon name="information-circle-outline"></ion-icon>              
-                                <p class="toolTip">Click for more info on the icon option in your manifest.</p>
-                            </a>  
-                        </div>
-                    </div>
                 </div>
         
                 <div id="desc-box">
@@ -184,9 +159,7 @@ export function getWebviewContent() {
                 let desc = document.getElementById("description").value;
                 let theme_color = document.getElementById("theme_color").value;
                 let background_color = document.getElementById("background_color").value;
-                let icon = document.getElementById("icon").value;
 
-                console.log("good here");
 
                 let maniObj = {
                     "dir": dir,
@@ -199,10 +172,14 @@ export function getWebviewContent() {
                     "description": desc,
                     "theme_color": theme_color,
                     "background_color": background_color,
-                    "icons": icon
+                    "icons": [
+                        {
+                            "src": "/pwabuilder-icons/512x512.png",
+                            "sizes": "512x512",
+                            "type": "image/png"
+                          },
+                    ]
                 } 
-
-                console.log("good here 2");
 
                 const vscode = acquireVsCodeApi();
                 vscode.postMessage({
