@@ -3,9 +3,11 @@
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/StarterService";
 import { handleServiceWorkerCommand } from "./services/service-worker";
+import { handleValidation, testManiEntry } from "./services/validation";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
+const validateCommandId = "pwa-studio.validatePWA";
 
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(
@@ -19,7 +21,7 @@ export function activate(context: vscode.ExtensionContext) {
     serviceWorkerCommandId,
     async () => {
       await handleServiceWorkerCommand();
-	  myStatusBarItem.show();
+      myStatusBarItem.show();
     }
   );
 
@@ -30,9 +32,31 @@ export function activate(context: vscode.ExtensionContext) {
     setUpLocalPwaStarterRepository
   );
 
+  let validationCommand = vscode.commands.registerCommand(
+    validateCommandId,
+    async () => {
+      handleValidation();
+    }
+  );
+
+  vscode.languages.registerHoverProvider("json", {
+    provideHover(document, position, token) {
+      const range = document.getWordRangeAtPosition(position);
+      const text = document.lineAt(position.line).text;
+      const word = document.getText(range);
+
+      return testManiEntry(word, text).then((result) => {
+		if (result) {
+			return new vscode.Hover(result);
+		  }
+	  })
+    },
+  });
+
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
   context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(validationCommand);
 }
 
 export function deactivate() {}
