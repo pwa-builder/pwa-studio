@@ -82,7 +82,11 @@ export async function handleIcons() {
       );
 
     } catch (err) {
-      console.log(err);
+      vscode.window.showErrorMessage(
+        err && (err as Error).message
+          ? (err as Error).message
+          : "There was an issue handling icons"
+      );
     }
   }
 }

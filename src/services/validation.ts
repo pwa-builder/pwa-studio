@@ -103,8 +103,6 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
     (r) => r.result === false && r.category === "required"
   );
 
-  console.log(problems);
-
   if (problems.length > 0) {
     const maniAnswer = await vscode.window.showInformationMessage(
       "Your Web Manifest is missing some required fields, should we add them?",
@@ -124,7 +122,6 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
     );
     // open problems
     problems.forEach(async (problem) => {
-      console.log("problem", problem);
       const end = editor.document.positionAt(
         editor.document.getText().lastIndexOf("}") - 1
       );
@@ -137,8 +134,6 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
       );
     });
 
-    console.log("manifestContents", manifestContents);
-
     if (manifestContents) {
       // check for a 512x512 icon in manifestFile
       const fiveTwelveCheck = JSON.parse(manifestContents).icons.forEach(
@@ -148,8 +143,6 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
           }
         }
       );
-
-      console.log("fiveTwelveCheck", fiveTwelveCheck);
 
       if (!fiveTwelveCheck) {
         const iconAnswer = await vscode.window.showInformationMessage(
