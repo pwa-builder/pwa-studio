@@ -10,8 +10,10 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter",
     "onCommand:pwa-studio-serviceWorker",
+    "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp"
   ],
   "main": "./out/extension.js",
@@ -23,12 +25,15 @@
       },
       {
         "command": "pwa-studio.serviceWorker",
-         "title": "PWA Studio: Add a Service Worker to your app"
+        "title": "PWABuilder: Add a Service Worker to your app"
+      },
+      {
+        "command": "pwa-studio.manifest",
+        "title": "PWABuilder: Add a Manifest to your app"
       },
       {
         "command": "pwa-studio.packageApp",
         "title": "PWA Studio: Package Your PWA"
-
       }
     ]
   },
@@ -41,6 +46,7 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.1.4",
     "@types/mocha": "^9.0.0",
     "@types/node": "14.x",

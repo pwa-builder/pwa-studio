@@ -3,6 +3,7 @@
 import * as vscode from 'vscode';
 import { setUpLocalPwaStarterRepository } from './services/new-pwa-starter';
 import { handleServiceWorkerCommand } from './services/service-worker';
+import { handleManifestCommand } from './services/manifest/manifest-service';
 import { packageApp } from './services/package-app';
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -33,6 +34,11 @@ export function activate(context: vscode.ExtensionContext) {
     setUpLocalPwaStarterRepository
   );
 
+	let manifestCommand = vscode.commands.registerCommand('pwa-studio.manifest', async () => {
+		await handleManifestCommand(context);
+	});
+
+	context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
   context.subscriptions.push(myStatusBarItem);
