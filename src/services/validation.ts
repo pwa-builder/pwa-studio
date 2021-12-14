@@ -6,6 +6,14 @@ export async function handleValidation() {
     "Lets validate your PWA and make sure its installable and Store Ready"
   );
 
+  const answer = await vscode.window.showInformationMessage("First, let's check your Web Manifest", {
+    modal: true
+  }, "OK");
+
+  if (!answer || answer !== "OK") {
+    return;
+  }
+
   const manifestFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
@@ -17,31 +25,109 @@ export async function handleValidation() {
   });
 
   if (manifestFile) {
-    console.log("manifestFile", manifestFile);
     const manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
     const results = await testManifest(manifestContents);
 
-    gatherResults(results);
+    await gatherResults(results, manifestFile);
+  } else {
+    await vscode.window.showErrorMessage("Please select a Web Manifest");
     return;
   }
-  else {
-    vscode.window.showErrorMessage("Please select a Web Manifest");
+
+  const swAnswer = await vscode.window.showInformationMessage(
+    "Next, let's evaluate your Service Worker",
+    {
+      modal: true
+    },
+    "OK"
+  );
+
+  if (!swAnswer || swAnswer !== "OK") {
+    return;
+  }
+
+
+  // ask the user if they have a service worker with quickPick
+  const swQuestion = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Yes",
+        description: "I have a Service Worker",
+      },
+      {
+        label: "No",
+        description: "I don't have a Service Worker",
+      },
+    ],
+    {
+      placeHolder: "Do you have a Service Worker?",
+      ignoreFocusOut: true,
+      canPickMany: false,
+    }
+  );
+
+  if (swQuestion && swQuestion.label === "Yes") {
+    const swFile = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your Service Worker file",
+      filters: {
+        JavaScript: ["js"],
+        TypeScript: ["ts"],
+      },
+    });
+
+    if (swFile) {
+      await vscode.window.showInformationMessage("Awesome! Your PWA is installable and store ready!");
+    } else {
+      vscode.window.showErrorMessage("Please select a Service Worker");
+    }
+  }
+  else if (swQuestion && swQuestion.label === "No") {
+    // execute a command to create a service worker
+    await vscode.commands.executeCommand("pwa-studio.serviceWorker");
     return;
   }
 }
 
-function gatherResults(results: Array<any>) {
-  const resultList = results.map((r) => {
-    if (r.result) {
-      return `✅ ${r.infoString}`;
-    } else {
-      return `❌ ${r.infoString}`;
+async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
+  const problems = results.filter(
+    (r) => r.result === false && r.category === "required"
+  );
+
+  if (problems.length > 0) {
+    const maniAnswer = await vscode.window.showInformationMessage("Your Web Manifest is missing some required fields, should we add them?", {
+      modal: true
+    }, "OK");
+
+    if (!maniAnswer || maniAnswer !== "OK") {
+      return;
     }
-  });
 
-  const resultString = resultList.join("\n");
+    // open manifestFile
+    const editor = await vscode.window.showTextDocument(
+      vscode.Uri.file(manifestFile[0].fsPath)
+    );
+    // open problems
+    problems.forEach(async (problem) => {
+      const end = editor.document.positionAt(
+        editor.document.getText().lastIndexOf("}") - 1
+      );
 
-  vscode.window.showInformationMessage(resultString);
+      await editor.insertSnippet(
+        new vscode.SnippetString(
+          `,"${problem.member}": "${problem.defaultValue}"`
+        ),
+        end
+      );
+    });
+  }
+  else {
+    await vscode.window.showInformationMessage("Your Web Manifest looks great!", {
+      modal: true
+    }, "OK");
+  }
 }
 
 async function testManifest(manifestFile: any): Promise<any[]> {
@@ -52,23 +138,31 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       infoString: "Lists icons for add to home screen",
       result: manifest.icons && manifest.icons.length > 0 ? true : false,
       category: "required",
+      member: "icons",
+      defaultValue: [],
     },
     {
       infoString: "Contains name property",
       result: manifest.name && manifest.name.length > 1 ? true : false,
       category: "required",
+      member: "name",
+      defaultValue: "placeholder name",
     },
     {
       infoString: "Contains short_name property",
       result:
         manifest.short_name && manifest.short_name.length > 1 ? true : false,
       category: "required",
+      member: "short_name",
+      defaultValue: "placeholder",
     },
     {
       infoString: "Designates a start_url",
       result:
         manifest.start_url && manifest.start_url.length > 0 ? true : false,
       category: "required",
+      member: "start_url",
+      defaultValue: "/",
     },
     {
       infoString: "Specifies a display mode",
@@ -80,16 +174,22 @@ async function testManifest(manifestFile: any): Promise<any[]> {
           ? true
           : false,
       category: "recommended",
+      member: "display",
+      defaultValue: "standalone",
     },
     {
       infoString: "Has a background color",
       result: manifest.background_color ? true : false,
       category: "recommended",
+      member: "background_color",
+      defaultValue: "black",
     },
     {
       infoString: "Has a theme color",
       result: manifest.theme_color ? true : false,
       category: "recommended",
+      member: "theme_color",
+      defaultValue: "black",
     },
     {
       infoString: "Specifies an orientation mode",
@@ -98,43 +198,24 @@ async function testManifest(manifestFile: any): Promise<any[]> {
           ? true
           : false,
       category: "recommended",
+      member: "orientation",
+      defaultValue: "any",
     },
     {
       infoString: "Contains screenshots for app store listings",
       result:
         manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
       category: "recommended",
-    },
-    {
-      infoString: "Has a square PNG icon 512x512 or larger",
-      result:
-        manifest.icons &&
-        manifest.icons.some((i: any) =>
-          i.sizes.includes("512x512") ? true : false
-        ),
-      category: "required",
-    },
-    {
-      infoString: "Has a maskable PNG icon 512x512 or larger",
-      result: () => {
-        if (manifest.icons) {
-          const maskIcon = (manifest.icons as any[]).some(
-            (i) => i.purpose === "maskable" && i.sizes.includes("512x512")
-          );
-          if (maskIcon) {
-            return true;
-          } else {
-            return false;
-          }
-        }
-      },
-      category: "recommended",
+      member: "screenshots",
+      defaultValue: [],
     },
     {
       infoString: "Lists shortcuts for quick access",
       result:
         manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
       category: "recommended",
+      member: "shortcuts",
+      defaultValue: [],
     },
     {
       infoString: "Contains categories to classify the app",
@@ -145,6 +226,8 @@ async function testManifest(manifestFile: any): Promise<any[]> {
           ? true
           : false,
       category: "recommended",
+      member: "categories",
+      defaultValue: [],
     },
     {
       infoString: "Icons specify their type",
