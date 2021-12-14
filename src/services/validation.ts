@@ -1,14 +1,21 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
+import { handleIcons } from "./manifest/manifest-service";
+
+let manifestContents: any | undefined;
 
 export async function handleValidation() {
   vscode.window.showInformationMessage(
     "Lets validate your PWA and make sure its installable and Store Ready"
   );
 
-  const answer = await vscode.window.showInformationMessage("First, let's check your Web Manifest", {
-    modal: true
-  }, "OK");
+  const answer = await vscode.window.showInformationMessage(
+    "First, let's check your Web Manifest",
+    {
+      modal: true,
+    },
+    "OK"
+  );
 
   if (!answer || answer !== "OK") {
     return;
@@ -25,7 +32,7 @@ export async function handleValidation() {
   });
 
   if (manifestFile) {
-    const manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
+    manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
     const results = await testManifest(manifestContents);
 
     await gatherResults(results, manifestFile);
@@ -37,7 +44,7 @@ export async function handleValidation() {
   const swAnswer = await vscode.window.showInformationMessage(
     "Next, let's evaluate your Service Worker",
     {
-      modal: true
+      modal: true,
     },
     "OK"
   );
@@ -45,7 +52,6 @@ export async function handleValidation() {
   if (!swAnswer || swAnswer !== "OK") {
     return;
   }
-
 
   // ask the user if they have a service worker with quickPick
   const swQuestion = await vscode.window.showQuickPick(
@@ -79,12 +85,13 @@ export async function handleValidation() {
     });
 
     if (swFile) {
-      await vscode.window.showInformationMessage("Awesome! Your PWA is installable and store ready!");
+      await vscode.window.showInformationMessage(
+        "Awesome! Your PWA is installable and store ready!"
+      );
     } else {
       vscode.window.showErrorMessage("Please select a Service Worker");
     }
-  }
-  else if (swQuestion && swQuestion.label === "No") {
+  } else if (swQuestion && swQuestion.label === "No") {
     // execute a command to create a service worker
     await vscode.commands.executeCommand("pwa-studio.serviceWorker");
     return;
@@ -97,9 +104,13 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
   );
 
   if (problems.length > 0) {
-    const maniAnswer = await vscode.window.showInformationMessage("Your Web Manifest is missing some required fields, should we add them?", {
-      modal: true
-    }, "OK");
+    const maniAnswer = await vscode.window.showInformationMessage(
+      "Your Web Manifest is missing some required fields, should we add them?",
+      {
+        modal: true,
+      },
+      "OK"
+    );
 
     if (!maniAnswer || maniAnswer !== "OK") {
       return;
@@ -122,12 +133,61 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
         end
       );
     });
+
+    if (manifestContents) {
+      // check for a 512x512 icon in manifestFile
+      const fiveTwelveCheck = JSON.parse(manifestContents).icons.forEach(
+        (icon: any) => {
+          if (icon.sizes === "512x512") {
+            return icon;
+          }
+        }
+      );
+
+      if (!fiveTwelveCheck) {
+        const iconAnswer = await vscode.window.showInformationMessage(
+          "You are missing a 512x512 sized icon, please select one",
+          {
+            modal: true,
+          },
+          "OK"
+        );
+
+        if (iconAnswer && iconAnswer === "OK") {
+          await handleIcons();
+          addIconToManifest(editor);
+
+          return;
+        }
+      }
+    }
+  } else {
+    await vscode.window.showInformationMessage(
+      "Your Web Manifest looks great!",
+      {
+        modal: true,
+      },
+      "OK"
+    );
   }
-  else {
-    await vscode.window.showInformationMessage("Your Web Manifest looks great!", {
-      modal: true
-    }, "OK");
-  }
+}
+
+function addIconToManifest(editor: vscode.TextEditor) {
+  // find start of icons array in file using editor
+  const start = editor.document.positionAt(
+    editor.document.getText().indexOf("icons")
+  );
+
+  editor.insertSnippet(
+    new vscode.SnippetString(
+      `{
+        "src": "/pwabuilder-icons/512x512.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      },`
+    ),
+    start.translate(+1, 0)
+  );
 }
 
 async function testManifest(manifestFile: any): Promise<any[]> {
@@ -163,6 +223,11 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "start_url",
       defaultValue: "/",
+    },
+    {
+      infoString: "Has a square PNG icon 512x512 or larger",
+      category: "required",
+      member: "512",
     },
     {
       infoString: "Specifies a display mode",

@@ -5,13 +5,13 @@ import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
 import { handleServiceWorkerCommand } from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package-app";
-import {
-  handleValidation,
-} from "./services/validation";
+import { handleValidation } from "./services/validation";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
 const validateCommandId = "pwa-studio.validatePWA";
+const packageCommandId = "pwa-studio.packageApp";
+const manifestCommandID = "pwa-studio.manifest";
 
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(
@@ -32,7 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
   myStatusBarItem.command = serviceWorkerCommandId;
 
   let packageAppCommand = vscode.commands.registerCommand(
-    "pwa-studio.packageApp",
+    packageCommandId,
     packageApp
   );
 
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   let manifestCommand = vscode.commands.registerCommand(
-    "pwa-studio.manifest",
+    manifestCommandID,
     async () => {
       await handleManifestCommand(context);
     }

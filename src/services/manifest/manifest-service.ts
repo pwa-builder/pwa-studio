@@ -58,14 +58,14 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
   );
 }
 
-async function handleIcons() {
+export async function handleIcons() {
   const iconFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
     title: "Select a 512x512 icon",
     filters: {
-      Image: ["png", "jpg", "jpeg", "gif"],
+      Image: ["png"],
     },
   });
 
@@ -82,7 +82,11 @@ async function handleIcons() {
       );
 
     } catch (err) {
-      console.log(err);
+      vscode.window.showErrorMessage(
+        err && (err as Error).message
+          ? (err as Error).message
+          : "There was an issue handling icons"
+      );
     }
   }
 }
