@@ -12,7 +12,8 @@
   "activationEvents": [
     "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter",
-    "onCommand:pwa-studio-serviceWorker",
+    "onCommand:pwa-studio.serviceWorker",
+    "onCommand:pwa-studio.validatePWA",
     "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp"
   ],
@@ -25,7 +26,11 @@
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWABuilder: Add a Service Worker to your app"
+        "title": "PWA Studio: Add a Service Worker to your app"
+      },
+      {
+        "command": "pwa-studio.validatePWA",
+        "title": "PWA Studio: Validate your PWA"
       },
       {
         "command": "pwa-studio.manifest",
