@@ -1,3 +1,4 @@
+import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 
 export async function handleValidation() {
@@ -16,27 +17,17 @@ export async function handleValidation() {
   });
 
   if (manifestFile) {
-      
+    console.log("manifestFile", manifestFile);
+    const manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
+    const results = await testManifest(manifestContents);
+
+    return results;
+  }
+  else {
+    vscode.window.showErrorMessage("Please select a Web Manifest");
+    return;
   }
 }
-
-const requiredString = "PWA Studio: This Web Manifest value is required for your PWA to be installable and to be published to the app stores";
-const hasString = "PWA Studio: This Web Manifest is good to go!";
-
-
-export async function testManiEntry(name: string, value: any) {
-    switch (name) {
-        case "name": {
-            return value && value.length > 1 ? hasString : requiredString;
-        }
-        case "short_name": {
-            return value && value.length > 1 ? hasString : requiredString;
-        }
-        case "start_url": {
-            return value && value.length > 0 ? hasString : requiredString;
-        }
-    }
-} 
 
 async function testManifest(manifestFile: any): Promise<any[]> {
   const manifest = JSON.parse(manifestFile);

@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/StarterService";
 import { handleServiceWorkerCommand } from "./services/service-worker";
-import { handleValidation, testManiEntry } from "./services/validation";
+import { handleValidation } from "./services/validation";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
@@ -38,20 +38,6 @@ export function activate(context: vscode.ExtensionContext) {
       handleValidation();
     }
   );
-
-  vscode.languages.registerHoverProvider("json", {
-    provideHover(document, position, token) {
-      const range = document.getWordRangeAtPosition(position);
-      const text = document.lineAt(position.line).text;
-      const word = document.getText(range);
-
-      return testManiEntry(word, text).then((result) => {
-		if (result) {
-			return new vscode.Hover(result);
-		  }
-	  })
-    },
-  });
 
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
