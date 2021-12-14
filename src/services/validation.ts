@@ -21,12 +21,27 @@ export async function handleValidation() {
     const manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
     const results = await testManifest(manifestContents);
 
-    return results;
+    gatherResults(results);
+    return;
   }
   else {
     vscode.window.showErrorMessage("Please select a Web Manifest");
     return;
   }
+}
+
+function gatherResults(results: Array<any>) {
+  const resultList = results.map((r) => {
+    if (r.result) {
+      return `✅ ${r.infoString}`;
+    } else {
+      return `❌ ${r.infoString}`;
+    }
+  });
+
+  const resultString = resultList.join("\n");
+
+  vscode.window.showInformationMessage(resultString);
 }
 
 async function testManifest(manifestFile: any): Promise<any[]> {
