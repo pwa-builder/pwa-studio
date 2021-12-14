@@ -10,9 +10,12 @@
     "Other"
   ],
   "activationEvents": [
+    "onCommand:pwa-studio.helloWorld",
     "onCommand:pwa-studio.newPwaStarter",
     "onCommand:pwa-studio.serviceWorker",
-    "onCommand:pwa-studio.validatePWA"
+    "onCommand:pwa-studio.validatePWA",
+    "onCommand:pwa-studio.manifest",
+    "onCommand:pwa-studio.packageApp"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -28,6 +31,14 @@
       {
         "command": "pwa-studio.validatePWA",
         "title": "PWA Studio: Validate your PWA"
+      },
+      {
+        "command": "pwa-studio.manifest",
+        "title": "PWABuilder: Add a Manifest to your app"
+      },
+      {
+        "command": "pwa-studio.packageApp",
+        "title": "PWA Studio: Package Your PWA"
       }
     ]
   },
@@ -40,9 +51,11 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
+    "@types/fs-extra": "^9.0.13",
     "@types/glob": "^7.1.4",
     "@types/mocha": "^9.0.0",
     "@types/node": "14.x",
+    "@types/node-fetch": "^2.5.12",
     "@types/vscode": "^1.62.0",
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
@@ -53,6 +66,7 @@
     "typescript": "^4.4.4"
   },
   "dependencies": {
+    "node-fetch": "^2.6.6",
     "shelljs": "^0.8.4",
     "workbox-build": "^6.4.2"
   }
