@@ -21,7 +21,7 @@ export async function handleValidation() {
       },
     ],
     {
-      placeHolder: "Do you have a Web Manifest?",
+      placeHolder: "Do you already have a Web Manifest?",
       ignoreFocusOut: true,
       canPickMany: false,
     }
@@ -81,7 +81,7 @@ async function checkServiceworker() {
       },
     ],
     {
-      placeHolder: "Do you have a Service Worker?",
+      placeHolder: "Do you already have a Service Worker?",
       ignoreFocusOut: true,
       canPickMany: false,
     }

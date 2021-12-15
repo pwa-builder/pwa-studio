@@ -30,7 +30,7 @@
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWA Studio: Validate your PWA"
+        "title": "PWA Studio: Check if my PWA is installable"
       },
       {
         "command": "pwa-studio.manifest",
