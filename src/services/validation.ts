@@ -9,38 +9,53 @@ export async function handleValidation() {
     "Lets validate your PWA and make sure its installable and Store Ready"
   );
 
-  const answer = await vscode.window.showInformationMessage(
-    "First, let's check your Web Manifest",
+  const maniQuestion = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Yes",
+        description: "I have a Web Manifest",
+      },
+      {
+        label: "No",
+        description: "I don't have a Web Manifest",
+      },
+    ],
     {
-      modal: true,
-    },
-    "OK"
+      placeHolder: "Do you have a Web Manifest?",
+      ignoreFocusOut: true,
+      canPickMany: false,
+    }
   );
 
-  if (!answer || answer !== "OK") {
-    return;
+  if(maniQuestion && maniQuestion.label === "Yes") {
+    const manifestFile = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your Web Manifest file",
+      filters: {
+        JSON: ["json"],
+      },
+    });
+  
+    if (manifestFile) {
+      manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
+      const results = await testManifest(manifestContents);
+  
+      await gatherResults(results, manifestFile);
+    } else {
+      await vscode.window.showErrorMessage("Please select a Web Manifest");
+      return;
+    }
+  }
+  else if(maniQuestion && maniQuestion.label === "No") {
+    await vscode.commands.executeCommand("pwa-studio.manifest");
   }
 
-  const manifestFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select your Web Manifest file",
-    filters: {
-      JSON: ["json"],
-    },
-  });
+  await checkServiceworker();
+}
 
-  if (manifestFile) {
-    manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
-    const results = await testManifest(manifestContents);
-
-    await gatherResults(results, manifestFile);
-  } else {
-    await vscode.window.showErrorMessage("Please select a Web Manifest");
-    return;
-  }
-
+async function checkServiceworker() {
   const swAnswer = await vscode.window.showInformationMessage(
     "Next, let's evaluate your Service Worker",
     {
