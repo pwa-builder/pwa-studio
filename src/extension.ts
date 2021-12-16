@@ -4,7 +4,7 @@ import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
 import { handleServiceWorkerCommand } from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
-import { packageApp } from "./services/package-app";
+import { packageApp } from "./services/package/package-app";
 import { handleValidation } from "./services/validation";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";

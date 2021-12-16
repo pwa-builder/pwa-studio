@@ -6,7 +6,8 @@ export const packageQuestion: Question = {
     message: "Which platform did you want to package your app for?",
     choices: [
         "Windows Development",
-        "Windows Production"
+        "Windows Production",
+        "Android"
     ],
     default: "Windows Development"
 };
