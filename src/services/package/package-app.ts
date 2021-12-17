@@ -20,24 +20,52 @@ import { packageForAndroid } from "./package-android-app";
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
 
-var packagePlatform: string | undefined;
-var packageInfo: MsixInfo;
-var msixAnswers: string[];
-var didInputFail: boolean;
+let packagePlatform: string | undefined;
+let packageInfo: MsixInfo;
+let msixAnswers: string[];
+let didInputFail: boolean;
 
 export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
   if (packageType === "Android") {
-    const options = await getAndroidPackageOptions();
-    const responseData: Blob = await packageForAndroid(options);
-    await convertPackageToZip(responseData, options?.packageId);
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Packaging your app..." });
+          const options = await getAndroidPackageOptions();
+          if (options) {
+            const responseData: Blob = await packageForAndroid(options);
+            progress.report({ message: "Converting to zip..." });
+            await convertPackageToZip(responseData, options.packageId);
+          }
+        }
+      );
+    } catch (err: any) {
+      vscode.window.showErrorMessage(
+        `There was an error packaging your app: ${
+          err && err.message ? err.message : err
+        }`
+      );
+    }
   } else {
     await getMsixInputs();
     if (!didInputFail) {
-      var responseData: any = await packageWithPwaBuilder();
-      await convertPackageToZip(responseData);
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Packaging your app..." });
+          const responseData: any = await packageWithPwaBuilder();
+          progress.report({ message: "Converting to zip..." });
+          await convertPackageToZip(responseData);
+        }
+      );
     }
   }
 }
