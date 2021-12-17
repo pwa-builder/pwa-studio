@@ -59,8 +59,6 @@ export async function buildAndroidPackage(options: any) {
     headers: new Headers({ "content-type": "application/json" }),
   });
 
-  console.log(response.status, response.body);
-
   return response;
 }
 
@@ -78,12 +76,21 @@ export async function buildAndroidOptions() {
     prompt: "Enter the URL to your manifest",
   });
 
+  const packageId = await vscode.window.showInputBox({
+    prompt: "Enter the package ID",
+  });
 
-  if (manifestUrl) {
+  if (manifestUrl && packageId) {
     // fetch manifest from manifestUrl using node-fetch
     const manifestData = await (await fetch(manifestUrl)).json();
-    console.log('manifestData', manifestData);
     const manifest = manifestData;
+
+    // find icon with a size of 512x512 from manifest.icons
+    const icon = manifest.icons.find((icon: any) => {
+      if (icon.sizes.includes("512x512")) {
+        return icon;
+      }
+    });
 
     return {
       appVersion: "1.0.0.0",
@@ -103,7 +110,7 @@ export async function buildAndroidOptions() {
         },
       },
       host: appUrl,
-      iconUrl: "https://webboard.app/icons/android/android-launchericon-512-512.png",
+      iconUrl: `${appUrl}/${icon.src}`,
       includeSourceCode: false,
       isChromeOSOnly: false,
       launcherName: manifest.short_name.substring(0, 30), // launcher name should be the short name. If none is available, fallback to the full app name.
@@ -114,7 +121,7 @@ export async function buildAndroidOptions() {
       navigationDividerColorDark:
         manifest.background_color || manifest.theme_color,
       orientation: manifest.orientation || "default",
-      packageId: "com.android.test",
+      packageId: packageId || "com.android.pwa",
       shortcuts: manifest.shortcuts || [],
       signing: {
         file: null,

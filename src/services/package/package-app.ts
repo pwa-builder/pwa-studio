@@ -30,11 +30,10 @@ export async function packageApp(): Promise<void> {
   const packageType = await getPackageInputFromUser();
 
   if (packageType === "Android") {
-      const options = await getAndroidPackageOptions();
-      const responseData: Blob = await packageForAndroid(options);
-      await convertPackageToZip(responseData, options?.packageId);
-  }
-  else {
+    const options = await getAndroidPackageOptions();
+    const responseData: Blob = await packageForAndroid(options);
+    await convertPackageToZip(responseData, options?.packageId);
+  } else {
     await getMsixInputs();
     if (!didInputFail) {
       var responseData: any = await packageWithPwaBuilder();
@@ -45,7 +44,6 @@ export async function packageApp(): Promise<void> {
 
 async function getAndroidPackageOptions() {
   const options = await buildAndroidOptions();
-  console.log('android options', options);
   return options;
 }
 
@@ -69,7 +67,10 @@ async function packageWithPwaBuilder(): Promise<any> {
   return (await packageForWindows(packageInfo)).blob();
 }
 
-async function convertPackageToZip(responseData: Blob, packageID?: string): Promise<void> {
+async function convertPackageToZip(
+  responseData: Blob,
+  packageID?: string
+): Promise<void> {
   await writeMSIXToFile(responseData, packageID || packageInfo.packageId);
 }
 
@@ -144,13 +145,22 @@ async function writeMSIXToFile(
   name: string
 ): Promise<void> {
   try {
-    console.log("responseData", responseData);
-    console.log(`${process.env.USERPROFILE} + "\\Downloads\\" + ${name} + ".zip"`)
-    const data = await writeFile(
-      process.env.USERPROFILE + "\\Downloads\\" + name + ".zip",
-      Buffer.from(await responseData.arrayBuffer())
-    );
-    console.log('data', data);
+    const test = await vscode.window.showSaveDialog({
+      title: "Save your package",
+      defaultUri: vscode.workspace.workspaceFolders
+        ? vscode.Uri.file(
+            `${vscode.workspace.workspaceFolders[0].uri.fsPath}/${name}.zip`
+          )
+        : undefined,
+    });
+
+    if (test) {
+      // write file to current workspace directory with vscode api
+      await writeFile(
+        test.fsPath,
+        Buffer.from(await responseData.arrayBuffer())
+      );
+    }
   } catch (err) {
     console.error(`There was an error packaging your app: ${err}`);
   }
