@@ -87,10 +87,30 @@ export async function buildAndroidOptions() {
 
     // find icon with a size of 512x512 from manifest.icons
     const icon = manifest.icons.find((icon: any) => {
-      if (icon.sizes.includes("512x512")) {
+      if (icon.sizes && icon.sizes.includes("512x512")) {
         return icon;
       }
     });
+
+    const maskableIcon = manifest.icons.find((icon: any) => {
+      if (icon.purpose && icon.purpose.includes("maskable")) {
+        return icon;
+      }
+    });
+
+    if (!icon) {
+      await vscode.window.showErrorMessage(
+        "Your app cannot be packaged, please add an icon with a size of 512x512"
+      );
+
+      return;
+    }
+
+    if (!maskableIcon) {
+      await vscode.window.showWarningMessage(
+        "We highly recommend adding a maskable icon to your app, however your app can still be packaged without one"
+      );
+    }
 
     return {
       appVersion: "1.0.0.0",
@@ -111,6 +131,7 @@ export async function buildAndroidOptions() {
       },
       host: appUrl,
       iconUrl: `${appUrl}/${icon.src}`,
+      maskableIconUrl: maskableIcon ? `${appUrl}/${maskableIcon.src}` : null,
       includeSourceCode: false,
       isChromeOSOnly: false,
       launcherName: manifest.short_name.substring(0, 30), // launcher name should be the short name. If none is available, fallback to the full app name.
