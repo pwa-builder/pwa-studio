@@ -31,11 +31,20 @@ export async function packageApp(): Promise<void> {
 
   if (packageType === "Android") {
     try {
-      const options = await getAndroidPackageOptions();
-      if (options) {
-        const responseData: Blob = await packageForAndroid(options);
-        await convertPackageToZip(responseData, options.packageId);
-      }
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Packaging your app..." });
+          const options = await getAndroidPackageOptions();
+          if (options) {
+            const responseData: Blob = await packageForAndroid(options);
+            progress.report({ message: "Converting to zip..." });
+            await convertPackageToZip(responseData, options.packageId);
+          }
+        }
+      );
     } catch (err: any) {
       vscode.window.showErrorMessage(
         `There was an error packaging your app: ${
@@ -46,8 +55,17 @@ export async function packageApp(): Promise<void> {
   } else {
     await getMsixInputs();
     if (!didInputFail) {
-      var responseData: any = await packageWithPwaBuilder();
-      await convertPackageToZip(responseData);
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Packaging your app..." });
+          const responseData: any = await packageWithPwaBuilder();
+          progress.report({ message: "Converting to zip..." });
+          await convertPackageToZip(responseData);
+        }
+      );
     }
   }
 }
