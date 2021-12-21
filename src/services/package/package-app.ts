@@ -15,7 +15,10 @@ import {
   getSimpleMsixFromArray,
   packageForWindows,
 } from "../../library/package-utils";
-import { packageForAndroid, validateAndroidOptions } from "./package-android-app";
+import {
+  packageForAndroid,
+  validateAndroidOptions,
+} from "./package-android-app";
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -40,12 +43,21 @@ export async function packageApp(): Promise<void> {
           const options = await getAndroidPackageOptions();
           if (options) {
             const optionsValidation = await validateAndroidOptions(options);
-            console.log('optionsValidation', optionsValidation);
 
-            /*
-            const responseData: Blob = await packageForAndroid(options);
-            progress.report({ message: "Converting to zip..." });
-            await convertPackageToZip(responseData, options.packageId);*/
+            if (optionsValidation.length === 0) {
+              // no validation errors
+              const responseData: Blob = await packageForAndroid(options);
+              progress.report({ message: "Converting to zip..." });
+              await convertPackageToZip(responseData, options.packageId);
+            } else {
+              // validation errors
+              await vscode.window.showErrorMessage(
+                `There are some problems with your manifest that have prevented us from packaging: ${optionsValidation.join(
+                  "\n"
+                )}`
+              );
+              return;
+            }
           }
         }
       );
