@@ -14,8 +14,10 @@ import {
   getPublisherMsixFromArray,
   getSimpleMsixFromArray,
   packageForWindows,
+  WindowsDocsURL,
 } from "../../library/package-utils";
 import {
+  AndroidDocsURL,
   packageForAndroid,
   validateAndroidOptions,
 } from "./package-android-app";
@@ -49,6 +51,9 @@ export async function packageApp(): Promise<void> {
               const responseData: Blob = await packageForAndroid(options);
               progress.report({ message: "Converting to zip..." });
               await convertPackageToZip(responseData, options.packageId);
+
+              // open android docs
+              await vscode.env.openExternal(vscode.Uri.parse(AndroidDocsURL));
             } else {
               // validation errors
               await vscode.window.showErrorMessage(
@@ -80,6 +85,9 @@ export async function packageApp(): Promise<void> {
           const responseData: any = await packageWithPwaBuilder();
           progress.report({ message: "Converting to zip..." });
           await convertPackageToZip(responseData);
+
+          // open windows docs
+          await vscode.env.openExternal(vscode.Uri.parse(WindowsDocsURL));
         }
       );
     }

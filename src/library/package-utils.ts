@@ -4,8 +4,11 @@ import { Headers } from "node-fetch";
 import { MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
+import { AndroidPackageOptions } from "../services/package/package-android-app";
 
-const advancedAndroidSettings = {
+export const WindowsDocsURL = "https://blog.pwabuilder.com/docs/windows-platform/";
+
+const advancedAndroidSettings: AndroidPackageOptions = {
   appVersion: "1.0.0.0",
   appVersionCode: 1,
   backgroundColor: "#FFFFFF",
@@ -24,6 +27,7 @@ const advancedAndroidSettings = {
   host: "https://myapp.com",
   iconUrl: "https://myapp.com/icon.png",
   maskableIconUrl: "https://myapp.com/maskable-icon.png",
+  monochromeIconUrl: "https://myapp.com/monochrome-icon.png",
   includeSourceCode: false,
   isChromeOSOnly: false,
   launcherName: "app name", // launcher name should be the short name. If none is available, fallback to the full app name.
@@ -49,7 +53,7 @@ const advancedAndroidSettings = {
   splashScreenFadeOutDuration: 300,
   startUrl: "/",
   themeColor: "#FFFFFF",
-  shareTarget: [],
+  shareTarget: ([] as any),
   webManifestUrl: "https://myapp.com/manifest.json",
 };
 
@@ -99,7 +103,7 @@ export function getPublisherMsixFromArray(...args: string[]): MsixInfo {
   };
 }
 
-export async function buildAndroidPackage(options: any) {
+export async function buildAndroidPackage(options: AndroidPackageOptions) {
   const generateAppUrl = `https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage`;
   const response = await fetch(generateAppUrl, {
     method: "POST",
@@ -110,7 +114,7 @@ export async function buildAndroidPackage(options: any) {
   return response;
 }
 
-export async function buildAndroidOptions() {
+export async function buildAndroidOptions(): Promise<AndroidPackageOptions | undefined> {
   const appUrl = await vscode.window.showInputBox({
     prompt: "Enter the URL to your app",
   });
@@ -247,6 +251,7 @@ export async function buildAndroidOptions() {
       host: appUrl,
       iconUrl: `${appUrl}/${icon.src}`,
       maskableIconUrl: maskableIcon ? `${appUrl}/${maskableIcon.src}` : null,
+      monochromeIconUrl: null,
       includeSourceCode: false,
       isChromeOSOnly: false,
       launcherName: manifest.short_name.substring(0, 30), // launcher name should be the short name. If none is available, fallback to the full app name.
