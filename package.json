@@ -15,7 +15,8 @@
     "onCommand:pwa-studio.serviceWorker",
     "onCommand:pwa-studio.validatePWA",
     "onCommand:pwa-studio.manifest",
-    "onCommand:pwa-studio.packageApp"
+    "onCommand:pwa-studio.packageApp",
+    "onCommand:pwa-studio.generateWorker"
   ],
   "main": "./out/extension.js",
   "contributes": {
