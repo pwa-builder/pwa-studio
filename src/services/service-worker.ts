@@ -1,8 +1,6 @@
 import * as vscode from "vscode";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
-const workboxBuild = require("workbox-build");
-
 const vsTerminal = vscode.window.createTerminal();
 
 export async function handleServiceWorkerCommand(): Promise<void> {
