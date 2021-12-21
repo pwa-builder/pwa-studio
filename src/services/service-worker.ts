@@ -1,62 +1,68 @@
 import * as vscode from "vscode";
+import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
-const workboxBuild = require("workbox-build");
+const vsTerminal = vscode.window.createTerminal();
 
 export async function handleServiceWorkerCommand(): Promise<void> {
-  vscode.window.showInformationMessage(
-    "Your build directory is where your code is compiled to. With most setups this will be either `dist` or `build`. Check the documentation for your framework for more information."
-  );
-
-  const buildDir = await vscode.window.showOpenDialog({
-    canSelectFiles: false,
-    canSelectFolders: true,
-    canSelectMany: false,
-    title: "Select your build directory",
-  });
-
-  if (buildDir) {
-    const serviceWorkerFileName = await vscode.window.showInputBox({
-      title: "Service Worker File Name",
-      value: "service-worker.js",
-      prompt: "What would you like your service worker file to be called?",
-      placeHolder: "service-worker.js",
-    });
-
-    if (serviceWorkerFileName) {
-      try {
-        vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-          },
-          async (progress) => {
-            progress.report({ message: "Building service worker..." });
-            await runWorkboxTool(buildDir[0].fsPath, serviceWorkerFileName);
-            progress.report({ message: "Service worker added!" });
-          }
-        );
-
-        await handleAddingToIndex();
-      } catch (err) {
-        vscode.window.showErrorMessage(
-          err && (err as Error).message
-            ? (err as Error).message
-            : "There was an issue adding your service worker"
-        );
+  try {
+    vscode.window.withProgress(
+      {
+        location: vscode.ProgressLocation.Notification,
+      },
+      async (progress) => {
+        progress.report({ message: "Building service worker..." });
+        await runWorkboxTool();
+        progress.report({ message: "Service worker added!" });
       }
-    }
+    );
+
+    await handleAddingToIndex();
+
+    vscode.window.showInformationMessage(
+      "When you are ready to generate your Service Worker, tap the 'Generate Service Worker' button in the status bar below."
+    );
+
+    await vscode.window.showInformationMessage(
+      "Check the Workbox documentation to add workbox to your existing build command.",
+      {},
+      {
+        title: "Open Workbox Documentation",
+        action: async () => {
+          await vscode.env.openExternal(
+            vscode.Uri.parse(
+              "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
+            )
+          );
+        },
+      }
+    );
+  } catch (err) {
+    vscode.window.showErrorMessage(
+      err && (err as Error).message
+        ? (err as Error).message
+        : "There was an issue adding your service worker"
+    );
   }
 }
 
-async function runWorkboxTool(buildDir: string, fileName: string): Promise<unknown> {
+export function generateServiceWorker() {
+  vsTerminal.show();
+  vsTerminal.sendText("workbox generateSW");
+}
+
+async function runWorkboxTool(): Promise<void> {
   return new Promise(async (resolve, reject) => {
     try {
-      const data = await workboxBuild.generateSW({
-        globDirectory: `${buildDir}`,
-        globPatterns: ["**/*.{html,json,js,css}"],
-        inlineWorkboxRuntime: true,
-        swDest: `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/${fileName}`,
-      });
-      resolve(data);
+      const npmCheck = isNpmInstalled();
+      if (npmCheck) {
+        vsTerminal.show();
+        vsTerminal.sendText("npm install workbox-cli --global");
+
+        vsTerminal.sendText("workbox wizard");
+        resolve();
+      } else {
+        noNpmInstalledWarning();
+      }
     } catch (err) {
       reject(err);
     }

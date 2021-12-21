@@ -68,7 +68,7 @@ function changeDirectory(pathToDirectory: string | undefined): void {
   vsTerminal.sendText(`cd ${pathToDirectory}`);
 }
 
-function isNpmInstalled(): boolean {
+export function isNpmInstalled(): boolean {
   var isNpmInstalled: boolean = true;
 
   if (!shell.which("npm")) {
@@ -116,6 +116,6 @@ function noGitInstalledWarning(): void {
   vscode.window.showWarningMessage(noGitWarning);
 }
 
-function noNpmInstalledWarning(): void {
+export function noNpmInstalledWarning(): void {
   vscode.window.showWarningMessage(noNpmWarning);
 }

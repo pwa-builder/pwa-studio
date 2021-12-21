@@ -2,12 +2,13 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-import { handleServiceWorkerCommand } from "./services/service-worker";
+import { handleServiceWorkerCommand, generateServiceWorker } from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import { handleValidation } from "./services/validation";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
+const generateWorkerCommandId = "pwa-studio.generateWorker";
 const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
 const validateCommandId = "pwa-studio.validatePWA";
 const packageCommandId = "pwa-studio.packageApp";
@@ -19,7 +20,7 @@ export function activate(context: vscode.ExtensionContext) {
     100
   );
 
-  myStatusBarItem.text = "Update Service Worker";
+  myStatusBarItem.text = "Generate Service Worker";
 
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,
@@ -29,7 +30,15 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  myStatusBarItem.command = serviceWorkerCommandId;
+  const generateWorker = vscode.commands.registerCommand(
+    generateWorkerCommandId,
+    async () => {
+      await generateServiceWorker();
+      myStatusBarItem.show();
+    }
+  );
+
+  myStatusBarItem.command = generateWorkerCommandId;
 
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
@@ -61,6 +70,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(myStatusBarItem);
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
+  context.subscriptions.push(generateWorker);
 }
 
 export function deactivate() {}
