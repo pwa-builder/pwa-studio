@@ -1,5 +1,6 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
+import { handleWebhint } from "../library/handle-webhint";
 import { handleIcons } from "./manifest/manifest-service";
 
 let manifestContents: any | undefined;
@@ -94,6 +95,30 @@ export async function handleValidation() {
   } else if (swQuestion && swQuestion.label === "No") {
     // execute a command to create a service worker
     await vscode.commands.executeCommand("pwa-studio.serviceWorker");
+    return;
+  }
+
+  const runWebhintQuestion = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Yes",
+        description: "I want to run Webhint",
+      },
+      {
+        label: "No",
+        description: "I don't want to run Webhint",
+      },
+    ],
+    {
+      placeHolder: "Run extra tests on your PWA using Webhint?",
+      ignoreFocusOut: true,
+      canPickMany: false,
+    }
+  );
+
+  if (runWebhintQuestion && runWebhintQuestion.label === "Yes") {
+    await handleWebhint();
+
     return;
   }
 }
