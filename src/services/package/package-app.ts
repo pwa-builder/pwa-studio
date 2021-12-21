@@ -14,8 +14,13 @@ import {
   getPublisherMsixFromArray,
   getSimpleMsixFromArray,
   packageForWindows,
+  WindowsDocsURL,
 } from "../../library/package-utils";
-import { packageForAndroid } from "./package-android-app";
+import {
+  AndroidDocsURL,
+  packageForAndroid,
+  validateAndroidOptions,
+} from "./package-android-app";
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -39,9 +44,25 @@ export async function packageApp(): Promise<void> {
           progress.report({ message: "Packaging your app..." });
           const options = await getAndroidPackageOptions();
           if (options) {
-            const responseData: Blob = await packageForAndroid(options);
-            progress.report({ message: "Converting to zip..." });
-            await convertPackageToZip(responseData, options.packageId);
+            const optionsValidation = await validateAndroidOptions(options);
+
+            if (optionsValidation.length === 0) {
+              // no validation errors
+              const responseData: Blob = await packageForAndroid(options);
+              progress.report({ message: "Converting to zip..." });
+              await convertPackageToZip(responseData, options.packageId);
+
+              // open android docs
+              await vscode.env.openExternal(vscode.Uri.parse(AndroidDocsURL));
+            } else {
+              // validation errors
+              await vscode.window.showErrorMessage(
+                `There are some problems with your manifest that have prevented us from packaging: ${optionsValidation.join(
+                  "\n"
+                )}`
+              );
+              return;
+            }
           }
         }
       );
@@ -64,6 +85,9 @@ export async function packageApp(): Promise<void> {
           const responseData: any = await packageWithPwaBuilder();
           progress.report({ message: "Converting to zip..." });
           await convertPackageToZip(responseData);
+
+          // open windows docs
+          await vscode.env.openExternal(vscode.Uri.parse(WindowsDocsURL));
         }
       );
     }
