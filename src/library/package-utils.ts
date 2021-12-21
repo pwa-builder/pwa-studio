@@ -182,7 +182,7 @@ export async function buildAndroidOptions() {
     }
 
     // make sure we have manifestUrl and packageId first
-    if (advancedSettings) {
+    if (advancedSettings && advancedSettings.label === "Yes") {
       // handle advanced settings
       const uri = await vscode.window.showSaveDialog({
         title: "Save advanced Android settings file to continue",

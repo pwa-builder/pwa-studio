@@ -15,7 +15,7 @@ import {
   getSimpleMsixFromArray,
   packageForWindows,
 } from "../../library/package-utils";
-import { packageForAndroid } from "./package-android-app";
+import { packageForAndroid, validateAndroidOptions } from "./package-android-app";
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -39,9 +39,13 @@ export async function packageApp(): Promise<void> {
           progress.report({ message: "Packaging your app..." });
           const options = await getAndroidPackageOptions();
           if (options) {
+            const optionsValidation = await validateAndroidOptions(options);
+            console.log('optionsValidation', optionsValidation);
+
+            /*
             const responseData: Blob = await packageForAndroid(options);
             progress.report({ message: "Converting to zip..." });
-            await convertPackageToZip(responseData, options.packageId);
+            await convertPackageToZip(responseData, options.packageId);*/
           }
         }
       );
