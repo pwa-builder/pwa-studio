@@ -22,23 +22,48 @@ export async function handleValidation() {
     return;
   }
 
-  const manifestFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select your Web Manifest file",
-    filters: {
-      JSON: ["json"],
-    },
-  });
+  // ask the user if they have a service worker with quickPick
+  const maniQuestion = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Yes",
+        description: "I have a Web Manifest",
+      },
+      {
+        label: "No",
+        description: "I don't have a Web Manifest",
+      },
+    ],
+    {
+      placeHolder: "Do you have a Web Manifest?",
+      ignoreFocusOut: true,
+      canPickMany: false,
+    }
+  );
 
-  if (manifestFile) {
-    manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
-    const results = await testManifest(manifestContents);
+  if (maniQuestion && maniQuestion.label === "Yes") {
+    const manifestFile = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your Web Manifest file",
+      filters: {
+        JSON: ["json"],
+      },
+    });
 
-    await gatherResults(results, manifestFile);
-  } else {
-    await vscode.window.showErrorMessage("Please select a Web Manifest");
+    if (manifestFile) {
+      manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
+      const results = await testManifest(manifestContents);
+
+      await gatherResults(results, manifestFile);
+    } else {
+      await vscode.window.showErrorMessage("Please select a Web Manifest");
+      return;
+    }
+  }
+  else if (maniQuestion && maniQuestion.label === "No") {
+    await vscode.commands.executeCommand("pwa-studio.manifest");
     return;
   }
 
@@ -258,9 +283,9 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       infoString: "Specifies a display mode",
       result:
         manifest.display &&
-        ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
-          manifest.display
-        )
+          ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
+            manifest.display
+          )
           ? true
           : false,
       category: "recommended",
@@ -311,8 +336,8 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       infoString: "Contains categories to classify the app",
       result:
         manifest.categories &&
-        manifest.categories.length > 0 &&
-        containsStandardCategory(manifest.categories)
+          manifest.categories.length > 0 &&
+          containsStandardCategory(manifest.categories)
           ? true
           : false,
       category: "recommended",
@@ -338,7 +363,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       infoString: "Specifies related_applications",
       result:
         manifest.related_applications &&
-        manifest.related_applications.length > 0
+          manifest.related_applications.length > 0
           ? true
           : false,
       category: "optional",
