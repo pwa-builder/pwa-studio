@@ -16,7 +16,8 @@
     "onCommand:pwa-studio.validatePWA",
     "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp",
-    "onCommand:pwa-studio.generateWorker"
+    "onCommand:pwa-studio.generateWorker",
+    "onView:validationPanel"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -41,7 +42,15 @@
         "command": "pwa-studio.packageApp",
         "title": "PWA Studio: Package Your PWA"
       }
-    ]
+    ],
+    "views": {
+      "explorer": [
+        {
+          "id": "validationPanel",
+          "name": "PWA Status"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",

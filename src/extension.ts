@@ -2,10 +2,14 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import { setUpLocalPwaStarterRepository } from "./services/new-pwa-starter";
-import { handleServiceWorkerCommand, generateServiceWorker } from "./services/service-worker";
+import {
+  handleServiceWorkerCommand,
+  generateServiceWorker,
+} from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
-import { handleValidation } from "./services/validation";
+import { handleValidation } from "./validation/validation";
+import { PWAValidationProvider } from "./validation/validation-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -21,6 +25,17 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   myStatusBarItem.text = "Generate Service Worker";
+
+  if (
+    vscode.workspace.workspaceFolders &&
+    vscode.workspace.workspaceFolders.length > 0
+  ) {
+    vscode.window.createTreeView("validationPanel", {
+      treeDataProvider: new PWAValidationProvider(
+        vscode.workspace.workspaceFolders[0].uri.fsPath
+      ),
+    });
+  }
 
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,

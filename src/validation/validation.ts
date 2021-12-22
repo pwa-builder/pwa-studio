@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../library/handle-webhint";
-import { handleIcons } from "./manifest/manifest-service";
+import { handleIcons } from "../services/manifest/manifest-service";
 
 let manifestContents: any | undefined;
 
@@ -240,7 +240,7 @@ function addIconToManifest(editor: vscode.TextEditor) {
   );
 }
 
-async function testManifest(manifestFile: any): Promise<any[]> {
+export async function testManifest(manifestFile: any): Promise<any[]> {
   const manifest = JSON.parse(manifestFile);
 
   return [
@@ -273,11 +273,6 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "start_url",
       defaultValue: "/",
-    },
-    {
-      infoString: "Has a square PNG icon 512x512 or larger",
-      category: "required",
-      member: "512",
     },
     {
       infoString: "Specifies a display mode",
