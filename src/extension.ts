@@ -8,7 +8,7 @@ import {
 } from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
-import { handleValidation } from "./validation/validation";
+import { handleManiDocsCommand, handleValidation } from "./validation/validation";
 import { PWAValidationProvider } from "./validation/validation-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -17,6 +17,7 @@ const newPWAStarterCommandId = "pwa-studio.newPwaStarter";
 const validateCommandId = "pwa-studio.validatePWA";
 const packageCommandId = "pwa-studio.packageApp";
 const manifestCommandID = "pwa-studio.manifest";
+const maniDocsCommandID = "pwa-studio.maniItemDocs";
 
 export function activate(context: vscode.ExtensionContext) {
   const myStatusBarItem = vscode.window.createStatusBarItem(
@@ -36,6 +37,13 @@ export function activate(context: vscode.ExtensionContext) {
       ),
     });
   }
+
+  const maniDocs = vscode.commands.registerCommand(
+    maniDocsCommandID,
+    async (event: any) => {
+      await handleManiDocsCommand(event)
+    }
+  );
 
   const addServiceWorker = vscode.commands.registerCommand(
     serviceWorkerCommandId,
@@ -86,6 +94,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);
+  context.subscriptions.push(maniDocs);
 }
 
 export function deactivate() {}

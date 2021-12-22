@@ -49,13 +49,6 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         }
       }
     } else {
-      /*const packageJsonPath = path.join(this.workspaceRoot, "package.json");
-      if (this.pathExists(packageJsonPath)) {
-        return Promise.resolve(this.getDepsInPackageJson(packageJsonPath));
-      } else {
-        vscode.window.showInformationMessage("Workspace has no package.json");
-        return Promise.resolve([]);
-      }*/
 
       // search for a manifest file in the root of the workspace
       const manifestPath = path.join(this.workspaceRoot, "manifest.json");
@@ -78,7 +71,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
               this.handleTestResults(
                 [
                   {
-                    infoString: "Web Manifest: Not Installable",
+                    infoString: "Not Installable",
                     result: false,
                   },
                 ],
@@ -92,7 +85,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
                 [
                   {
                     // infoString has checkmark
-                    infoString: "Web Manifest: Installable",
+                    infoString: "Installable",
                     result: true,
                   },
                 ],
@@ -124,6 +117,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         resultsData.push(
           new ValidationItem(
             result.infoString,
+            result.docsLink ? result.docsLink : "",
             result.result ? result.result.toString() : "",
             vscode.TreeItemCollapsibleState.None
           )
@@ -132,6 +126,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         resultsData.push(
           new ValidationItem(
             result.infoString,
+            "",
             result.result ? result.result.toString() : "",
             collapsedState
           )
@@ -155,6 +150,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
 class ValidationItem extends vscode.TreeItem {
   constructor(
     public readonly label: string,
+    public readonly docsLink: string,
     private version: string,
     public readonly collapsibleState: vscode.TreeItemCollapsibleState
   ) {

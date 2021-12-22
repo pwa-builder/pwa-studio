@@ -250,6 +250,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "icons",
       defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Contains name property",
@@ -257,6 +258,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "name",
       defaultValue: "placeholder name",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
     },
     {
       infoString: "Contains short_name property",
@@ -265,6 +267,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "short_name",
       defaultValue: "placeholder",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
     },
     {
       infoString: "Designates a start_url",
@@ -273,6 +276,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "start_url",
       defaultValue: "/",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
     },
     {
       infoString: "Specifies a display mode",
@@ -286,6 +290,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "display",
       defaultValue: "standalone",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
     },
     {
       infoString: "Has a background color",
@@ -293,6 +298,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "background_color",
       defaultValue: "black",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
     },
     {
       infoString: "Has a theme color",
@@ -300,6 +306,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "theme_color",
       defaultValue: "black",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
     },
     {
       infoString: "Specifies an orientation mode",
@@ -310,6 +317,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "orientation",
       defaultValue: "any",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
     },
     {
       infoString: "Contains screenshots for app store listings",
@@ -318,6 +326,7 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "screenshots",
       defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"
     },
     {
       infoString: "Lists shortcuts for quick access",
@@ -326,33 +335,27 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "shortcuts",
       defaultValue: [],
-    },
-    {
-      infoString: "Contains categories to classify the app",
-      result:
-        manifest.categories &&
-          manifest.categories.length > 0 &&
-          containsStandardCategory(manifest.categories)
-          ? true
-          : false,
-      category: "recommended",
-      member: "categories",
-      defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts"
     },
     {
       infoString: "Icons specify their type",
       result: !!manifest.icons && manifest.icons.every((i: any) => !!i.type),
       category: "recommended",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Icons specify their size",
       result: !!manifest.icons && manifest.icons.every((i: any) => !!i.sizes),
       category: "recommended",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Contains an IARC ID",
       result: manifest.iarc_rating_id ? true : false,
       category: "optional",
+      member: "iarc_rating_id",
+      defaultValue: "",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id"
     },
     {
       infoString: "Specifies related_applications",
@@ -362,6 +365,9 @@ export async function testManifest(manifestFile: any): Promise<any[]> {
           ? true
           : false,
       category: "optional",
+      member: "related_applications",
+      defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications"
     },
   ];
 }
@@ -413,4 +419,16 @@ function isStandardOrientation(orientation: string) {
     "portrait-secondary",
   ];
   return standardOrientations.includes(orientation);
+}
+
+export async function handleManiDocsCommand(event: any) {
+  // open docs link
+  console.log(event);
+  if (event.label === "Installable" || event.label === "Uninstallable") {
+    vscode.env.openExternal(vscode.Uri.parse("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs"));
+  }
+
+  if (event && event.docsLink && event.docsLink.length > 0) {
+    vscode.env.openExternal(event.docsLink);
+  }
 }

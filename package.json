@@ -41,6 +41,10 @@
       {
         "command": "pwa-studio.packageApp",
         "title": "PWA Studio: Package Your PWA"
+      },
+      {
+        "command": "pwa-studio.maniItemDocs",
+        "title": "More Info"
       }
     ],
     "views": {
@@ -48,6 +52,15 @@
         {
           "id": "validationPanel",
           "name": "PWA Status"
+        }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "pwa-studio.maniItemDocs",
+          "when": "view == validationPanel",
+          "group": "inline"
         }
       ]
     }
