@@ -10,6 +10,7 @@ import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import { handleManiDocsCommand, handleValidation } from "./validation/validation";
 import { PWAValidationProvider } from "./validation/validation-view";
+import { ServiceWorkerProvider } from "./validation/sw-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -36,6 +37,12 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.workspace.workspaceFolders[0].uri.fsPath
       ),
     });
+
+    vscode.window.createTreeView("serviceWorkerPanel", {
+      treeDataProvider: new ServiceWorkerProvider(
+        vscode.workspace.workspaceFolders[0].uri.fsPath
+      ),
+    })
   }
 
   const maniDocs = vscode.commands.registerCommand(

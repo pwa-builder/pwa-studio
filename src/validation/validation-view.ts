@@ -19,23 +19,14 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       return Promise.resolve([]);
     }
 
-    if (element) {
-      /*return Promise.resolve(
-        this.getDepsInPackageJson(
-          path.join(
-            this.workspaceRoot,
-            "node_modules",
-            element.label,
-            "package.json"
-          )
-        )
-      );*/
+    // search for a manifest file in the root of the workspace
+    const manifestPath = path.join(this.workspaceRoot, "manifest.json");
+    const manifestExists = this.pathExists(manifestPath)
 
-      // search for a manifest file in the root of the workspace
-      const manifestPath = path.join(this.workspaceRoot, "manifest.json");
-      if (this.pathExists(manifestPath)) {
+    if (element && manifestPath && manifestExists) {
         if (manifestPath) {
           const manifestContents = await readFile(manifestPath, "utf8");
+          console.log("manifestContents", manifestContents);
           const testResults = await testManifest(manifestContents);
           console.log("testResults", testResults);
 
@@ -47,14 +38,14 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
             )
           );
         }
-      }
-    } else {
-
+    } else if (manifestPath && manifestExists) {
       // search for a manifest file in the root of the workspace
       const manifestPath = path.join(this.workspaceRoot, "manifest.json");
       if (this.pathExists(manifestPath)) {
         if (manifestPath) {
           const manifestContents = await readFile(manifestPath, "utf8");
+          console.log("manifestContents", manifestContents);
+
           const testResults = await testManifest(manifestContents);
 
           let requiredTestsFailed: any = [];
@@ -66,39 +57,31 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
             }
           });
 
-          if (requiredTestsFailed.length > 0) {
-            return Promise.resolve(
-              this.handleTestResults(
-                [
-                  {
-                    infoString: "Not Installable",
-                    result: false,
-                  },
-                ],
-                vscode.TreeItemCollapsibleState.Collapsed,
-                false
-              )
-            );
-          } else {
-            return Promise.resolve(
-              this.handleTestResults(
-                [
-                  {
-                    // infoString has checkmark
-                    infoString: "Installable",
-                    result: true,
-                  },
-                ],
-                vscode.TreeItemCollapsibleState.Collapsed,
-                false
-              )
-            );
-          }
+          return Promise.resolve(
+            this.handleTestResults(
+              [
+                {
+                  // infoString has checkmark
+                  infoString: "Web Manifest",
+                  result: true,
+                },
+              ],
+              vscode.TreeItemCollapsibleState.Expanded,
+              false
+            )
+          );
         }
-      } else {
-        vscode.window.showInformationMessage("Workspace has no manifest.json");
-        return Promise.resolve([]);
       }
+    } else {
+      console.log('no web manifest');
+      return Promise.resolve([
+        new ValidationItem(
+          "Web Manifest",
+          "https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests",
+          "false",
+          vscode.TreeItemCollapsibleState.None
+        ),
+      ]);
     }
   }
 
@@ -113,7 +96,6 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     let resultsData: ValidationItem[] = [];
     testResults.map((result: any) => {
       if (detail) {
-        console.log("result here", result);
         resultsData.push(
           new ValidationItem(
             result.infoString,

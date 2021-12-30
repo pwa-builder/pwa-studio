@@ -47,11 +47,24 @@
         "title": "More Info"
       }
     ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "pwabuilder-view",
+          "title": "PWABuilder",
+          "icon": "resources/pwa_badge.svg"
+        }
+      ]
+    },
     "views": {
-      "explorer": [
+      "pwabuilder-view": [
         {
           "id": "validationPanel",
-          "name": "PWA Status"
+          "name": "Web Manifest"
+        },
+        {
+          "id": "serviceWorkerPanel",
+          "name": "Service Worker"
         }
       ]
     },
