@@ -100,40 +100,6 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
     }
   }
 
-  /*
-   * Handle test results
-   */
-  private handleTestResults(
-    testResults: any,
-    collapsedState: vscode.TreeItemCollapsibleState,
-    detail: boolean
-  ): ValidationItem[] {
-    let resultsData: ValidationItem[] = [];
-    testResults.map((result: any) => {
-      if (detail) {
-        resultsData.push(
-          new ValidationItem(
-            result.infoString,
-            result.docsLink ? result.docsLink : "",
-            result.result ? result.result.toString() : "",
-            vscode.TreeItemCollapsibleState.None
-          )
-        );
-      } else {
-        resultsData.push(
-          new ValidationItem(
-            result.infoString,
-            "",
-            result.result ? result.result.toString() : "",
-            collapsedState
-          )
-        );
-      }
-    });
-
-    return resultsData;
-  }
-
   private pathExists(p: string): boolean {
     try {
       fs.accessSync(p);

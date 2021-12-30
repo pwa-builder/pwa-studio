@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
-import { handleWebhint } from "../library/handle-webhint";
-import { handleIcons } from "../services/manifest/manifest-service";
+import { handleWebhint } from "../../library/handle-webhint";
+import { handleIcons } from "../manifest/manifest-service";
 
 let manifestContents: any | undefined;
 

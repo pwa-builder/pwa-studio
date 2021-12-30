@@ -8,9 +8,9 @@ import {
 } from "./services/service-worker";
 import { handleManifestCommand } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
-import { handleManiDocsCommand, handleValidation } from "./validation/validation";
-import { PWAValidationProvider } from "./validation/validation-view";
-import { ServiceWorkerProvider } from "./validation/sw-view";
+import { handleManiDocsCommand, handleValidation } from "./services/validation/validation";
+import { PWAValidationProvider } from "./services/validation/validation-view";
+import { ServiceWorkerProvider } from "./services/validation/sw-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
