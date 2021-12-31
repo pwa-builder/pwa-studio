@@ -24,23 +24,23 @@
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "PWA Studio: New PWA Starter App"
+        "title": "Start a new PWA"
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWA Studio: Add a Service Worker to your app"
+        "title": "Generate Service Worker"
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWA Studio: Validate my PWA"
+        "title": "Validate my PWA"
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "PWABuilder: Add a Manifest to your app"
+        "title": "Generate Web Manifest"
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "PWA Studio: Package Your PWA"
+        "title": "Package a PWA"
       },
       {
         "command": "pwa-studio.maniItemDocs",
@@ -69,6 +69,18 @@
       ]
     },
     "menus": {
+      "view/title": [
+        {
+          "command": "pwa-studio.serviceWorker",
+          "when": "view == serviceWorkerPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.manifest",
+          "when": "view == validationPanel",
+          "group": "navigation"
+        }
+      ],
       "view/item/context": [
         {
           "command": "pwa-studio.maniItemDocs",

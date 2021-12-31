@@ -21,59 +21,52 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
 
     // search for a manifest file in the root of the workspace
     const manifestPath = path.join(this.workspaceRoot, "manifest.json");
-    const manifestExists = this.pathExists(manifestPath)
+    const manifestExists = this.pathExists(manifestPath);
 
     if (element && manifestPath && manifestExists) {
-        if (manifestPath) {
-          const manifestContents = await readFile(manifestPath, "utf8");
-          console.log("manifestContents", manifestContents);
-          const testResults = await testManifest(manifestContents);
-          console.log("testResults", testResults);
+      if (manifestPath) {
+        const manifestContents = await readFile(manifestPath, "utf8");
+        console.log("manifestContents", manifestContents);
+        const testResults = await testManifest(manifestContents);
+        console.log("testResults", testResults);
 
-          return Promise.resolve(
-            this.handleTestResults(
-              testResults,
-              vscode.TreeItemCollapsibleState.None,
-              true
-            )
-          );
-        }
-    } else if (manifestPath && manifestExists) {
-      // search for a manifest file in the root of the workspace
-      const manifestPath = path.join(this.workspaceRoot, "manifest.json");
-      if (this.pathExists(manifestPath)) {
-        if (manifestPath) {
-          const manifestContents = await readFile(manifestPath, "utf8");
-          console.log("manifestContents", manifestContents);
-
-          const testResults = await testManifest(manifestContents);
-
-          let requiredTestsFailed: any = [];
-
-          testResults.map((result) => {
-            // console.log('result', result);
-            if (result.category === "required" && result.result === false) {
-              requiredTestsFailed.push(result);
-            }
-          });
-
-          return Promise.resolve(
-            this.handleTestResults(
-              [
-                {
-                  // infoString has checkmark
-                  infoString: "Web Manifest",
-                  result: true,
-                },
-              ],
-              vscode.TreeItemCollapsibleState.Expanded,
-              false
-            )
-          );
-        }
+        return Promise.resolve(
+          this.handleTestResults(
+            testResults,
+            vscode.TreeItemCollapsibleState.None,
+            true
+          )
+        );
       }
+    } else if (manifestPath && manifestExists) {
+      const manifestContents = await readFile(manifestPath, "utf8");
+      console.log("manifestContents", manifestContents);
+
+      const testResults = await testManifest(manifestContents);
+
+      let requiredTestsFailed: any = [];
+
+      testResults.map((result) => {
+        if (result.category === "required" && result.result === false) {
+          requiredTestsFailed.push(result);
+        }
+      });
+
+      return Promise.resolve(
+        this.handleTestResults(
+          [
+            {
+              // infoString has checkmark
+              infoString: "Web Manifest",
+              result: true,
+            },
+          ],
+          vscode.TreeItemCollapsibleState.Expanded,
+          false
+        )
+      );
     } else {
-      console.log('no web manifest');
+      console.log("no web manifest");
       return Promise.resolve([
         new ValidationItem(
           "Web Manifest",
