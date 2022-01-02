@@ -37,6 +37,8 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
                 uri.fsPath,
                 JSON.stringify(manifestObject, null, 2)
               );
+
+              await findManifest();
               vscode.window.showInformationMessage(message.text);
             } catch (err) {
               vscode.window.showErrorMessage(
@@ -82,7 +84,6 @@ export async function handleIcons() {
         iconFile[0].fsPath,
         `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/pwabuilder-icons/512x512.png`
       );
-
     } catch (err) {
       vscode.window.showErrorMessage(
         err && (err as Error).message
@@ -93,8 +94,8 @@ export async function handleIcons() {
   }
 }
 
-export async function chooseManifest() {  
-  console.log('here');
+export async function chooseManifest() {
+  console.log("here");
   const manifestFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
@@ -106,11 +107,38 @@ export async function chooseManifest() {
   });
 
   if (manifestFile) {
-    manifest = manifestFile;
+    await findManifest();
   }
 }
 
 export function getManifest(): any | undefined {
+  return manifest;
+}
+
+export async function findManifest() {
+  const mani = await vscode.workspace.findFiles(
+    "**/manifest.json",
+    "**​/node_modules/**"
+  );
+
+  if (mani.length > 0) {
+    manifest = mani[0];
+  } else {
+    const maniTryTwo = await vscode.workspace.findFiles(
+      "**/web-manifest.json",
+      "**​/node_modules/**"
+    );
+
+    if (maniTryTwo.length > 0) {
+      manifest = maniTryTwo[0];
+    }
+  }
+
+  if (manifest) {
+    // do refreshPackageView command
+    await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+  }
+
   return manifest;
 }
 

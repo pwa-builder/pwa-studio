@@ -18,6 +18,8 @@ import {
 } from "./services/validation/validation";
 import { PWAValidationProvider } from "./services/validation/validation-view";
 import { ServiceWorkerProvider } from "./services/validation/sw-view";
+import { PackageViewProvider } from "./services/package/package-view";
+import { LocalStorageService } from "./library/local-storage";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -29,9 +31,14 @@ const maniDocsCommandID = "pwa-studio.maniItemDocs";
 const chooseManiCommandID = "pwa-studio.chooseManifest";
 const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
+const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
 
+export let storageManager: LocalStorageService | undefined = undefined;
+
 export function activate(context: vscode.ExtensionContext) {
+  storageManager = new LocalStorageService(context.workspaceState);
+
   const myStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
     100
@@ -51,6 +58,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const packageViewProvider = new PackageViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    );
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -59,12 +70,20 @@ export function activate(context: vscode.ExtensionContext) {
       treeDataProvider: serviceWorkerProvider,
     });
 
+    vscode.window.createTreeView("packagePanel", {
+      treeDataProvider: packageViewProvider,
+    });
+
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);
     });
 
     vscode.commands.registerCommand(refreshSWCommandID, (event) => {
       serviceWorkerProvider.refresh(event);
+    });
+
+    vscode.commands.registerCommand(refreshPackageCommandID, (event) => {
+      packageViewProvider.refresh(event);
     });
   }
 
