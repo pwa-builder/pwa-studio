@@ -40,7 +40,6 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       }
     } else if (manifestPath && manifestExists) {
       const manifestContents = await readFile(manifestPath, "utf8");
-      console.log("manifestContents", manifestContents);
 
       const testResults = await testManifest(manifestContents);
 
@@ -67,14 +66,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       );
     } else {
       console.log("no web manifest");
-      return Promise.resolve([
-        new ValidationItem(
-          "Web Manifest",
-          "https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests",
-          "false",
-          vscode.TreeItemCollapsibleState.None
-        ),
-      ]);
+      return Promise.resolve([]);
     }
   }
 
@@ -120,6 +112,13 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     }
     return true;
   }
+
+  private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any| undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
+
+  refresh(ev: any): void {
+    this._onDidChangeTreeData.fire(ev);
+  }
 }
 
 class ValidationItem extends vscode.TreeItem {
@@ -135,11 +134,30 @@ class ValidationItem extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: path.join(__filename, "checkmark-outline.svg"),
+    light: this.version === "true"
+    ? path.join(
+        __filename,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "checkmark-light.svg"
+      )
+    : path.join(
+        __filename,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "warning-light.svg"
+      ),
     dark:
       this.version === "true"
         ? path.join(
             __filename,
+            "..",
             "..",
             "..",
             "..",
@@ -148,6 +166,7 @@ class ValidationItem extends vscode.TreeItem {
           )
         : path.join(
             __filename,
+            "..",
             "..",
             "..",
             "..",

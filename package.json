@@ -17,6 +17,8 @@
     "onCommand:pwa-studio.manifest",
     "onCommand:pwa-studio.packageApp",
     "onCommand:pwa-studio.generateWorker",
+    "onCommand:pwa-studio.chooseManifest",
+    "onCommand:pwa-studio.chooseServiceWorker",
     "onView:validationPanel"
   ],
   "main": "./out/extension.js",
@@ -28,7 +30,11 @@
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "Generate Service Worker"
+        "title": "Generate Service Worker",
+        "icon": {
+          "dark": "resources/add-dark.svg",
+          "light": "resources/add-outline.svg"
+        }
       },
       {
         "command": "pwa-studio.validatePWA",
@@ -36,7 +42,19 @@
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "Generate Web Manifest"
+        "title": "Generate Web Manifest",
+        "icon": {
+          "dark": "resources/add-dark.svg",
+          "light": "resources/add-outline.svg"
+        }
+      },
+      {
+        "command": "pwa-studio.chooseManifest",
+        "title": "Choose existing Web Manifest"
+      },
+      {
+        "command": "pwa-studio.chooseServiceWorker",
+        "title": "Choose existing Service Worker"
       },
       {
         "command": "pwa-studio.packageApp",
@@ -45,6 +63,32 @@
       {
         "command": "pwa-studio.maniItemDocs",
         "title": "More Info"
+      },
+      {
+        "command": "pwa-studio.refreshEntry",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/refresh-outline.svg",
+          "dark": "resources/refresh-dark.svg"
+        }
+      },
+      {
+        "command": "pwa-studio.refreshSWView",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/refresh-outline.svg",
+          "dark": "resources/refresh-dark.svg"
+        }
+      }
+    ],
+    "viewsWelcome": [
+      {
+        "view": "validationPanel",
+        "contents": "No web manifest found [learn more](https://www.npmjs.com/).\n[I have a Web Manifest](command:pwa-studio.chooseManifest) \n[Generate a Web Manifest](command:pwa-studio.manifest)"
+      },
+      {
+        "view": "serviceWorkerPanel",
+        "contents": "No service worker found [learn more](https://www.npmjs.com/).\n[I have a Service Worker](command:pwa-studio.chooseServiceWorker) \n[Generate a Service Worker](command:pwa-studio.serviceWorker)"
       }
     ],
     "viewsContainers": {
@@ -78,6 +122,16 @@
         {
           "command": "pwa-studio.manifest",
           "when": "view == validationPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.refreshEntry",
+          "when": "view == validationPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.refreshSWView",
+          "when": "view == serviceWorkerPanel",
           "group": "navigation"
         }
       ],

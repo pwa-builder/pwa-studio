@@ -19,7 +19,11 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
     }
 
     // search for a manifest file in the root of the workspace
-    const serviceWorkerPath = path.join(this.workspaceRoot, "pwabuilder-sw.ts");
+    const serviceWorkerPath =
+      path.join(this.workspaceRoot, "pwabuilder-sw.ts") ||
+      path.join(this.workspaceRoot, "pwabuilder-sw.js") ||
+      path.join(this.workspaceRoot, "sw.js") ||
+      path.join(this.workspaceRoot, "service-worker.js");
     // to-do: add support for more sw paths
     const serviceWorkerExists = this.pathExists(serviceWorkerPath);
 
@@ -88,15 +92,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         ),
       ]);
     } else {
-      console.log("no web manifest");
-      return Promise.resolve([
-        new ValidationItem(
-          "Service Worker",
-          "https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests",
-          "false",
-          vscode.TreeItemCollapsibleState.None
-        ),
-      ]);
+      return Promise.resolve([]);
     }
   }
 
@@ -107,6 +103,16 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       return false;
     }
     return true;
+  }
+
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    any | undefined | null | void
+  > = new vscode.EventEmitter<any | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> =
+    this._onDidChangeTreeData.event;
+
+  refresh(ev: any): void {
+    this._onDidChangeTreeData.fire(ev);
   }
 }
 
@@ -125,7 +131,44 @@ class ValidationItem extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: path.join(__filename, "pwa-badge.svg"),
-    dark: path.join(__filename, "pwa-badge.svg"),
+    light: this.desc.toString() === "true"
+    ? path.join(
+        __filename,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "checkmark-light.svg"
+      )
+    : path.join(
+        __filename,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "warning-light.svg"
+      ),
+    dark:
+      this.desc.toString() === "true"
+        ? path.join(
+            __filename,
+            "..",
+            "..",
+            "..",
+            "..",
+            "resources",
+            "checkmark-outline.svg"
+          )
+        : path.join(
+            __filename,
+            "..",
+            "..",
+            "..",
+            "..",
+            "resources",
+            "warning-outline.svg"
+          ),
   };
 }
