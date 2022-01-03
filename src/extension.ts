@@ -42,13 +42,25 @@ export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
   const serviceWorkerStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Right,
+    vscode.StatusBarAlignment.Left,
     100
   );
-
   serviceWorkerStatusBarItem.text = "Generate Service Worker";
+  serviceWorkerStatusBarItem.show();
 
-  
+  const packageStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    150
+  );
+  packageStatusBarItem.text = "Package PWA";
+  packageStatusBarItem.show();
+
+  const manifestStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    200
+  );
+  manifestStatusBarItem.text = "Generate Web Manifest";
+  manifestStatusBarItem.show();
 
   if (
     vscode.workspace.workspaceFolders &&
@@ -124,7 +136,6 @@ export function activate(context: vscode.ExtensionContext) {
     generateWorkerCommandId,
     async () => {
       await generateServiceWorker();
-      serviceWorkerStatusBarItem.show();
     }
   );
 
@@ -134,6 +145,8 @@ export function activate(context: vscode.ExtensionContext) {
     packageCommandId,
     packageApp
   );
+
+  packageStatusBarItem.command = packageCommandId;
 
   let newPwaStarterCommand = vscode.commands.registerCommand(
     newPWAStarterCommandId,
@@ -153,6 +166,7 @@ export function activate(context: vscode.ExtensionContext) {
       await handleManifestCommand(context);
     }
   );
+  manifestStatusBarItem.command = manifestCommandID;
 
   let setAppURLCommand = vscode.commands.registerCommand(
     setAppURLCommandID,
