@@ -20,6 +20,7 @@ import { PWAValidationProvider } from "./services/validation/validation-view";
 import { ServiceWorkerProvider } from "./services/validation/sw-view";
 import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
+import { askForUrl } from "./services/web-publish";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -33,6 +34,7 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
+const setAppURLCommandID = "pwa-studio.setWebURL";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -150,6 +152,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let setAppURLCommand = vscode.commands.registerCommand(
+    setAppURLCommandID,
+    async () => {
+      await askForUrl();
+    }
+  );
+
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
@@ -160,6 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateWorker);
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
+  context.subscriptions.push(setAppURLCommand);
 }
 
 export function deactivate() {}
