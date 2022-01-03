@@ -18,6 +18,9 @@ import {
 } from "./services/validation/validation";
 import { PWAValidationProvider } from "./services/validation/validation-view";
 import { ServiceWorkerProvider } from "./services/validation/sw-view";
+import { PackageViewProvider } from "./services/package/package-view";
+import { LocalStorageService } from "./library/local-storage";
+import { askForUrl } from "./services/web-publish";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -29,9 +32,15 @@ const maniDocsCommandID = "pwa-studio.maniItemDocs";
 const chooseManiCommandID = "pwa-studio.chooseManifest";
 const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
+const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
+const setAppURLCommandID = "pwa-studio.setWebURL";
+
+export let storageManager: LocalStorageService | undefined = undefined;
 
 export function activate(context: vscode.ExtensionContext) {
+  storageManager = new LocalStorageService(context.workspaceState);
+
   const myStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
     100
@@ -51,6 +60,10 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.workspaceFolders[0].uri.fsPath
     );
 
+    const packageViewProvider = new PackageViewProvider(
+      vscode.workspace.workspaceFolders[0].uri.fsPath
+    );
+
     vscode.window.createTreeView("validationPanel", {
       treeDataProvider: maniValidationProvider,
     });
@@ -59,12 +72,20 @@ export function activate(context: vscode.ExtensionContext) {
       treeDataProvider: serviceWorkerProvider,
     });
 
+    vscode.window.createTreeView("packagePanel", {
+      treeDataProvider: packageViewProvider,
+    });
+
     vscode.commands.registerCommand(refreshViewCommandID, (event) => {
       maniValidationProvider.refresh(event);
     });
 
     vscode.commands.registerCommand(refreshSWCommandID, (event) => {
       serviceWorkerProvider.refresh(event);
+    });
+
+    vscode.commands.registerCommand(refreshPackageCommandID, (event) => {
+      packageViewProvider.refresh(event);
     });
   }
 
@@ -131,6 +152,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  let setAppURLCommand = vscode.commands.registerCommand(
+    setAppURLCommandID,
+    async () => {
+      await askForUrl();
+    }
+  );
+
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
@@ -141,6 +169,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateWorker);
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
+  context.subscriptions.push(setAppURLCommand);
 }
 
 export function deactivate() {}

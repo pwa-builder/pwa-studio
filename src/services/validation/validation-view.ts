@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
+import { findManifest, getManifest } from "../manifest/manifest-service";
 
 export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
   constructor(private workspaceRoot: string) {}
@@ -20,12 +21,12 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     }
 
     // search for a manifest file in the root of the workspace
-    const manifestPath = path.join(this.workspaceRoot, "manifest.json");
-    const manifestExists = this.pathExists(manifestPath);
+    const manifestPath: vscode.Uri = await findManifest();
+    const manifestExists = this.pathExists(manifestPath.path);
 
     if (element && manifestPath && manifestExists) {
       if (manifestPath) {
-        const manifestContents = await readFile(manifestPath, "utf8");
+        const manifestContents = await readFile(manifestPath.path, "utf8");
         console.log("manifestContents", manifestContents);
         const testResults = await testManifest(manifestContents);
         console.log("testResults", testResults);
@@ -39,7 +40,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         );
       }
     } else if (manifestPath && manifestExists) {
-      const manifestContents = await readFile(manifestPath, "utf8");
+      const manifestContents = await readFile(manifestPath.path, "utf8");
 
       const testResults = await testManifest(manifestContents);
 

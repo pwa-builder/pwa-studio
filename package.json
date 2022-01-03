@@ -19,7 +19,9 @@
     "onCommand:pwa-studio.generateWorker",
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
-    "onView:validationPanel"
+    "onView:validationPanel",
+    "onView:serviceWorkerPanel",
+    "onView: packagePanel"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -79,16 +81,28 @@
           "light": "resources/refresh-outline.svg",
           "dark": "resources/refresh-dark.svg"
         }
+      },
+      {
+        "command": "pwa-studio.refreshPackageView",
+        "title": "Refresh",
+        "icon": {
+          "light": "resources/refresh-outline.svg",
+          "dark": "resources/refresh-dark.svg"
+        }
+      },
+      {
+        "command": "pwa-studio.setWebURL",
+        "title": "Set App URL"
       }
     ],
     "viewsWelcome": [
       {
         "view": "validationPanel",
-        "contents": "No web manifest found [learn more](https://www.npmjs.com/).\n[I have a Web Manifest](command:pwa-studio.chooseManifest) \n[Generate a Web Manifest](command:pwa-studio.manifest)"
+        "contents": "No Web Manifest found [learn more](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests).\n[I have a Web Manifest](command:pwa-studio.chooseManifest) \n[Generate a Web Manifest](command:pwa-studio.manifest)"
       },
       {
         "view": "serviceWorkerPanel",
-        "contents": "No service worker found [learn more](https://www.npmjs.com/).\n[I have a Service Worker](command:pwa-studio.chooseServiceWorker) \n[Generate a Service Worker](command:pwa-studio.serviceWorker)"
+        "contents": "No Service Worker found [learn more](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/service-workers).\n[I have a Service Worker](command:pwa-studio.chooseServiceWorker) \n[Generate a Service Worker](command:pwa-studio.serviceWorker)"
       }
     ],
     "viewsContainers": {
@@ -109,6 +123,10 @@
         {
           "id": "serviceWorkerPanel",
           "name": "Service Worker"
+        },
+        {
+          "id": "packagePanel",
+          "name": "Store Ready Checklist"
         }
       ]
     },
@@ -132,6 +150,16 @@
         {
           "command": "pwa-studio.refreshSWView",
           "when": "view == serviceWorkerPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.setWebURL",
+          "when": "view == packagePanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.packageApp",
+          "when": "view == packagePanel",
           "group": "navigation"
         }
       ],

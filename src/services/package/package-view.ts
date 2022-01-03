@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
 import * as fs from "fs";
 import * as path from "path";
-import { readFile } from "fs/promises";
-import { findWorker } from "../service-worker";
+import { getWorker } from "../service-worker";
+import { getManifest } from "../manifest/manifest-service";
+import { getURL } from "../web-publish";
 
-export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
+export class PackageViewProvider implements vscode.TreeDataProvider<any> {
   constructor(private workspaceRoot: string) {}
 
   getTreeItem(element: ValidationItem): vscode.TreeItem {
@@ -19,23 +20,35 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       return Promise.resolve([]);
     }
 
-    const serviceWorkerId: vscode.Uri = await findWorker();
-    const serviceWorkerExists = this.pathExists(serviceWorkerId.path);
+    const sw = getWorker();
+    const manifest = getManifest();
+    const pwaUrl = getURL();
 
-    if (element && serviceWorkerId && serviceWorkerExists) {
-      const items = [];
+    if (element) {
+      let items: any[] = [];
+      items.push(
+        new ValidationItem(
+          "Service Worker",
+          "",
+          sw ? "true" : "false",
+          vscode.TreeItemCollapsibleState.None
+        )
+      );
 
-      const swContents = await readFile(serviceWorkerId.path, "utf8");
+      items.push(
+        new ValidationItem(
+          "Web Manifest",
+          "",
+          manifest ? "true" : "false",
+          vscode.TreeItemCollapsibleState.None
+        )
+      );
 
-      if (
-        swContents.includes("preacache") ||
-        swContents.includes("cache") ||
-        swContents.includes("caches")
-      ) {
+      if (pwaUrl) {
         items.push(
           new ValidationItem(
-            "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "Published to Web",
+            pwaUrl,
             "true",
             vscode.TreeItemCollapsibleState.None
           )
@@ -43,61 +56,29 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       } else {
         items.push(
           new ValidationItem(
-            "Handles Caching",
-            "https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Offline_Service_workers",
+            "Published to Web",
+            "",
             "false",
             vscode.TreeItemCollapsibleState.None
           )
         );
       }
 
-      const indexFile = path.join(this.workspaceRoot, "index.html");
-      if (indexFile) {
-        const indexContents = await readFile(indexFile, "utf8");
+      return Promise.resolve(items);
+    } else {
+      let items: any[] = [];
 
-        if (indexContents && indexContents.includes("serviceWorker.register")) {
-          items.push(
-            new ValidationItem(
-              "Registered",
-              "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
-              "true",
-              vscode.TreeItemCollapsibleState.None
-            )
-          );
-        } else {
-          items.push(
-            new ValidationItem(
-              "Registered",
-              "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
-              "false",
-              vscode.TreeItemCollapsibleState.None
-            )
-          );
-        }
-      }
+      items.push(
+        new ValidationItem(
+          "Store Ready",
+          "",
+          sw && manifest && pwaUrl ? "true" : "false",
+          vscode.TreeItemCollapsibleState.Expanded
+        )
+      );
 
       return Promise.resolve(items);
-    } else if (serviceWorkerId.path && serviceWorkerExists) {
-      return Promise.resolve([
-        new ValidationItem(
-          "Service Worker",
-          "https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/service-workers",
-          "true",
-          vscode.TreeItemCollapsibleState.Expanded
-        ),
-      ]);
-    } else {
-      return Promise.resolve([]);
     }
-  }
-
-  private pathExists(p: string): boolean {
-    try {
-      fs.accessSync(p);
-    } catch (err) {
-      return false;
-    }
-    return true;
   }
 
   private _onDidChangeTreeData: vscode.EventEmitter<

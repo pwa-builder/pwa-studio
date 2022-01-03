@@ -15,6 +15,8 @@ export async function handleServiceWorkerCommand(): Promise<void> {
         progress.report({ message: "Building service worker..." });
         await runWorkboxTool();
         progress.report({ message: "Service worker added!" });
+
+        findWorker();
       }
     );
 
@@ -53,7 +55,7 @@ export function generateServiceWorker() {
 }
 
 export function chooseServiceWorker() {
- const serviceWorker = vscode.window.showOpenDialog({
+  const serviceWorker = vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
     canSelectMany: false,
@@ -63,12 +65,39 @@ export function chooseServiceWorker() {
     },
   });
 
-  if(serviceWorker) {
+  if (serviceWorker) {
     existingWorker = serviceWorker;
   }
 }
 
 export function getWorker() {
+  return existingWorker;
+}
+
+export async function findWorker() {
+  const worker = await vscode.workspace.findFiles(
+    "**/service-worker.js",
+    "**​/node_modules/**"
+  );
+
+  if (worker.length > 0) {
+    existingWorker = worker[0];
+  } else {
+    const workerTryTwo = await vscode.workspace.findFiles(
+      "**/pwabuider-sw.ts",
+      "**​/node_modules/**"
+    );
+
+    if (workerTryTwo.length > 0) {
+      existingWorker = workerTryTwo[0];
+    }
+  }
+
+  if (existingWorker) {
+    // do refreshPackageView command
+    await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+  }
+
   return existingWorker;
 }
 
