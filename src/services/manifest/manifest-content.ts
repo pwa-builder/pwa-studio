@@ -235,6 +235,7 @@ placeholder description</textarea
               </a>
             </div>
           </div>
+        
         </div>
 
         <div id="submit-block">
@@ -287,6 +288,15 @@ placeholder description</textarea
     </script>
   </body>
   <style>
+    
+    body.vscode-light {
+      color: black;
+    }
+
+    body.vscode-dark label {
+      color: white;
+    }
+
     #central {
       padding: 1em;
       font-family: sans-serif;
@@ -301,13 +311,11 @@ placeholder description</textarea
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      max-width: 49%;
     }
 
     #first-six {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      grid-template-rows: 1fr 1fr 1fr;
+      grid-template-columns: auto auto;
       grid-gap: 20px;
       margin: 20px 0;
     }
@@ -380,6 +388,7 @@ placeholder description</textarea
       font-size: 14px;
       text-indent: 10px;
       color: black;
+      width: 45%;
     }
 
     #icon {
@@ -428,7 +437,6 @@ placeholder description</textarea
       justify-content: flex-end;
       align-items: center;
       margin-top: 2em;
-      padding-right: 2em;
     }
 
     #submit-block button {

@@ -3,6 +3,8 @@ import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
 const vsTerminal = vscode.window.createTerminal();
 
+let existingWorker: any | undefined = undefined;
+
 export async function handleServiceWorkerCommand(): Promise<void> {
   try {
     vscode.window.withProgress(
@@ -48,6 +50,26 @@ export async function handleServiceWorkerCommand(): Promise<void> {
 export function generateServiceWorker() {
   vsTerminal.show();
   vsTerminal.sendText("workbox generateSW");
+}
+
+export function chooseServiceWorker() {
+ const serviceWorker = vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    title: "Select your Service Worker",
+    filters: {
+      JavaScript: ["js", "ts"],
+    },
+  });
+
+  if(serviceWorker) {
+    existingWorker = serviceWorker;
+  }
+}
+
+export function getWorker() {
+  return existingWorker;
 }
 
 async function runWorkboxTool(): Promise<void> {

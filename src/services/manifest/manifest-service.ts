@@ -2,6 +2,8 @@ import { copyFile, mkdir, writeFile } from "fs/promises";
 import * as vscode from "vscode";
 import { getWebviewContent } from "./manifest-content";
 
+let manifest: any | undefined;
+
 export async function handleManifestCommand(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
     "pwa-studio", // Identifies the type of the webview. Used internally
@@ -91,7 +93,28 @@ export async function handleIcons() {
   }
 }
 
-async function handleAddingManiToIndex() {
+export async function chooseManifest() {  
+  console.log('here');
+  const manifestFile = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    title: "Select your Web Manifest",
+    filters: {
+      JSON: ["json"],
+    },
+  });
+
+  if (manifestFile) {
+    manifest = manifestFile;
+  }
+}
+
+export function getManifest(): any | undefined {
+  return manifest;
+}
+
+async function handleAddingManiToIndex(): Promise<void> {
   const indexFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,

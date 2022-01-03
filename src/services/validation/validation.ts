@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
-import { handleWebhint } from "../library/handle-webhint";
-import { handleIcons } from "./manifest/manifest-service";
+import { handleWebhint } from "../../library/handle-webhint";
+import { handleIcons } from "../manifest/manifest-service";
 
 let manifestContents: any | undefined;
 
@@ -22,23 +22,48 @@ export async function handleValidation() {
     return;
   }
 
-  const manifestFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select your Web Manifest file",
-    filters: {
-      JSON: ["json"],
-    },
-  });
+  // ask the user if they have a service worker with quickPick
+  const maniQuestion = await vscode.window.showQuickPick(
+    [
+      {
+        label: "Yes",
+        description: "I have a Web Manifest",
+      },
+      {
+        label: "No",
+        description: "I don't have a Web Manifest",
+      },
+    ],
+    {
+      placeHolder: "Do you have a Web Manifest?",
+      ignoreFocusOut: true,
+      canPickMany: false,
+    }
+  );
 
-  if (manifestFile) {
-    manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
-    const results = await testManifest(manifestContents);
+  if (maniQuestion && maniQuestion.label === "Yes") {
+    const manifestFile = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your Web Manifest file",
+      filters: {
+        JSON: ["json"],
+      },
+    });
 
-    await gatherResults(results, manifestFile);
-  } else {
-    await vscode.window.showErrorMessage("Please select a Web Manifest");
+    if (manifestFile) {
+      manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
+      const results = await testManifest(manifestContents);
+
+      await gatherResults(results, manifestFile);
+    } else {
+      await vscode.window.showErrorMessage("Please select a Web Manifest");
+      return;
+    }
+  }
+  else if (maniQuestion && maniQuestion.label === "No") {
+    await vscode.commands.executeCommand("pwa-studio.manifest");
     return;
   }
 
@@ -215,7 +240,7 @@ function addIconToManifest(editor: vscode.TextEditor) {
   );
 }
 
-async function testManifest(manifestFile: any): Promise<any[]> {
+export async function testManifest(manifestFile: any): Promise<any[]> {
   const manifest = JSON.parse(manifestFile);
 
   return [
@@ -225,6 +250,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "icons",
       defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Contains name property",
@@ -232,6 +258,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "name",
       defaultValue: "placeholder name",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
     },
     {
       infoString: "Contains short_name property",
@@ -240,6 +267,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "short_name",
       defaultValue: "placeholder",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
     },
     {
       infoString: "Designates a start_url",
@@ -248,24 +276,21 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "required",
       member: "start_url",
       defaultValue: "/",
-    },
-    {
-      infoString: "Has a square PNG icon 512x512 or larger",
-      category: "required",
-      member: "512",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
     },
     {
       infoString: "Specifies a display mode",
       result:
         manifest.display &&
-        ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
-          manifest.display
-        )
+          ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
+            manifest.display
+          )
           ? true
           : false,
       category: "recommended",
       member: "display",
       defaultValue: "standalone",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
     },
     {
       infoString: "Has a background color",
@@ -273,6 +298,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "background_color",
       defaultValue: "black",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
     },
     {
       infoString: "Has a theme color",
@@ -280,6 +306,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "theme_color",
       defaultValue: "black",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
     },
     {
       infoString: "Specifies an orientation mode",
@@ -290,6 +317,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "orientation",
       defaultValue: "any",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation"
     },
     {
       infoString: "Contains screenshots for app store listings",
@@ -298,6 +326,7 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "screenshots",
       defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots"
     },
     {
       infoString: "Lists shortcuts for quick access",
@@ -306,42 +335,39 @@ async function testManifest(manifestFile: any): Promise<any[]> {
       category: "recommended",
       member: "shortcuts",
       defaultValue: [],
-    },
-    {
-      infoString: "Contains categories to classify the app",
-      result:
-        manifest.categories &&
-        manifest.categories.length > 0 &&
-        containsStandardCategory(manifest.categories)
-          ? true
-          : false,
-      category: "recommended",
-      member: "categories",
-      defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts"
     },
     {
       infoString: "Icons specify their type",
       result: !!manifest.icons && manifest.icons.every((i: any) => !!i.type),
       category: "recommended",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Icons specify their size",
       result: !!manifest.icons && manifest.icons.every((i: any) => !!i.sizes),
       category: "recommended",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
     },
     {
       infoString: "Contains an IARC ID",
       result: manifest.iarc_rating_id ? true : false,
       category: "optional",
+      member: "iarc_rating_id",
+      defaultValue: "",
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id"
     },
     {
       infoString: "Specifies related_applications",
       result:
         manifest.related_applications &&
-        manifest.related_applications.length > 0
+          manifest.related_applications.length > 0
           ? true
           : false,
       category: "optional",
+      member: "related_applications",
+      defaultValue: [],
+      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications"
     },
   ];
 }
@@ -393,4 +419,16 @@ function isStandardOrientation(orientation: string) {
     "portrait-secondary",
   ];
   return standardOrientations.includes(orientation);
+}
+
+export async function handleManiDocsCommand(event: any) {
+  // open docs link
+  console.log(event);
+  if (event.label === "Installable" || event.label === "Uninstallable") {
+    vscode.env.openExternal(vscode.Uri.parse("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs"));
+  }
+
+  if (event && event.docsLink && event.docsLink.length > 0) {
+    vscode.env.openExternal(event.docsLink);
+  }
 }
