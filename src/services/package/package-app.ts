@@ -21,6 +21,9 @@ import {
   packageForAndroid,
   validateAndroidOptions,
 } from "./package-android-app";
+import { getURL } from "../web-publish";
+import { getWorker } from "../service-worker";
+import { getManifest } from "../manifest/manifest-service";
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -31,6 +34,60 @@ let msixAnswers: string[];
 let didInputFail: boolean;
 
 export async function packageApp(): Promise<void> {
+  const url = getURL();
+  const sw = getWorker();
+  const manifest = getManifest();
+
+  if (!url || !sw || !manifest) {
+    if (!url) {
+      await vscode.window.showErrorMessage(
+        "Please publish your app before packaging it.", {
+          title: "Publish",
+          action: async () => {
+            await vscode.commands.executeCommand("pwa-studio.setWebURL");
+          }
+        },
+        {
+          title: "Cancel",
+        }
+      );
+
+      return;
+    }
+
+    if (!sw) {
+      await vscode.window.showErrorMessage(
+        "You must have a Service Worker to package your PWA.", {
+          title: "Generate Service Worker",
+          action: async () => {
+            await vscode.commands.executeCommand("pwa-studio.serviceWorker");
+          }
+        },
+        {
+          title: "Cancel",
+        }
+      );
+
+      return;
+    }
+
+    if (!manifest) {
+      await vscode.window.showErrorMessage(
+        "You must have a Manifest to package your PWA.", {
+          title: "Generate Manifest",
+          action: async () => {
+            await vscode.commands.executeCommand("pwa-studio.manifest");
+          }
+        },
+        {
+          title: "Cancel",
+        }
+      );
+
+      return;
+    }
+  }
+
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
