@@ -110,7 +110,7 @@
         {
           "id": "pwabuilder-view",
           "title": "PWABuilder",
-          "icon": "resources/pwa_badge.svg"
+          "icon": "resources/pwabuilder-icon.svg"
         }
       ]
     },
