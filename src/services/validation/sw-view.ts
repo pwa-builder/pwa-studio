@@ -51,28 +51,43 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         );
       }
 
-      const indexFile = path.join(this.workspaceRoot, "index.html");
-      if (indexFile) {
-        const indexContents = await readFile(indexFile, "utf8");
+      let indexFile: undefined | vscode.Uri;
+      const indexFileData = await vscode.workspace.findFiles(
+        "**/index.html",
+        "**/node_modules/**"
+      );
 
-        if (indexContents && indexContents.includes("serviceWorker.register")) {
-          items.push(
-            new ValidationItem(
-              "Registered",
-              "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
-              "true",
-              vscode.TreeItemCollapsibleState.None
-            )
-          );
-        } else {
-          items.push(
-            new ValidationItem(
-              "Registered",
-              "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
-              "false",
-              vscode.TreeItemCollapsibleState.None
-            )
-          );
+      if (indexFileData && indexFileData.length > 0) {
+        indexFile = indexFileData[0];
+      }
+
+      if (indexFile) {
+        const indexFileExists = this.pathExists(indexFile.path);
+        if (indexFileExists) {
+          const indexContents = await readFile(indexFile.path, "utf8");
+
+          if (
+            indexContents &&
+            indexContents.includes("serviceWorker.register")
+          ) {
+            items.push(
+              new ValidationItem(
+                "Registered",
+                "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
+                "true",
+                vscode.TreeItemCollapsibleState.None
+              )
+            );
+          } else {
+            items.push(
+              new ValidationItem(
+                "Registered",
+                "https://developers.google.com/web/fundamentals/primers/service-workers/registration",
+                "false",
+                vscode.TreeItemCollapsibleState.None
+              )
+            );
+          }
         }
       }
 

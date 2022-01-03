@@ -157,25 +157,18 @@ async function handleAddingManiToIndex(): Promise<void> {
     const document = await vscode.workspace.openTextDocument(indexFile[0]);
     await vscode.window.showTextDocument(document);
 
-    await vscode.window.showInformationMessage(
-      "Finish adding your service worker by adding the following code to your index.html: <link rel='manifest' href='manifest.json'>",
+    const answer = await vscode.window.showInformationMessage(
+      "Finish adding your Web Manifest by adding the following code to your index.html: <link rel='manifest' href='manifest.json'>",
       {},
       {
         title: "Copy to clipboard",
-        action: async () => {
-          try {
-            await vscode.env.clipboard.writeText(
-              "<link rel='manifest' href='manifest.json'>"
-            );
-          } catch (err) {
-            vscode.window.showErrorMessage(
-              err && (err as Error).message
-                ? (err as Error).message
-                : "There was an issue adding your manifest to your index.html"
-            );
-          }
-        },
       }
     );
+
+    if (answer && answer.title === "Copy to clipboard") {
+      await vscode.env.clipboard.writeText(
+        `<link rel="manifest" href="manifest.json">`
+      );
+    }
   }
 }
