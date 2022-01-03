@@ -41,12 +41,14 @@ export let storageManager: LocalStorageService | undefined = undefined;
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
-  const myStatusBarItem = vscode.window.createStatusBarItem(
+  const serviceWorkerStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Right,
     100
   );
 
-  myStatusBarItem.text = "Generate Service Worker";
+  serviceWorkerStatusBarItem.text = "Generate Service Worker";
+
+  
 
   if (
     vscode.workspace.workspaceFolders &&
@@ -114,7 +116,7 @@ export function activate(context: vscode.ExtensionContext) {
     serviceWorkerCommandId,
     async () => {
       await handleServiceWorkerCommand();
-      myStatusBarItem.show();
+      serviceWorkerStatusBarItem.show();
     }
   );
 
@@ -122,11 +124,11 @@ export function activate(context: vscode.ExtensionContext) {
     generateWorkerCommandId,
     async () => {
       await generateServiceWorker();
-      myStatusBarItem.show();
+      serviceWorkerStatusBarItem.show();
     }
   );
 
-  myStatusBarItem.command = generateWorkerCommandId;
+  serviceWorkerStatusBarItem.command = generateWorkerCommandId;
 
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
@@ -163,7 +165,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
   context.subscriptions.push(chooseServiceWorkerCommand);
-  context.subscriptions.push(myStatusBarItem);
+  context.subscriptions.push(serviceWorkerStatusBarItem);
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);
