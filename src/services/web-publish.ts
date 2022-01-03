@@ -37,24 +37,25 @@ export async function askForUrl() {
   } else {
     // let user know they need to publish their PWA
     // and open docs
-    await vscode.window.showInformationMessage(
+    const answer = await vscode.window.showInformationMessage(
       "You need to publish your PWA to the web.",
       {
         modal: true,
       },
       {
         title: "Learn How",
-        action: async () => {
-          await vscode.env.openExternal(
-            vscode.Uri.parse(
-              "https://github.com/pwa-builder/pwa-starter/wiki/Deploying-to-the-Web-Azure-Static-Web-Apps"
-            )
-          );
-        },
       },
       {
         title: "OK",
       }
     );
+
+    if (answer && answer.title === "Learn How") {
+      await vscode.env.openExternal(
+        vscode.Uri.parse(
+          "https://github.com/pwa-builder/pwa-starter/wiki/Deploying-to-the-Web-Azure-Static-Web-Apps"
+        )
+      );
+    }
   }
 }

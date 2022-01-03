@@ -23,23 +23,27 @@ export async function handleServiceWorkerCommand(): Promise<void> {
     await handleAddingToIndex();
 
     vscode.window.showInformationMessage(
-      "When you are ready to generate your Service Worker, tap the 'Generate Service Worker' button in the status bar below."
+      "When you are ready to generate your Service Worker, tap the 'Generate Service Worker' button in the status bar below.",
+      {
+        modal: true,
+      }
     );
 
-    await vscode.window.showInformationMessage(
+    const answer = await vscode.window.showInformationMessage(
       "Check the Workbox documentation to add workbox to your existing build command.",
       {},
       {
         title: "Open Workbox Documentation",
-        action: async () => {
-          await vscode.env.openExternal(
-            vscode.Uri.parse(
-              "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
-            )
-          );
-        },
       }
     );
+
+    if (answer && answer.title === "Open Workbox Documentation") {
+      await vscode.env.openExternal(
+        vscode.Uri.parse(
+          "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
+        )
+      );
+    }
   } catch (err) {
     vscode.window.showErrorMessage(
       err && (err as Error).message
@@ -90,6 +94,14 @@ export async function findWorker() {
 
     if (workerTryTwo.length > 0) {
       existingWorker = workerTryTwo[0];
+    } else {
+      const workerTryThree = await vscode.workspace.findFiles(
+        "**/sw.js",
+        "**​/node_modules/**"
+      );
+      if (workerTryThree.length > 0) {
+        existingWorker = workerTryThree[0];
+      }
     }
   }
 
@@ -134,25 +146,18 @@ async function handleAddingToIndex(): Promise<void> {
   if (indexFile) {
     await vscode.workspace.openTextDocument(indexFile[0]);
 
-    await vscode.window.showInformationMessage(
-      "Finish adding your service worker by adding the following code to your index.html: `navigator.serviceWorker.register('/service-worker.js');`",
+    const answer = await vscode.window.showInformationMessage(
+      "Finish adding your Service Worker by adding the following code to your index.html: `navigator.serviceWorker.register('/sw.js');`",
       {},
       {
         title: "Copy to clipboard",
-        action: async () => {
-          try {
-            await vscode.env.clipboard.writeText(
-              `<script>navigator.serviceWorker.register('/service-worker.js');</script>`
-            );
-          } catch (err) {
-            vscode.window.showErrorMessage(
-              err && (err as Error).message
-                ? (err as Error).message
-                : "There was an issue adding your service worker"
-            );
-          }
-        },
       }
     );
+
+    if (answer && answer.title === "Copy to clipboard") {
+      await vscode.env.clipboard.writeText(
+        `<script>navigator.serviceWorker.register('/sw.js');</script>`
+      );
+    }
   }
 }

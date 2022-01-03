@@ -40,49 +40,55 @@ export async function packageApp(): Promise<void> {
 
   if (!url || !sw || !manifest) {
     if (!url) {
-      await vscode.window.showErrorMessage(
-        "Please publish your app before packaging it.", {
+      const answer = await vscode.window.showErrorMessage(
+        "Please publish your app before packaging it.",
+        {
           title: "Publish",
-          action: async () => {
-            await vscode.commands.executeCommand("pwa-studio.setWebURL");
-          }
         },
         {
           title: "Cancel",
         }
       );
+
+      if (answer && answer.title === "Publish") {
+        await vscode.commands.executeCommand("pwa-studio.setWebURL");
+      }
 
       return;
     }
 
     if (!sw) {
-      await vscode.window.showErrorMessage(
-        "You must have a Service Worker to package your PWA.", {
+      const answer = await vscode.window.showErrorMessage(
+        "You must have a Service Worker to package your PWA.",
+        {
           title: "Generate Service Worker",
-          action: async () => {
-            await vscode.commands.executeCommand("pwa-studio.serviceWorker");
-          }
         },
         {
           title: "Cancel",
         }
       );
+
+      if (answer && answer.title === "Generate Service Worker") {
+        await vscode.commands.executeCommand("pwa-studio.serviceWorker");
+      }
 
       return;
     }
 
     if (!manifest) {
-      await vscode.window.showErrorMessage(
-        "You must have a Manifest to package your PWA.", {
+      const answer = await vscode.window.showErrorMessage(
+        "You must have a Manifest to package your PWA.",
+        {
           title: "Generate Manifest",
-          action: async () => {
-            await vscode.commands.executeCommand("pwa-studio.manifest");
-          }
         },
         {
           title: "Cancel",
         }
       );
+
+      if (answer && answer.title === "Generate Manifest") {
+        await vscode.commands.executeCommand("pwa-studio.manifest");
+      }
 
       return;
     }
