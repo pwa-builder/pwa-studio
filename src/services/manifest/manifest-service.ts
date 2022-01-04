@@ -95,7 +95,6 @@ export async function handleIcons() {
 }
 
 export async function chooseManifest() {
-  console.log("here");
   const manifestFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,
@@ -143,32 +142,50 @@ export async function findManifest() {
 }
 
 async function handleAddingManiToIndex(): Promise<void> {
-  const indexFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select your index.html",
-    filters: {
-      HTML: ["html"],
-    },
-  });
+  let indexFile: undefined | vscode.Uri;
+  const indexFileData = await vscode.workspace.findFiles(
+    "**/index.html",
+    "**/node_modules/**"
+  );
+
+  if (indexFileData && indexFileData.length > 0) {
+    indexFile = indexFileData[0];
+  } else {
+    let indexFileDialogData = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your index.html",
+      filters: {
+        HTML: ["html"],
+      },
+    });
+
+    if (indexFileDialogData) {
+      indexFile = indexFileDialogData[0];
+    }
+  }
 
   if (indexFile) {
-    const document = await vscode.workspace.openTextDocument(indexFile[0]);
-    await vscode.window.showTextDocument(document);
+    const document = await vscode.workspace.openTextDocument(indexFile);
+    const editor = await vscode.window.showTextDocument(document);
 
-    const answer = await vscode.window.showInformationMessage(
-      "Finish adding your Web Manifest by adding the following code to your index.html: <link rel='manifest' href='manifest.json'>",
-      {},
-      {
-        title: "Copy to clipboard",
-      }
+    const manifest = getManifest();
+
+    const goodPath = vscode.workspace.asRelativePath(manifest.fsPath);
+
+    let linkString = `<link rel="manifest" href="${goodPath}">`;
+
+    // find head in index file
+    const start = editor.document.positionAt(
+      editor.document.getText().indexOf("</head>")
+    );
+    // insert registerCommand in head
+    editor.insertSnippet(
+      new vscode.SnippetString(linkString),
+      start.translate(-1, 0)
     );
 
-    if (answer && answer.title === "Copy to clipboard") {
-      await vscode.env.clipboard.writeText(
-        `<link rel="manifest" href="manifest.json">`
-      );
-    }
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   }
 }

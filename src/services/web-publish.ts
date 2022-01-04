@@ -5,12 +5,10 @@ let url: string | undefined = undefined;
 
 export function getURL(): string | undefined {
   const urlData = storageManager?.getValue<any>("urlData");
-  console.log("urlData", urlData);
   return urlData?.url;
 }
 
 export async function setURL(url: string | undefined): Promise<void> {
-  console.log('url to set', url);
   if (url && url.length > 0) {
     storageManager?.setValue<any>("urlData", {
       url: url,
