@@ -5,6 +5,8 @@ import { handleIcons } from "../manifest/manifest-service";
 
 let manifestContents: any | undefined;
 
+setupFileWatcher();
+
 export async function handleValidation() {
   vscode.window.showInformationMessage(
     "Lets validate your PWA and make sure its installable and Store Ready"
@@ -146,6 +148,18 @@ export async function handleValidation() {
 
     return;
   }
+}
+
+function setupFileWatcher() {
+  const watcher = vscode.workspace.createFileSystemWatcher(
+    "**/manifest.json"
+  );
+
+  watcher.onDidChange(async (manifestFile) => {
+    manifestContents = await readFile(manifestFile.fsPath, "utf8");
+    await testManifest(manifestContents);
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
+  });
 }
 
 async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
@@ -423,7 +437,6 @@ function isStandardOrientation(orientation: string) {
 
 export async function handleManiDocsCommand(event: any) {
   // open docs link
-  console.log(event);
   if (event.label === "Installable" || event.label === "Uninstallable") {
     vscode.env.openExternal(vscode.Uri.parse("https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Installable_PWAs"));
   }

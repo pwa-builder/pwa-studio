@@ -95,7 +95,6 @@ export async function handleIcons() {
 }
 
 export async function chooseManifest() {
-  console.log("here");
   const manifestFile = await vscode.window.showOpenDialog({
     canSelectFiles: true,
     canSelectFolders: false,

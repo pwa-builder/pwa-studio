@@ -27,9 +27,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     if (element && manifestPath && manifestExists) {
       if (manifestPath) {
         const manifestContents = await readFile(manifestPath.path, "utf8");
-        console.log("manifestContents", manifestContents);
         const testResults = await testManifest(manifestContents);
-        console.log("testResults", testResults);
 
         return Promise.resolve(
           this.handleTestResults(
@@ -66,7 +64,6 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         )
       );
     } else {
-      console.log("no web manifest");
       return Promise.resolve([]);
     }
   }

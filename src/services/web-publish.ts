@@ -9,7 +9,6 @@ export function getURL(): string | undefined {
 }
 
 export async function setURL(url: string | undefined): Promise<void> {
-  console.log('url to set', url);
   if (url && url.length > 0) {
     storageManager?.setValue<any>("urlData", {
       url: url,

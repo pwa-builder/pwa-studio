@@ -168,10 +168,9 @@ async function handleAddingToIndex(): Promise<void> {
   const worker = getWorker();
   const goodPath = vscode.workspace.asRelativePath(worker.fsPath);
 
-  const registerCommand = `<script>navigator.serviceworker.register("${goodPath}")</script>`;
+  const registerCommand = `<script>navigator.serviceWorker.register("${goodPath}")</script>`;
 
   if (indexFile) {
-    console.log("in here");
     const editor = await vscode.window.showTextDocument(indexFile);
 
     // find head in index file
