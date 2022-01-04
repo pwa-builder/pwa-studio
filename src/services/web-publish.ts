@@ -5,7 +5,6 @@ let url: string | undefined = undefined;
 
 export function getURL(): string | undefined {
   const urlData = storageManager?.getValue<any>("urlData");
-  console.log("urlData", urlData);
   return urlData?.url;
 }
 
