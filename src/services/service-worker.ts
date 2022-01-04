@@ -1,3 +1,4 @@
+import { watch } from "fs";
 import * as vscode from "vscode";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
@@ -6,44 +7,36 @@ const vsTerminal = vscode.window.createTerminal();
 let existingWorker: any | undefined = undefined;
 
 export async function handleServiceWorkerCommand(): Promise<void> {
+  //setup file watcher for workbox config file
+  const watcher = vscode.workspace.createFileSystemWatcher(
+    "**/workbox-config.js"
+  );
+
+  watcher.onDidCreate((uri) => {
+    if (uri) {
+      watcher.dispose();
+      generateServiceWorker();
+    }
+  });
+
+  watcher.onDidChange((uri) => {
+    if (uri) {
+      watcher.dispose();
+      generateServiceWorker();
+    }
+  });
+
   try {
     vscode.window.withProgress(
       {
         location: vscode.ProgressLocation.Notification,
       },
       async (progress) => {
-        progress.report({ message: "Building service worker..." });
+        progress.report({ message: "Generating Workbox Config..." });
         await runWorkboxTool();
-        progress.report({ message: "Service worker added!" });
-
-        findWorker();
+        progress.report({ message: "Workbox Config added!" });
       }
     );
-
-    await handleAddingToIndex();
-
-    vscode.window.showInformationMessage(
-      "When you are ready to generate your Service Worker, tap the 'Generate Service Worker' button in the status bar below.",
-      {
-        modal: true,
-      }
-    );
-
-    const answer = await vscode.window.showInformationMessage(
-      "Check the Workbox documentation to add workbox to your existing build command.",
-      {},
-      {
-        title: "Open Workbox Documentation",
-      }
-    );
-
-    if (answer && answer.title === "Open Workbox Documentation") {
-      await vscode.env.openExternal(
-        vscode.Uri.parse(
-          "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
-        )
-      );
-    }
   } catch (err) {
     vscode.window.showErrorMessage(
       err && (err as Error).message
@@ -55,7 +48,21 @@ export async function handleServiceWorkerCommand(): Promise<void> {
 
 export function generateServiceWorker() {
   vsTerminal.show();
-  vsTerminal.sendText("workbox generateSW");
+
+  vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+    },
+    async (progress) => {
+      progress.report({ message: "Generating Service Worker..." });
+      vsTerminal.sendText("workbox generateSW");
+      progress.report({ message: "Service Worker generated!" });
+
+      findWorker();
+
+      await handleAddingToIndex();
+    }
+  );
 }
 
 export function chooseServiceWorker() {
@@ -108,6 +115,7 @@ export async function findWorker() {
   if (existingWorker) {
     // do refreshPackageView command
     await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+    // await vscode.commands.executeCommand("pwa-studio.refreshSWView");
   }
 
   return existingWorker;
@@ -133,30 +141,66 @@ async function runWorkboxTool(): Promise<void> {
 }
 
 async function handleAddingToIndex(): Promise<void> {
-  const indexFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select your index.html",
-    filters: {
-      HTML: ["html"],
-    },
-  });
+  let indexFile: undefined | vscode.Uri;
+  const indexFileData = await vscode.workspace.findFiles(
+    "**/index.html",
+    "**/node_modules/**"
+  );
+
+  if (indexFileData && indexFileData.length > 0) {
+    indexFile = indexFileData[0];
+  } else {
+    let indexFileDialogData = await vscode.window.showOpenDialog({
+      canSelectFiles: true,
+      canSelectFolders: false,
+      canSelectMany: false,
+      title: "Select your index.html",
+      filters: {
+        HTML: ["html"],
+      },
+    });
+
+    if (indexFileDialogData) {
+      indexFile = indexFileDialogData[0];
+    }
+  }
+
+  const worker = getWorker();
+  console.log(worker);
+
+  const goodPath = vscode.workspace.asRelativePath(worker.fsPath);
+
+  const registerCommand = `<script>navigator.serviceworker.register("${goodPath}")</script>`;
 
   if (indexFile) {
-    await vscode.workspace.openTextDocument(indexFile[0]);
+    console.log("in here");
+    const editor = await vscode.window.showTextDocument(indexFile);
 
-    const answer = await vscode.window.showInformationMessage(
-      "Finish adding your Service Worker by adding the following code to your index.html: `navigator.serviceWorker.register('/sw.js');`",
+    // find head in index file
+    const start = editor.document.positionAt(
+      editor.document.getText().indexOf("</head>")
+    );
+    // insert registerCommand in head
+    editor.insertSnippet(
+      new vscode.SnippetString(registerCommand),
+      start.translate(-1, 0)
+    );
+
+    await vscode.commands.executeCommand("pwa-studio.refreshSWView");
+
+    const docsAnswer = await vscode.window.showInformationMessage(
+      "Check the Workbox documentation to add workbox to your existing build command.",
       {},
       {
-        title: "Copy to clipboard",
+        title: "Open Workbox Documentation",
       }
     );
 
-    if (answer && answer.title === "Copy to clipboard") {
-      await vscode.env.clipboard.writeText(
-        `<script>navigator.serviceWorker.register('/sw.js');</script>`
+    if (docsAnswer && docsAnswer.title === "Open Workbox Documentation") {
+      await vscode.env.openExternal(
+        vscode.Uri.parse(
+          "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
+        )
       );
     }
   }
