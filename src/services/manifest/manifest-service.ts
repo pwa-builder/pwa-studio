@@ -185,5 +185,7 @@ async function handleAddingManiToIndex(): Promise<void> {
       new vscode.SnippetString(linkString),
       start.translate(-1, 0)
     );
+
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   }
 }

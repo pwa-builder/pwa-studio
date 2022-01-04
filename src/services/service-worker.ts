@@ -115,7 +115,6 @@ export async function findWorker() {
   if (existingWorker) {
     // do refreshPackageView command
     await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
-    // await vscode.commands.executeCommand("pwa-studio.refreshSWView");
   }
 
   return existingWorker;
@@ -183,8 +182,6 @@ async function handleAddingToIndex(): Promise<void> {
       start.translate(-1, 0)
     );
 
-    await vscode.commands.executeCommand("pwa-studio.refreshSWView");
-
     const docsAnswer = await vscode.window.showInformationMessage(
       "Check the Workbox documentation to add workbox to your existing build command.",
       {},
@@ -200,5 +197,7 @@ async function handleAddingToIndex(): Promise<void> {
         )
       );
     }
+
+    await vscode.commands.executeCommand("pwa-studio.refreshSWView");
   }
 }
