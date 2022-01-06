@@ -7,7 +7,8 @@ export const packageQuestion: Question = {
     choices: [
         "Windows Development",
         "Windows Production",
-        "Android"
+        "Android",
+        "iOS"
     ],
     default: "Windows Development"
 };
