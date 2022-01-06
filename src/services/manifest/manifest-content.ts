@@ -161,6 +161,13 @@ export function getWebviewContent() {
               </a>
             </div>
           </div>
+
+          <div class="six">
+            <label for="file_input">Choose a 512x512 icon:</label>
+            <div class="input-area">
+              <input type="file" name="file_input" id="file_input" required />
+            </div>
+          </div>
         </div>
 
         <div id="desc-box">
@@ -235,7 +242,6 @@ placeholder description</textarea
               </a>
             </div>
           </div>
-        
         </div>
 
         <div id="submit-block">
@@ -244,7 +250,44 @@ placeholder description</textarea
       </form>
     </div>
     <script>
-      function handleSubmit() {
+      let file = undefined;
+      document.querySelector("#file_input").addEventListener("change", (ev) => {
+        file = ev.target.files[0];
+      });
+
+      async function generateIcons() {
+        return new Promise(async (resolve, reject) => {
+          const url =
+          "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
+
+        const form = new FormData();
+        form.append("baseImage", file);
+        form.append("platform", "windows10");
+        form.append("platform", "android");
+        form.append("platform", "ios");
+        form.append("colorChanged", "false");
+        form.append("padding", "0");
+        // send formdata with http node module
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            body: form,
+          });
+
+          const data = await response.json();
+
+          console.log("data", data);
+
+          resolve(data);
+        } catch (err) {
+          console.error("error", err);
+          reject(err);
+        }
+        });
+      }
+
+      async function handleSubmit(event) {
+        event.preventDefault();
         let dir = document.getElementById("dir").value;
         let display = document.getElementById("display").value;
         let name = document.getElementById("name").value;
@@ -254,8 +297,10 @@ placeholder description</textarea
         let scope = document.getElementById("scope").value;
         let desc = document.getElementById("description").value;
         let theme_color = document.getElementById("theme_color").value;
-        let background_color = document.getElementById("background_color")
-          .value;
+        let background_color =
+          document.getElementById("background_color").value;
+
+        const icons = await generateIcons();
 
         let maniObj = {
           dir: dir,
@@ -268,27 +313,20 @@ placeholder description</textarea
           description: desc,
           theme_color: theme_color,
           background_color: background_color,
-          icons: [
-            {
-              src: "/pwabuilder-icons/512x512.png",
-              sizes: "512x512",
-              type: "image/png"
-            }
-          ]
+          icons: icons ? icons : []
         };
 
         const vscode = acquireVsCodeApi();
         vscode.postMessage({
           command: "prompt",
           text: "Your manifest has been created and added to your project.",
-          manifestObject: maniObj
+          manifestObject: maniObj,
         });
         event.preventDefault();
       }
     </script>
   </body>
   <style>
-    
     body.vscode-light {
       color: black;
     }
@@ -328,7 +366,7 @@ placeholder description</textarea
     .toolTip {
       visibility: hidden;
       width: 200px;
-      background-color: #F8F8F8;
+      background-color: #f8f8f8;
       color: black;
       text-align: center;
       border-radius: 6px;
@@ -359,7 +397,7 @@ placeholder description</textarea
     input {
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 95%;
       font-size: 14px;
@@ -367,10 +405,15 @@ placeholder description</textarea
       color: black;
     }
 
+    #file_input {
+      border: none;
+      color: currentColor;
+    }
+
     select {
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 95%;
       font-size: 14px;
@@ -382,7 +425,7 @@ placeholder description</textarea
       margin-bottom: 20px;
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 100%;
       font-size: 14px;
@@ -463,5 +506,6 @@ placeholder description</textarea
     }
   </style>
 </html>
+
 `;
 }

@@ -1,6 +1,8 @@
-import { copyFile, mkdir, writeFile } from "fs/promises";
+import { copyFile, mkdir, readFile, writeFile } from "fs/promises";
 import * as vscode from "vscode";
+import fetch, { Headers } from "node-fetch";
 import { getWebviewContent } from "./manifest-content";
+import { FormData, Blob } from "formdata-node";
 
 let manifest: any | undefined;
 
@@ -49,7 +51,7 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
               );
             }
 
-            await handleIcons();
+            // await handleIcons();
 
             await handleAddingManiToIndex();
           }
