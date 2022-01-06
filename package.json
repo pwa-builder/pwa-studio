@@ -28,11 +28,11 @@
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "Start a new PWA"
+        "title": "PWABuilder: New PWA"
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "Generate Service Worker",
+        "title": "PWABuilder: Generate Service Worker",
         "icon": {
           "dark": "resources/add-dark.svg",
           "light": "resources/add-outline.svg"
@@ -40,11 +40,11 @@
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "Validate my PWA"
+        "title": "PWABuilder: Validate"
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "Generate Web Manifest",
+        "title": "PWABuilder: Generate Web Manifest",
         "icon": {
           "dark": "resources/add-dark.svg",
           "light": "resources/add-outline.svg"
@@ -52,15 +52,15 @@
       },
       {
         "command": "pwa-studio.chooseManifest",
-        "title": "Choose existing Web Manifest"
+        "title": "PWABuilder: Choose existing Web Manifest"
       },
       {
         "command": "pwa-studio.chooseServiceWorker",
-        "title": "Choose existing Service Worker"
+        "title": "PWABuilder: Choose existing Service Worker"
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "Package a PWA"
+        "title": "PWABuilder: Package your PWA"
       },
       {
         "command": "pwa-studio.maniItemDocs",
@@ -92,7 +92,7 @@
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "Set App URL"
+        "title": "PWABuilder: Set App URL"
       }
     ],
     "viewsWelcome": [
