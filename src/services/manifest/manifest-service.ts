@@ -1,8 +1,6 @@
-import { copyFile, mkdir, readFile, writeFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
-import fetch, { Headers } from "node-fetch";
-import { getWebviewContent } from "./manifest-content";
-import { FormData, Blob } from "formdata-node";
+import { getIconWebviewContent, getWebviewContent } from "./manifest-content";
 
 let manifest: any | undefined;
 
@@ -64,36 +62,46 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
   );
 }
 
-export async function handleIcons() {
-  const iconFile = await vscode.window.showOpenDialog({
-    canSelectFiles: true,
-    canSelectFolders: false,
-    canSelectMany: false,
-    title: "Select a 512x512 icon",
-    filters: {
-      Image: ["png"],
-    },
-  });
-
-  if (iconFile) {
-    try {
-      await mkdir(
-        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/pwabuilder-icons`,
-        { recursive: true }
-      );
-
-      await copyFile(
-        iconFile[0].fsPath,
-        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/pwabuilder-icons/512x512.png`
-      );
-    } catch (err) {
-      vscode.window.showErrorMessage(
-        err && (err as Error).message
-          ? (err as Error).message
-          : "There was an issue handling icons"
-      );
+export async function handleIcons(context: vscode.ExtensionContext) {
+  const panel = vscode.window.createWebviewPanel(
+    "pwa-studio", // Identifies the type of the webview. Used internally
+    "PWA Studio", // Title of the panel displayed to the user
+    vscode.ViewColumn.One, // Editor column to show the new webview panel in.
+    {
+      // Enable scripts in the webview
+      enableScripts: true,
     }
-  }
+  );
+
+  panel.webview.html = getIconWebviewContent();
+
+  let iconsObject: any;
+  // Handle messages from the webview
+  panel.webview.onDidReceiveMessage(
+    async (message) => {
+      switch (message.command) {
+        case "prompt":
+          iconsObject = message.iconsObject;
+          const manifest: vscode.Uri = await findManifest();
+
+          if (manifest && iconsObject) {
+            // read manifest file
+            const manifestFile = await vscode.workspace.openTextDocument(
+              manifest
+            );
+
+            const manifestObject = JSON.parse(manifestFile.getText());
+
+            // add icons to manifest
+            manifestObject.icons = iconsObject;
+          }
+
+          return;
+      }
+    },
+    undefined,
+    context.subscriptions
+  );
 }
 
 export async function chooseManifest() {
