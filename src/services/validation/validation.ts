@@ -7,7 +7,7 @@ let manifestContents: any | undefined;
 
 setupFileWatcher();
 
-export async function handleValidation() {
+export async function handleValidation(context: vscode.ExtensionContext) {
   vscode.window.showInformationMessage(
     "Lets validate your PWA and make sure its installable and Store Ready"
   );
@@ -58,7 +58,7 @@ export async function handleValidation() {
       manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
       const results = await testManifest(manifestContents);
 
-      await gatherResults(results, manifestFile);
+      await gatherResults(results, manifestFile, context);
     } else {
       await vscode.window.showErrorMessage("Please select a Web Manifest");
       return;
@@ -162,7 +162,7 @@ function setupFileWatcher() {
   });
 }
 
-async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
+async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[], context: vscode.ExtensionContext) {
   const problems = results.filter(
     (r) => r.result === false && r.category === "required"
   );
@@ -210,7 +210,7 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
 
       if (!fiveTwelveCheck) {
         const iconAnswer = await vscode.window.showInformationMessage(
-          "You are missing a 512x512 sized icon, please select one",
+          "You are missing a 512x512 sized icon, lets generate one",
           {
             modal: true,
           },
@@ -218,8 +218,7 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
         );
 
         if (iconAnswer && iconAnswer === "OK") {
-          await handleIcons();
-          addIconToManifest(editor);
+          await handleIcons(context);
 
           return;
         }
@@ -234,24 +233,6 @@ async function gatherResults(results: Array<any>, manifestFile: vscode.Uri[]) {
       "OK"
     );
   }
-}
-
-function addIconToManifest(editor: vscode.TextEditor) {
-  // find start of icons array in file using editor
-  const start = editor.document.positionAt(
-    editor.document.getText().indexOf("icons")
-  );
-
-  editor.insertSnippet(
-    new vscode.SnippetString(
-      `{
-        "src": "/pwabuilder-icons/512x512.png",
-        "sizes": "512x512",
-        "type": "image/png"
-      },`
-    ),
-    start.translate(+1, 0)
-  );
 }
 
 export async function testManifest(manifestFile: any): Promise<any[]> {

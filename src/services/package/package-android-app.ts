@@ -1,3 +1,4 @@
+import { URL } from "url";
 import { buildAndroidPackage } from "../../library/package-utils";
 
 export async function packageForAndroid(options: any): Promise<any> {
@@ -5,7 +6,8 @@ export async function packageForAndroid(options: any): Promise<any> {
   return await responseData.blob();
 }
 
-export const AndroidDocsURL = "https://blog.pwabuilder.com/docs/testing-and-publishing-your-android-pwa-to-the-google-play-store";
+export const AndroidDocsURL =
+  "https://blog.pwabuilder.com/docs/testing-and-publishing-your-android-pwa-to-the-google-play-store";
 
 // below code pulled from the main PWABuilder site
 export interface ShortcutItem {

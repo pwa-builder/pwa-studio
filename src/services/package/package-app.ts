@@ -111,7 +111,7 @@ export async function packageApp(): Promise<void> {
 
             if (optionsValidation.length === 0) {
               // no validation errors
-              const responseData: Blob = await packageForAndroid(options);
+              const responseData = await packageForAndroid(options);
               progress.report({ message: "Converting to zip..." });
               await convertPackageToZip(responseData, options.packageId);
 
@@ -183,7 +183,7 @@ async function packageWithPwaBuilder(): Promise<any> {
 }
 
 async function convertPackageToZip(
-  responseData: Blob,
+  responseData: any,
   packageID?: string
 ): Promise<void> {
   await writeMSIXToFile(responseData, packageID || packageInfo.packageId);
@@ -256,7 +256,7 @@ function validateInput(input: string | undefined, question: Question): string {
 }
 
 async function writeMSIXToFile(
-  responseData: Blob,
+  responseData: any,
   name: string
 ): Promise<void> {
   try {

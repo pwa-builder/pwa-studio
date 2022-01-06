@@ -161,6 +161,24 @@ export function getWebviewContent() {
               </a>
             </div>
           </div>
+
+          <div class="six">
+            <label for="file_input">Choose a 512x512 icon:</label>
+            <div class="input-area">
+              <input type="file" name="file_input" id="file_input" required />
+
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
+                target="_blank"
+                rel="noopener"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p class="toolTip">
+                  Click for more info on icons your manifest.
+                </p>
+              </a>
+            </div>
+          </div>
         </div>
 
         <div id="desc-box">
@@ -235,7 +253,6 @@ placeholder description</textarea
               </a>
             </div>
           </div>
-        
         </div>
 
         <div id="submit-block">
@@ -244,7 +261,44 @@ placeholder description</textarea
       </form>
     </div>
     <script>
-      function handleSubmit() {
+      let file = undefined;
+      document.querySelector("#file_input").addEventListener("change", (ev) => {
+        file = ev.target.files[0];
+      });
+
+      async function generateIcons() {
+        return new Promise(async (resolve, reject) => {
+          const url =
+          "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
+
+        const form = new FormData();
+        form.append("baseImage", file);
+        form.append("platform", "windows10");
+        form.append("platform", "android");
+        form.append("platform", "ios");
+        form.append("colorChanged", "false");
+        form.append("padding", "0");
+        // send formdata with http node module
+        try {
+          const response = await fetch(url, {
+            method: "POST",
+            body: form,
+          });
+
+          const data = await response.json();
+
+          console.log("data", data);
+
+          resolve(data);
+        } catch (err) {
+          console.error("error", err);
+          reject(err);
+        }
+        });
+      }
+
+      async function handleSubmit(event) {
+        event.preventDefault();
         let dir = document.getElementById("dir").value;
         let display = document.getElementById("display").value;
         let name = document.getElementById("name").value;
@@ -254,8 +308,10 @@ placeholder description</textarea
         let scope = document.getElementById("scope").value;
         let desc = document.getElementById("description").value;
         let theme_color = document.getElementById("theme_color").value;
-        let background_color = document.getElementById("background_color")
-          .value;
+        let background_color =
+          document.getElementById("background_color").value;
+
+        const icons = await generateIcons();
 
         let maniObj = {
           dir: dir,
@@ -268,27 +324,20 @@ placeholder description</textarea
           description: desc,
           theme_color: theme_color,
           background_color: background_color,
-          icons: [
-            {
-              src: "/pwabuilder-icons/512x512.png",
-              sizes: "512x512",
-              type: "image/png"
-            }
-          ]
+          icons: icons ? icons : []
         };
 
         const vscode = acquireVsCodeApi();
         vscode.postMessage({
           command: "prompt",
           text: "Your manifest has been created and added to your project.",
-          manifestObject: maniObj
+          manifestObject: maniObj,
         });
         event.preventDefault();
       }
     </script>
   </body>
   <style>
-    
     body.vscode-light {
       color: black;
     }
@@ -328,7 +377,7 @@ placeholder description</textarea
     .toolTip {
       visibility: hidden;
       width: 200px;
-      background-color: #F8F8F8;
+      background-color: #f8f8f8;
       color: black;
       text-align: center;
       border-radius: 6px;
@@ -359,7 +408,7 @@ placeholder description</textarea
     input {
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 95%;
       font-size: 14px;
@@ -367,10 +416,15 @@ placeholder description</textarea
       color: black;
     }
 
+    #file_input {
+      border: none;
+      color: currentColor;
+    }
+
     select {
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 95%;
       font-size: 14px;
@@ -382,7 +436,7 @@ placeholder description</textarea
       margin-bottom: 20px;
       border-radius: 4px;
       box-sizing: border-box;
-      border: 1px solid #A8A8A8;
+      border: 1px solid #a8a8a8;
       height: 38px;
       width: 100%;
       font-size: 14px;
@@ -463,5 +517,295 @@ placeholder description</textarea
     }
   </style>
 </html>
+
+`;
+}
+
+export function getIconWebviewContent() {
+  return `
+	<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://glitch.com/favicon.ico" />
+
+    <title>PWA VSCode Extension Manifest Form</title>
+
+    <!-- Ionicons Import -->
+    <script src="https://unpkg.com/ionicons@4.5.10-0/dist/ionicons.js"></script>
+  </head>
+  <body>
+    <div id="central">
+      <form id="manifest-options" onsubmit="handleSubmit(event)">
+        <div id="first-six">
+          <div class="six">
+            <label for="file_input">Choose a 512x512 icon:</label>
+            <div class="input-area">
+              <input type="file" name="file_input" id="file_input" required />
+
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
+                target="_blank"
+                rel="noopener"
+              >
+                <ion-icon name="information-circle-outline"></ion-icon>
+                <p class="toolTip">
+                  Click for more info on icons your manifest.
+                </p>
+              </a>
+            </div>
+          </div>
+        </div>
+
+
+        <div id="submit-block">
+          <button id="submit" type="submit">Generate Icons</button>
+        </div>
+      </form>
+    </div>
+    <script>
+      let file = undefined;
+      document.querySelector("#file_input").addEventListener("change", (ev) => {
+        file = ev.target.files[0];
+      });
+
+      async function generateIcons() {
+        return new Promise(async (resolve, reject) => {
+          const url =
+            "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
+
+          const form = new FormData();
+          form.append("baseImage", file);
+          form.append("platform", "windows10");
+          form.append("platform", "android");
+          form.append("platform", "ios");
+          form.append("colorChanged", "false");
+          form.append("padding", "0");
+          // send formdata with http node module
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: form,
+            });
+
+            const data = await response.json();
+
+            console.log("data", data);
+
+            resolve(data);
+          } catch (err) {
+            console.error("error", err);
+            reject(err);
+          }
+        });
+      }
+
+      async function handleSubmit(event) {
+        event.preventDefault();
+
+        const icons = await generateIcons();
+
+        let maniObj = {
+          icons: icons,
+        };
+
+        const vscode = acquireVsCodeApi();
+        vscode.postMessage({
+          command: "prompt",
+          text: "Your icons have been generated!",
+          iconsObject: maniObj,
+        });
+      }
+    </script>
+  </body>
+  <style>
+    body.vscode-light {
+      color: black;
+    }
+
+    body.vscode-dark label {
+      color: white;
+    }
+
+    #file_input {
+      display: block;
+      height: 2em;
+      width: 14em;
+    }
+
+    #central {
+      padding: 1em;
+      font-family: sans-serif;
+    }
+
+    #manifest-options {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .input-area {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    #first-six {
+      display: grid;
+      grid-template-columns: auto auto;
+      grid-gap: 20px;
+      margin: 20px 0;
+    }
+
+    .six {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .toolTip {
+      visibility: hidden;
+      width: 200px;
+      background-color: #f8f8f8;
+      color: black;
+      text-align: center;
+      border-radius: 6px;
+      padding: 5px;
+      /* Position the tooltip */
+      position: absolute;
+      top: 0px;
+      right: 65%;
+      z-index: 1;
+    }
+
+    .input-area a {
+      position: relative;
+    }
+
+    a:hover .toolTip {
+      visibility: visible;
+    }
+
+    label {
+      margin-bottom: 6px;
+      font-size: 16px;
+      color: black;
+
+      font-weight: bold;
+    }
+
+    input {
+      border-radius: 4px;
+      box-sizing: border-box;
+      border: 1px solid #a8a8a8;
+      height: 38px;
+      width: 95%;
+      font-size: 14px;
+      text-indent: 10px;
+      color: black;
+    }
+
+    #file_input {
+      border: none;
+      color: currentColor;
+    }
+
+    select {
+      border-radius: 4px;
+      box-sizing: border-box;
+      border: 1px solid #a8a8a8;
+      height: 38px;
+      width: 95%;
+      font-size: 14px;
+      text-indent: 10px;
+    }
+
+    textarea {
+      margin-top: 6px;
+      margin-bottom: 20px;
+      border-radius: 4px;
+      box-sizing: border-box;
+      border: 1px solid #a8a8a8;
+      height: 38px;
+      width: 100%;
+      font-size: 14px;
+      text-indent: 10px;
+      color: black;
+      width: 45%;
+    }
+
+    #icon {
+      padding: 1px;
+    }
+
+    #bottom-four {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+    }
+
+    .color {
+      display: flex;
+      flex-direction: column;
+    }
+
+    #icon {
+      border: none;
+      text-indent: 0;
+      margin-top: 6px;
+      height: max-content;
+    }
+
+    #bottom-four button {
+      font-size: 16px;
+      font-weight: bolder;
+      padding: 20px 10px;
+
+      border-radius: 30px;
+      border: none;
+
+      height: 75%;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #bottom-four button:hover {
+      cursor: pointer;
+    }
+
+    #submit-block {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      margin-top: 2em;
+    }
+
+    #submit-block button {
+      background: #487cf1;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 1.1em;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    ion-icon {
+      margin-left: 10px;
+      font-size: 24px;
+    }
+
+    ion-icon:hover {
+      cursor: pointer;
+    }
+
+    a:visited {
+      color: black;
+    }
+  </style>
+</html>
+
+
 `;
 }

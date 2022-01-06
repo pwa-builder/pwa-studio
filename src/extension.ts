@@ -10,6 +10,7 @@ import {
 import {
   handleManifestCommand,
   chooseManifest,
+  handleIcons,
 } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
@@ -35,6 +36,7 @@ const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
+const handleIconsCommmandID = "pwa-studio.generateIcons";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -61,6 +63,13 @@ export function activate(context: vscode.ExtensionContext) {
   );
   manifestStatusBarItem.text = "Generate Web Manifest";
   manifestStatusBarItem.show();
+
+  const generateIconsStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    350
+  );
+  generateIconsStatusBarItem.text = "Generate Icons";
+  generateIconsStatusBarItem.show();
 
   const generateAppStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -131,6 +140,14 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  const generateIconsCommand = vscode.commands.registerCommand(
+    handleIconsCommmandID,
+    async () => {
+      await handleIcons(context);
+    }
+  );
+  generateIconsStatusBarItem.command = handleIconsCommmandID;
+
   const chooseServiceWorkerCommand = vscode.commands.registerCommand(
     chooseServiceWorkerCommandID,
     async () => {
@@ -170,7 +187,7 @@ export function activate(context: vscode.ExtensionContext) {
   let validationCommand = vscode.commands.registerCommand(
     validateCommandId,
     async () => {
-      handleValidation();
+      handleValidation(context);
     }
   );
 
@@ -201,6 +218,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(maniDocs);
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
+  context.subscriptions.push(generateIconsCommand);
 }
 
 export function deactivate() {}
