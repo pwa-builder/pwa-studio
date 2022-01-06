@@ -49,8 +49,6 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
               );
             }
 
-            // await handleIcons();
-
             await handleAddingManiToIndex();
           }
 
@@ -64,8 +62,8 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
 
 export async function handleIcons(context: vscode.ExtensionContext) {
   const panel = vscode.window.createWebviewPanel(
-    "pwa-studio", // Identifies the type of the webview. Used internally
-    "PWA Studio", // Title of the panel displayed to the user
+    "pwa-studio-icons", // Identifies the type of the webview. Used internally
+    "Icon Generator", // Title of the panel displayed to the user
     vscode.ViewColumn.One, // Editor column to show the new webview panel in.
     {
       // Enable scripts in the webview
@@ -74,6 +72,11 @@ export async function handleIcons(context: vscode.ExtensionContext) {
   );
 
   panel.webview.html = getIconWebviewContent();
+
+  // show information message
+  vscode.window.showInformationMessage(
+    "Choose an Icon and then tap Generate Icons, your icons will be added to your Web Manifest. This may take a minute."
+  );
 
   let iconsObject: any;
   // Handle messages from the webview
@@ -84,7 +87,7 @@ export async function handleIcons(context: vscode.ExtensionContext) {
           iconsObject = message.iconsObject;
           const manifest: vscode.Uri = await findManifest();
 
-          if (manifest && iconsObject) {
+          if (manifest && iconsObject.icons) {
             // read manifest file
             const manifestFile = await vscode.workspace.openTextDocument(
               manifest
@@ -93,7 +96,19 @@ export async function handleIcons(context: vscode.ExtensionContext) {
             const manifestObject = JSON.parse(manifestFile.getText());
 
             // add icons to manifest
-            manifestObject.icons = iconsObject;
+            manifestObject.icons = iconsObject.icons;
+
+            // write manifest file
+            await writeFile(
+              manifest.fsPath,
+              JSON.stringify(manifestObject, null, 2)
+            );
+
+            // show manifest with vscode
+            await vscode.window.showTextDocument(manifestFile);
+          }
+          else {
+            vscode.window.showErrorMessage("You first need a Web Manifest. Tap the Generate Manifest button at the bottom to get started.");
           }
 
           return;

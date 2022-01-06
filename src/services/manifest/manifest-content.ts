@@ -540,152 +540,6 @@ export function getIconWebviewContent() {
       <form id="manifest-options" onsubmit="handleSubmit(event)">
         <div id="first-six">
           <div class="six">
-            <label for="dir">Dir:</label>
-            <div class="input-area">
-              <select name="dir" id="dir" required>
-                <option value="auto" selected>auto</option>
-                <option value="ltr">ltr</option>
-                <option value="rtl">rtl</option>
-              </select>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the dir option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="display">Display:</label>
-            <div class="input-area">
-              <select name="display" id="display" required>
-                <option value="fullscreen">fullscreen</option>
-                <option value="standalone" selected>standalone</option>
-                <option value="minimal-ui">minimal-ui</option>
-                <option value="browser">browser</option>
-              </select>
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the dir option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="name">Name:</label>
-            <div class="input-area">
-              <input
-                type="text"
-                name="name"
-                id="name"
-                value="placeholder"
-                required
-              />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the name option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="short_name">Short Name:</label>
-            <div class="input-area">
-              <input
-                type="text"
-                name="short_name"
-                id="short_name"
-                value="placeholder"
-                required
-              />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the short name option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="scope">Scope:</label>
-            <div class="input-area">
-              <input type="text" name="scope" id="scope" value="/" required />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the scope option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="start_url">Start Url:</label>
-            <div class="input-area">
-              <input
-                type="text"
-                name="start_url"
-                id="start_url"
-                value="/"
-                required
-              />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the start url option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
-            <label for="lang">Default Language:</label>
-            <div class="input-area">
-              <input type="text" name="lang" id="lang" value="en" required />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the language option in your manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="six">
             <label for="file_input">Choose a 512x512 icon:</label>
             <div class="input-area">
               <input type="file" name="file_input" id="file_input" required />
@@ -704,79 +558,6 @@ export function getIconWebviewContent() {
           </div>
         </div>
 
-        <div id="desc-box">
-          <label for="description">Description:</label>
-          <div class="input-area">
-            <textarea
-              type="text"
-              name="description"
-              id="description"
-              rows="3"
-              cols="60"
-              required
-            >
-placeholder description</textarea
-            >
-            <a
-              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-              target="_blank"
-              rel="noopener"
-            >
-              <ion-icon name="information-circle-outline"></ion-icon>
-              <p class="toolTip">
-                Click for more info on the description option in your manifest.
-              </p>
-            </a>
-          </div>
-        </div>
-
-        <div id="bottom-four">
-          <div class="color">
-            <label for="theme_color">Theme Color:</label>
-            <div class="input-area">
-              <input
-                type="color"
-                name="theme_color"
-                id="theme_color"
-                required
-              />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the theme color option in your
-                  manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-
-          <div class="color">
-            <label for="background_color">Background Color:</label>
-            <div class="input-area">
-              <input
-                type="color"
-                name="background_color"
-                id="background_color"
-                required
-              />
-              <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
-                target="_blank"
-                rel="noopener"
-              >
-                <ion-icon name="information-circle-outline"></ion-icon>
-                <p class="toolTip">
-                  Click for more info on the background color option in your
-                  manifest.
-                </p>
-              </a>
-            </div>
-          </div>
-        </div>
 
         <div id="submit-block">
           <button id="submit" type="submit">Generate Icons</button>
@@ -792,31 +573,31 @@ placeholder description</textarea
       async function generateIcons() {
         return new Promise(async (resolve, reject) => {
           const url =
-          "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
+            "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
 
-        const form = new FormData();
-        form.append("baseImage", file);
-        form.append("platform", "windows10");
-        form.append("platform", "android");
-        form.append("platform", "ios");
-        form.append("colorChanged", "false");
-        form.append("padding", "0");
-        // send formdata with http node module
-        try {
-          const response = await fetch(url, {
-            method: "POST",
-            body: form,
-          });
+          const form = new FormData();
+          form.append("baseImage", file);
+          form.append("platform", "windows10");
+          form.append("platform", "android");
+          form.append("platform", "ios");
+          form.append("colorChanged", "false");
+          form.append("padding", "0");
+          // send formdata with http node module
+          try {
+            const response = await fetch(url, {
+              method: "POST",
+              body: form,
+            });
 
-          const data = await response.json();
+            const data = await response.json();
 
-          console.log("data", data);
+            console.log("data", data);
 
-          resolve(data);
-        } catch (err) {
-          console.error("error", err);
-          reject(err);
-        }
+            resolve(data);
+          } catch (err) {
+            console.error("error", err);
+            reject(err);
+          }
         });
       }
 
@@ -825,17 +606,16 @@ placeholder description</textarea
 
         const icons = await generateIcons();
 
-        let iconsObj = {
-          icons: icons ? icons : []
+        let maniObj = {
+          icons: icons,
         };
 
         const vscode = acquireVsCodeApi();
         vscode.postMessage({
           command: "prompt",
           text: "Your icons have been generated!",
-          iconsObject: iconsObj,
+          iconsObject: maniObj,
         });
-        event.preventDefault();
       }
     </script>
   </body>
@@ -846,6 +626,12 @@ placeholder description</textarea
 
     body.vscode-dark label {
       color: white;
+    }
+
+    #file_input {
+      display: block;
+      height: 2em;
+      width: 14em;
     }
 
     #central {
@@ -921,10 +707,6 @@ placeholder description</textarea
     #file_input {
       border: none;
       color: currentColor;
-
-      display: block;
-      height: 2em;
-      width: 14em;
     }
 
     select {
@@ -1023,6 +805,7 @@ placeholder description</textarea
     }
   </style>
 </html>
+
 
 `;
 }
