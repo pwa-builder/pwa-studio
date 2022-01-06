@@ -17,6 +17,11 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
 
   panel.webview.html = getWebviewContent();
 
+  // show information message
+  vscode.window.showInformationMessage(
+    "Fill out the details of your Web Manifest and choose an Icon, then tap the Submit Manifest Options button. This may take a minute..."
+  );
+
   let manifestObject: any;
   // Handle messages from the webview
   panel.webview.onDidReceiveMessage(
