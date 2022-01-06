@@ -97,7 +97,26 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  if (packageType === "Android") {
+  if (packageType === "iOS") {
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({
+            message: "Packaging iOS app...",
+          });
+
+          // Setting up iOS platform
+          // Next step is to generate the correct options for iOS 
+
+          /*const options = await getAndroidPackageOptions();
+          await packageForAndroid(options);*/
+        }
+      );
+    } catch (err) {}
+  } else if (packageType === "Android") {
     try {
       vscode.window.withProgress(
         {
@@ -255,10 +274,7 @@ function validateInput(input: string | undefined, question: Question): string {
   return validatedInput === undefined ? "" : validatedInput;
 }
 
-async function writeMSIXToFile(
-  responseData: any,
-  name: string
-): Promise<void> {
+async function writeMSIXToFile(responseData: any, name: string): Promise<void> {
   try {
     const test = await vscode.window.showSaveDialog({
       title: "Save your package",
