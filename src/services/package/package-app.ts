@@ -11,9 +11,13 @@ import {
 
 import {
   buildAndroidOptions,
+  buildIOSOptions,
   getPublisherMsixFromArray,
   getSimpleMsixFromArray,
+  iosDocsURL,
+  packageForIOS,
   packageForWindows,
+  validateIOSOptions,
   WindowsDocsURL,
 } from "../../library/package-utils";
 import {
@@ -97,7 +101,52 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  if (packageType === "Android") {
+  if (packageType === "iOS") {
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({
+            message: "Packaging iOS app...",
+          });
+
+          // Setting up iOS platform
+          // Next step is to generate the correct options for iOS
+          const options = await getIOSPackageOptions();
+          if (options) {
+            const optionsValidation = await validateIOSOptions(options);
+
+            if (optionsValidation.length === 0) {
+              // no validation errors
+              // package app
+              const responseData = await packageForIOS(options);
+              progress.report({ message: "Converting to zip..." });
+              await convertPackageToZip(responseData, options.bundleId);
+
+              // open iOS docs
+              await vscode.env.openExternal(vscode.Uri.parse(iosDocsURL));
+            } else {
+              // validation errors
+              await vscode.window.showErrorMessage(
+                `There are some problems with your manifest that have prevented us from packaging: ${optionsValidation.join(
+                  "\n"
+                )}`
+              );
+              return;
+            }
+          }
+        }
+      );
+    } catch (err: any) {
+      vscode.window.showErrorMessage(
+        `There was an error packaging your app: ${
+          err && err.message ? err.message : err
+        }`
+      );
+    }
+  } else if (packageType === "Android") {
     try {
       vscode.window.withProgress(
         {
@@ -159,6 +208,11 @@ export async function packageApp(): Promise<void> {
 
 async function getAndroidPackageOptions() {
   const options = await buildAndroidOptions();
+  return options;
+}
+
+async function getIOSPackageOptions() {
+  const options = await buildIOSOptions();
   return options;
 }
 
@@ -255,10 +309,7 @@ function validateInput(input: string | undefined, question: Question): string {
   return validatedInput === undefined ? "" : validatedInput;
 }
 
-async function writeMSIXToFile(
-  responseData: any,
-  name: string
-): Promise<void> {
+async function writeMSIXToFile(responseData: any, name: string): Promise<void> {
   try {
     const test = await vscode.window.showSaveDialog({
       title: "Save your package",

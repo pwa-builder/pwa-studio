@@ -5,8 +5,12 @@ import { MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../services/package/package-android-app";
+import { URL } from "url";
 
-export const WindowsDocsURL = "https://blog.pwabuilder.com/docs/windows-platform/";
+export const WindowsDocsURL =
+  "https://blog.pwabuilder.com/docs/windows-platform/";
+
+export const iosDocsURL = "https://blog.pwabuilder.com/docs/ios-platform/";
 
 const advancedAndroidSettings: AndroidPackageOptions = {
   appVersion: "1.0.0.0",
@@ -53,7 +57,7 @@ const advancedAndroidSettings: AndroidPackageOptions = {
   splashScreenFadeOutDuration: 300,
   startUrl: "/",
   themeColor: "#FFFFFF",
-  shareTarget: ([] as any),
+  shareTarget: [] as any,
   webManifestUrl: "https://myapp.com/manifest.json",
 };
 
@@ -114,7 +118,74 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
   return response;
 }
 
-export async function buildAndroidOptions(): Promise<AndroidPackageOptions | undefined> {
+export async function buildIOSPackage(options: IOSAppPackageOptions) {
+  const generateAppUrl = "https://pwabuilder-ios.azurewebsites.net/packages/create";
+  const response = await fetch(generateAppUrl, {
+    method: "POST",
+    body: JSON.stringify(options),
+    headers: new Headers({ "content-type": "application/json" }),
+  });
+
+  return response;
+}
+
+export async function packageForIOS(options: any): Promise<any> {
+  const responseData = await buildIOSPackage(options);
+  return await responseData.blob();
+}
+
+export async function buildIOSOptions(): Promise<any | undefined> {
+  const appUrl = await vscode.window.showInputBox({
+    prompt: "Enter the URL to your app",
+  });
+
+  if (!appUrl) {
+    await vscode.window.showErrorMessage("Please enter a URL");
+    return;
+  }
+
+  const manifestUrl = await vscode.window.showInputBox({
+    prompt: "Enter the URL to your manifest",
+  });
+
+  let manifest = undefined;
+
+  if (manifestUrl) {
+    // fetch manifest from manifestUrl using node-fetch
+    const manifestData = await (await fetch(manifestUrl)).json();
+    manifest = manifestData;
+
+    const host =
+      [appUrl, manifestUrl].map((i) => tryGetHost(i)).find((i) => !!i) || "";
+
+    // find icon with a size of 512x512 from manifest.icons
+    const icon = manifest.icons.find((icon: any) => {
+      if (icon.sizes && icon.sizes.includes("512x512")) {
+        return icon;
+      }
+    });
+
+    return {
+      name: manifest.short_name || manifest.name || "My PWA",
+      bundleId: iosGenerateBundleId(host),
+      url: new URL(manifest.start_url || "/", manifestUrl).toString(),
+      imageUrl: `${appUrl}/${icon.src}`,
+      splashColor: manifest.background_color || "#ffffff",
+      progressBarColor: manifest.theme_color || "#000000",
+      statusBarColor:
+        manifest.theme_color || manifest.background_color || "#ffffff",
+      permittedUrls: [],
+      manifestUrl: manifestUrl,
+      manifest: manifest,
+    };
+  } else {
+    return undefined;
+  }
+}
+
+export async function buildAndroidOptions(): Promise<
+  AndroidPackageOptions | undefined
+> {
   const appUrl = await vscode.window.showInputBox({
     prompt: "Enter the URL to your app",
   });
@@ -213,7 +284,8 @@ export async function buildAndroidOptions(): Promise<AndroidPackageOptions | und
               },
             ],
             {
-              title: "Save advanced settings and generate my package? Ensure you have edited your settings first.",
+              title:
+                "Save advanced settings and generate my package? Ensure you have edited your settings first.",
             }
           );
 
@@ -281,5 +353,110 @@ export async function buildAndroidOptions(): Promise<AndroidPackageOptions | und
       shareTarget: manifest.share_target || [],
       webManifestUrl: manifestUrl,
     };
+  }
+}
+
+/**
+ * Package options for PWABuilder's iOS platform. Should match https://github.com/pwa-builder/pwabuilder-ios/blob/main/Microsoft.PWABuilder.IOS.Web/Models/IOSAppPackageOptions.cs
+ */
+export interface IOSAppPackageOptions {
+  name: string;
+  bundleId: string;
+  url: string;
+  imageUrl: string;
+  splashColor: string;
+  progressBarColor: string;
+  statusBarColor: string;
+  permittedUrls: string[];
+  manifestUrl: string;
+  manifest: any;
+}
+
+export function iosGenerateBundleId(host: string): string {
+  const parts = host
+    .split(".")
+    .reverse()
+    .map((p) => p.trim().toLowerCase())
+    .filter((p) => p.length > 0);
+  return parts.join(".");
+}
+
+/**
+ * Validates the iOS app package options and returns errors as an array of strings.
+ * The array will be empty if there are no errors.
+ * @param options The options to validate.
+ */
+export function validateIOSOptions(options: IOSAppPackageOptions): string[] {
+  const errors: string[] = [];
+
+  if (!options.bundleId) {
+    errors.push("Bundle ID required");
+  }
+  if (options.bundleId.length < 3) {
+    errors.push("Bundle ID must be at least 3 characters in length");
+  }
+  if (options.bundleId.includes("*")) {
+    errors.push("Bundle ID cannot contain asterisk");
+  }
+
+  if (!options.imageUrl) {
+    errors.push("Image URL required");
+  }
+
+  if (!options.manifest) {
+    errors.push("Manifest required");
+  }
+
+  if (!options.manifestUrl) {
+    errors.push("Manifest URL required");
+  }
+
+  if (!options.name) {
+    errors.push("Name required");
+  }
+  if (options.name.length < 3) {
+    errors.push("Name must be at least 3 characters in length");
+  }
+
+  if (!options.progressBarColor) {
+    errors.push("Progress bar color required");
+  }
+
+  if (!options.splashColor) {
+    errors.push("Splash color required");
+  }
+
+  if (!options.statusBarColor) {
+    errors.push("Status bar color required");
+  }
+
+  if (!options.url) {
+    errors.push("URL required");
+  }
+
+  return errors;
+}
+
+export function emptyIOSPackageOptions(): IOSAppPackageOptions {
+  return {
+    name: "",
+    bundleId: "",
+    url: "",
+    imageUrl: "",
+    splashColor: "#ffffff",
+    progressBarColor: "#000000",
+    statusBarColor: "#ffffff",
+    permittedUrls: [],
+    manifestUrl: "",
+    manifest: {},
+  };
+}
+
+function tryGetHost(url: string): string | null {
+  try {
+    return new URL(url).host;
+  } catch (hostError) {
+    console.warn("Unable to parse host URL due to error", url, hostError);
+    return null;
   }
 }
