@@ -12,6 +12,19 @@ export async function handleServiceWorkerCommand(): Promise<void> {
     "**/workbox-config.js"
   );
 
+  const swFileWatcher = vscode.workspace.createFileSystemWatcher(
+    "**/sw.js",
+    false,
+    true
+  );
+
+  swFileWatcher.onDidCreate(async (uri) => {
+    if (uri) {
+      swFileWatcher.dispose();
+      await handleAddingToIndex();
+    }
+  });
+
   watcher.onDidCreate((uri) => {
     if (uri) {
       watcher.dispose();
@@ -56,11 +69,6 @@ export function generateServiceWorker() {
     async (progress) => {
       progress.report({ message: "Generating Service Worker..." });
       vsTerminal.sendText("workbox generateSW");
-      progress.report({ message: "Service Worker generated!" });
-
-      findWorker();
-
-      await handleAddingToIndex();
     }
   );
 }
@@ -86,38 +94,46 @@ export function getWorker() {
 }
 
 export async function findWorker() {
-  const worker = await vscode.workspace.findFiles(
-    "**/service-worker.js",
-    "**​/node_modules/**"
-  );
-
-  if (worker.length > 0) {
-    existingWorker = worker[0];
-  } else {
-    const workerTryTwo = await vscode.workspace.findFiles(
-      "**/pwabuider-sw.ts",
-      "**​/node_modules/**"
-    );
-
-    if (workerTryTwo.length > 0) {
-      existingWorker = workerTryTwo[0];
-    } else {
-      const workerTryThree = await vscode.workspace.findFiles(
-        "**/sw.js",
+  return new Promise<vscode.Uri>(async (resolve, reject) => {
+    try {
+      const worker = await vscode.workspace.findFiles(
+        "**/service-worker.js",
         "**​/node_modules/**"
       );
-      if (workerTryThree.length > 0) {
-        existingWorker = workerTryThree[0];
+
+      if (worker.length > 0) {
+        existingWorker = worker[0];
+      } else {
+        const workerTryTwo = await vscode.workspace.findFiles(
+          "**/pwabuider-sw.ts",
+          "**​/node_modules/**"
+        );
+
+        if (workerTryTwo.length > 0) {
+          existingWorker = workerTryTwo[0];
+        } else {
+          const workerTryThree = await vscode.workspace.findFiles(
+            "**/sw.js",
+            "**​/node_modules/**"
+          );
+          if (workerTryThree.length > 0) {
+            existingWorker = workerTryThree[0];
+          }
+        }
       }
+
+      console.log("existingWorker", existingWorker);
+
+      if (existingWorker) {
+        // do refreshPackageView command
+        await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+      }
+
+      resolve(existingWorker);
+    } catch (err) {
+      reject(`Error adding service worker to index file: ${err}`);
     }
-  }
-
-  if (existingWorker) {
-    // do refreshPackageView command
-    await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
-  }
-
-  return existingWorker;
+  });
 }
 
 async function runWorkboxTool(): Promise<void> {
@@ -146,6 +162,8 @@ async function handleAddingToIndex(): Promise<void> {
     "**/node_modules/**"
   );
 
+  console.log("indexFileData", indexFileData);
+
   if (indexFileData && indexFileData.length > 0) {
     indexFile = indexFileData[0];
   } else {
@@ -164,8 +182,11 @@ async function handleAddingToIndex(): Promise<void> {
     }
   }
 
-  const worker = getWorker();
-  const goodPath = vscode.workspace.asRelativePath(worker.fsPath);
+  const worker = await findWorker();
+  console.log("worker", worker);
+  const goodPath = vscode.workspace.asRelativePath(
+    worker.fsPath || worker.path
+  );
 
   const registerCommand = `<script>navigator.serviceWorker.register("${goodPath}")</script>`;
 
@@ -181,6 +202,8 @@ async function handleAddingToIndex(): Promise<void> {
       new vscode.SnippetString(registerCommand),
       start.translate(-1, 0)
     );
+
+    vscode.window.showInformationMessage("Service Worker added to index.html");
 
     const docsAnswer = await vscode.window.showInformationMessage(
       "Check the Workbox documentation to add workbox to your existing build command.",
