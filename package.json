@@ -21,10 +21,71 @@
     "onCommand:pwa-studio.chooseServiceWorker",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
-    "onView: packagePanel"
+    "onView:packagePanel"
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "walkthroughs": [
+      {
+        "id": "walkthrough.PWAStudio",
+        "title": "PWA Studio Walkthrough",
+        "media": {
+          "image": "/resources/pwabuilder-icon.svg"
+        },
+        "description": "A getting started guide for the PWABuilder pwa-studio extension",
+        "steps": [
+          {
+            "id": "startNewPWA",
+            "title": "Start a new PWA",
+            "description": "Looking to build a new PWA? This command will generate a new codebase for you using the PWABuilder pwa-starter app template.\n[Start new PWA](command:pwa-studio.newPwaStarter)",
+            "media": {
+              "image": "/resources/start_new.png",
+              "altText": "Start new PWA"
+            },
+            "completionEvents": [
+              "onCommand:pwa-studio.newPwaStarter"
+            ]
+          },
+          {
+            "id": "validatePWA",
+            "title": "Validate your PWA",
+            "description": "Ensure your PWA is ready to be deployed to the web and app stores! \n[Validate PWA](command:pwa-studio.validatePWA)",
+            "media": {
+              "image": "/resources/validate.png",
+              "altText": "Validate your PWA"
+            },
+            "completionEvents": [
+              "onView:validationPanel",
+              "onCommand:pwa-studio.validatePWA"
+            ]
+          },
+          {
+            "id": "publishPWA",
+            "title": "Publish your PWA with Azure Static Web Apps",
+            "description": "Learn how to publish your PWA to Azure Static Web Apps in minutes! \n[Publish App](command:pwa-studio.setWebURL)",
+            "media": {
+              "image": "/resources/publish.png",
+              "altText": "Publish a new PWA to the web!"
+            },
+            "completionEvents": [
+              "onCommand:pwa-studio.setWebURL"
+            ]
+          },
+          {
+            "id": "packageApps",
+            "title": "Package your PWA to the Microsoft Store",
+            "description": "Package your PWA for the Microsoft Store! \n[Package App](command:pwa-studio.packageApp)",
+            "media": {
+              "image": "/resources/package.png",
+              "altText": "Package your app for the Microsoft Store"
+            },
+            "completionEvents": [
+              "onCommand:getting-started-sample.runCommand"
+            ]
+          }
+        ]
+      }
+    ],
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
