@@ -105,7 +105,7 @@ export async function findWorker() {
         existingWorker = worker[0];
       } else {
         const workerTryTwo = await vscode.workspace.findFiles(
-          "**/pwabuider-sw.ts",
+          "**/pwabuilder-sw.ts",
           "**​/node_modules/**"
         );
 
@@ -121,8 +121,6 @@ export async function findWorker() {
           }
         }
       }
-
-      console.log("existingWorker", existingWorker);
 
       if (existingWorker) {
         // do refreshPackageView command
@@ -183,44 +181,45 @@ async function handleAddingToIndex(): Promise<void> {
   }
 
   const worker = await findWorker();
-  console.log("worker", worker);
-  const goodPath = vscode.workspace.asRelativePath(
-    worker.fsPath || worker.path
-  );
-
-  const registerCommand = `<script>navigator.serviceWorker.register("${goodPath}")</script>`;
-
-  if (indexFile) {
-    const editor = await vscode.window.showTextDocument(indexFile);
-
-    // find head in index file
-    const start = editor.document.positionAt(
-      editor.document.getText().indexOf("</head>")
+  if (worker) {
+    const goodPath = vscode.workspace.asRelativePath(
+      worker.fsPath || worker.path
     );
-    // insert registerCommand in head
-    editor.insertSnippet(
-      new vscode.SnippetString(registerCommand),
-      start.translate(-1, 0)
-    );
-
-    vscode.window.showInformationMessage("Service Worker added to index.html");
-
-    const docsAnswer = await vscode.window.showInformationMessage(
-      "Check the Workbox documentation to add workbox to your existing build command.",
-      {},
-      {
-        title: "Open Workbox Documentation",
-      }
-    );
-
-    if (docsAnswer && docsAnswer.title === "Open Workbox Documentation") {
-      await vscode.env.openExternal(
-        vscode.Uri.parse(
-          "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
-        )
+  
+    const registerCommand = `<script>navigator.serviceWorker.register("${goodPath}")</script>`;
+  
+    if (indexFile) {
+      const editor = await vscode.window.showTextDocument(indexFile);
+  
+      // find head in index file
+      const start = editor.document.positionAt(
+        editor.document.getText().indexOf("</head>")
       );
+      // insert registerCommand in head
+      editor.insertSnippet(
+        new vscode.SnippetString(registerCommand),
+        start.translate(-1, 0)
+      );
+  
+      vscode.window.showInformationMessage("Service Worker added to index.html");
+  
+      const docsAnswer = await vscode.window.showInformationMessage(
+        "Check the Workbox documentation to add workbox to your existing build command.",
+        {},
+        {
+          title: "Open Workbox Documentation",
+        }
+      );
+  
+      if (docsAnswer && docsAnswer.title === "Open Workbox Documentation") {
+        await vscode.env.openExternal(
+          vscode.Uri.parse(
+            "https://developers.google.com/web/tools/workbox/modules/workbox-cli#setup_and_configuration"
+          )
+        );
+      }
+  
+      await vscode.commands.executeCommand("pwa-studio.refreshSWView");
     }
-
-    await vscode.commands.executeCommand("pwa-studio.refreshSWView");
   }
 }
