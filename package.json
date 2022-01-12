@@ -11,7 +11,8 @@
     "vscode": "^1.62.0"
   },
   "categories": [
-    "Other"
+    "Other",
+    "Snippets"
   ],
   "activationEvents": [
     "onCommand:pwa-studio.helloWorld",
@@ -29,6 +30,16 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "snippets": [
+      {
+        "language": "json",
+        "path": "/snippets/pwa-windows.json.code-snippets"
+      },
+      {
+        "language": "javascript",
+        "path": "/snippets/pwa-windows.js.code-snippets"
+      }
+    ],
     "walkthroughs": [
       {
         "id": "walkthrough.PWAStudio",
