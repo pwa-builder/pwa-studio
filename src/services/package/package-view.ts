@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as path from "path";
 import { getWorker } from "../service-worker";
 import { getManifest } from "../manifest/manifest-service";
