@@ -13,13 +13,14 @@ This extension will turn your VSCode into the best developer environment for [Pr
 ## Features
 This extension brings the features of [pwabuilder.com](https://pwabuilder.com/) to VSCode!
 
-- Start building a new PWA with the [pwa-starter](https://aka.ms/pwa-starter)
-- Add a Web Manifest and Service Worker to your existing Web App
-- Generate Icons for your PWA
-- Package your PWA for the Microsoft Store, Google Play and the Apple App Store
-- Validate that your PWA is Store Ready and installable in the Browser
-- Improve your PWA with our snippets!
-- Learn how to publish your PWA to the web with [Azure Static Web Apps](https://azure.microsoft.com/en-us/services/app-service/static/)
+- [Start building a new PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Start-building-a-new-PWA), with all the best practices, an excellent developer experience and exceptional performance, in seconds using the [PWABuilder pwa-starter](https://aka.ms/pwa-starter).
+- [Learn how to publish your app to the Web](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Publish-your-PWA-to-the-web) with [Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/overview)
+- [Add a Web Manifest and Service Worker to your existing web app](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Add-a-Web-Manifest-and-Service-Worker-to-your-existing-web-app)
+- [Package your PWA for the Microsoft Store, Google Play, and Apple App Store](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Package-your-PWA-for-the-app-stores!)
+- [Generate Icons for your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Generate-Icons-for-your-PWA)
+- [Validate that your PWA is installable in the browser and is ready to publish to the app stores](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Validate-your-PWA)
+- [Learn more about the features of the Web Manifest to enable new features in your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Learn-more-about-the-features-of-the-Web-Manifest)
+- Use our snippets to quickly and easily implement native features that can improve the User Experience of your PWA
 
 ## Getting Started
 - [Install the extension from the VSCode Marketplace](    https://marketplace.visualstudio.com/itemsitemName=pwa-builder.vscode-pwa-builder)
