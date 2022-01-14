@@ -165,7 +165,7 @@ export function getWebviewContent() {
           <div class="six">
             <label for="file_input">Choose a 512x512 icon:</label>
             <div class="input-area">
-              <input type="file" name="file_input" id="file_input" required />
+              <input type="file" name="file_input" id="file_input" accept="image/png, image/jpeg" required />
 
               <a
                 href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons"
