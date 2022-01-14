@@ -6,6 +6,8 @@ import {
   handleServiceWorkerCommand,
   generateServiceWorker,
   chooseServiceWorker,
+  handleAdvServiceWorkerCommand,
+  updateAdvServiceWorker,
 } from "./services/service-worker";
 import {
   handleManifestCommand,
@@ -35,6 +37,8 @@ const refreshViewCommandID = "pwa-studio.refreshEntry";
 const refreshSWCommandID = "pwa-studio.refreshSWView";
 const refreshPackageCommandID = "pwa-studio.refreshPackageView";
 const chooseServiceWorkerCommandID = "pwa-studio.chooseServiceWorker";
+const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
+const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 
@@ -49,6 +53,20 @@ export function activate(context: vscode.ExtensionContext) {
   );
   serviceWorkerStatusBarItem.text = "Generate Service Worker";
   serviceWorkerStatusBarItem.show();
+
+  const generateADVWorkerStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    400
+  );
+  generateADVWorkerStatusBarItem.text = "Generate Advanced Service Worker";
+  generateADVWorkerStatusBarItem.show();
+
+  const updateADVWorkerStatusBarItem = vscode.window.createStatusBarItem(
+    vscode.StatusBarAlignment.Left,
+    450
+  );
+  updateADVWorkerStatusBarItem.text = "Update Precache Manifest";
+  updateADVWorkerStatusBarItem.show();
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -172,6 +190,22 @@ export function activate(context: vscode.ExtensionContext) {
 
   serviceWorkerStatusBarItem.command = generateWorkerCommandId;
 
+  const generateAdvWorkerCommand = vscode.commands.registerCommand(
+    generateADVWorkerCommandID,
+    async () => {
+      handleAdvServiceWorkerCommand();
+    }
+  );
+  generateADVWorkerStatusBarItem.command = generateADVWorkerCommandID;
+
+  const updateAdvWorkerCommand = vscode.commands.registerCommand(
+    updateADVWorkerCommandID,
+    async () => {
+      updateAdvServiceWorker();
+    }
+  );
+  updateADVWorkerStatusBarItem.command = updateADVWorkerCommandID;
+
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
     packageApp
@@ -219,6 +253,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(chooseManifestCommand);
   context.subscriptions.push(setAppURLCommand);
   context.subscriptions.push(generateIconsCommand);
+  context.subscriptions.push(generateAdvWorkerCommand);
+  context.subscriptions.push(updateAdvWorkerCommand);
 }
 
 export function deactivate() {}
