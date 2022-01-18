@@ -54,13 +54,6 @@ export function activate(context: vscode.ExtensionContext) {
   serviceWorkerStatusBarItem.text = "Generate Service Worker";
   serviceWorkerStatusBarItem.show();
 
-  const generateADVWorkerStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    400
-  );
-  generateADVWorkerStatusBarItem.text = "Generate Advanced Service Worker";
-  generateADVWorkerStatusBarItem.show();
-
   const updateADVWorkerStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     450
@@ -180,6 +173,7 @@ export function activate(context: vscode.ExtensionContext) {
       serviceWorkerStatusBarItem.show();
     }
   );
+  serviceWorkerStatusBarItem.command = serviceWorkerCommandId;
 
   const generateWorker = vscode.commands.registerCommand(
     generateWorkerCommandId,
@@ -188,15 +182,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  serviceWorkerStatusBarItem.command = generateWorkerCommandId;
-
   const generateAdvWorkerCommand = vscode.commands.registerCommand(
     generateADVWorkerCommandID,
     async () => {
       handleAdvServiceWorkerCommand();
     }
   );
-  generateADVWorkerStatusBarItem.command = generateADVWorkerCommandID;
 
   const updateAdvWorkerCommand = vscode.commands.registerCommand(
     updateADVWorkerCommandID,

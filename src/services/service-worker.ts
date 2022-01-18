@@ -31,12 +31,27 @@ export async function updateAdvServiceWorker() {
       "Updating your precache manifest"
     );
 
-    const swSrc = swFile.fsPath;
-    const swDest = swFile.fsPath;
-    await injectManifest({
-      swSrc,
-      swDest,
+    const buildDir = await vscode.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      title: "Select your build directory",
     });
+
+    if (buildDir) {
+      const swSrc = swFile.fsPath;
+      const swDest = swFile.fsPath;
+      await injectManifest({
+        swSrc,
+        swDest,
+        globDirectory: buildDir[0].fsPath
+      });
+    }
+    else {
+      vscode.window.showErrorMessage(
+        "You must choose a build directory, normally this is either dist, public or build"
+      );
+    }
   }
 }
 
@@ -50,7 +65,15 @@ export async function handleAdvServiceWorkerCommand() {
       : undefined,
   });
 
-  if (uri) {
+
+  const buildDir = await vscode.window.showOpenDialog({
+    canSelectFiles: false,
+    canSelectFolders: true,
+    canSelectMany: false,
+    title: "Select your build directory",
+  });
+
+  if (uri && buildDir) {
     const advSWFileWatcher = vscode.workspace.createFileSystemWatcher(
       "**/pwabuilder-adv-sw.js"
     );
@@ -73,22 +96,24 @@ export async function handleAdvServiceWorkerCommand() {
       );
 
       vscode.window.showInformationMessage(
-        "Installing the needed dependencies"
+        "Installing the needed dependencies and Injecting a precache manifest"
       );
 
       vsTerminal.show();
       vsTerminal.sendText("npm install workbox-precaching");
 
-      vscode.window.showInformationMessage(
-        "Injecting a precache manifest"
-      );
-
       const swSrc = uri.fsPath;
       const swDest = uri.fsPath;
-      await injectManifest({
-        swSrc,
-        swDest,
-      });
+      try {
+        const test = await injectManifest({
+          swSrc,
+          swDest,
+          globDirectory: buildDir[0].fsPath
+        });
+      }
+      catch (err) {
+        console.log("error", err);
+      }
 
       vscode.window.showInformationMessage(
         "Your Service Worker will now precache your assets. Remember to tap the `Update Precache Manifest` button when you do a new build of your PWA"
@@ -141,23 +166,43 @@ export async function handleServiceWorkerCommand(): Promise<void> {
     }
   });
 
-  try {
-    vscode.window.withProgress(
+  const answer = await vscode.window.showQuickPick(
+    [
       {
-        location: vscode.ProgressLocation.Notification,
+        label: "Basic",
       },
-      async (progress) => {
-        progress.report({ message: "Generating Workbox Config..." });
-        await runWorkboxTool();
-        progress.report({ message: "Workbox Config added!" });
-      }
-    );
-  } catch (err) {
-    vscode.window.showErrorMessage(
-      err && (err as Error).message
-        ? (err as Error).message
-        : "There was an issue adding your service worker"
-    );
+      {
+        label: "Advanced",
+      },
+    ],
+    {
+      title:
+        "Would you like to generate a Basic or Advanced Service Worker? Basic is a good fit for most apps, however if you want to have full control over your Service Worker, Advanced is the best option.",
+    }
+  );
+
+  if (answer && answer.label === "Advanced") {
+    handleAdvServiceWorkerCommand();
+  }
+  else {
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Generating Workbox Config..." });
+          await runWorkboxTool();
+          progress.report({ message: "Workbox Config added!" });
+        }
+      );
+    } catch (err) {
+      vscode.window.showErrorMessage(
+        err && (err as Error).message
+          ? (err as Error).message
+          : "There was an issue adding your service worker"
+      );
+    }
   }
 }
 
