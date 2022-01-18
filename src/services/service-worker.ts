@@ -1,9 +1,132 @@
+import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
+import { injectManifest } from "workbox-build";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
 
 const vsTerminal = vscode.window.createTerminal();
 
 let existingWorker: any | undefined = undefined;
+
+const advSW = `
+  import { precacheAndRoute } from 'workbox-precaching/precacheAndRoute';
+
+  precacheAndRoute(self.__WB_MANIFEST);
+`;
+
+export async function updateAdvServiceWorker() {
+  let swFileDialogData = await vscode.window.showOpenDialog({
+    canSelectFiles: true,
+    canSelectFolders: false,
+    canSelectMany: false,
+    title: "Select your Service Worker",
+    filters: {
+      JavaScript: ["js"],
+    },
+  });
+
+  if (swFileDialogData) {
+    let swFile = swFileDialogData[0];
+
+    vscode.window.showInformationMessage(
+      "Updating your precache manifest"
+    );
+
+    const buildDir = await vscode.window.showOpenDialog({
+      canSelectFiles: false,
+      canSelectFolders: true,
+      canSelectMany: false,
+      title: "Select your build directory",
+    });
+
+    if (buildDir) {
+      const swSrc = swFile.fsPath;
+      const swDest = swFile.fsPath;
+      await injectManifest({
+        swSrc,
+        swDest,
+        globDirectory: buildDir[0].fsPath
+      });
+    }
+    else {
+      vscode.window.showErrorMessage(
+        "You must choose a build directory, normally this is either dist, public or build"
+      );
+    }
+  }
+}
+
+export async function handleAdvServiceWorkerCommand() {
+  const uri = await vscode.window.showSaveDialog({
+    title: "Where would you like to save your new Service Worker to?",
+    defaultUri: vscode.workspace.workspaceFolders
+      ? vscode.Uri.file(
+        `${vscode.workspace.workspaceFolders[0].uri.fsPath}/pwabuilder-adv-sw.js`
+      )
+      : undefined,
+  });
+
+
+  const buildDir = await vscode.window.showOpenDialog({
+    canSelectFiles: false,
+    canSelectFolders: true,
+    canSelectMany: false,
+    title: "Select your build directory",
+  });
+
+  if (uri && buildDir) {
+    const advSWFileWatcher = vscode.workspace.createFileSystemWatcher(
+      "**/pwabuilder-adv-sw.js"
+    );
+
+    advSWFileWatcher.onDidCreate(async (uri) => {
+      if (uri) {
+        advSWFileWatcher.dispose();
+        await handleAddingToIndex();
+      }
+    });
+
+    vscode.window.showInformationMessage(
+      "Writing a new service worker to your PWA..."
+    );
+
+    try {
+      await writeFile(
+        uri.fsPath,
+        advSW
+      );
+
+      vscode.window.showInformationMessage(
+        "Installing the needed dependencies and Injecting a precache manifest"
+      );
+
+      vsTerminal.show();
+      vsTerminal.sendText("npm install workbox-precaching");
+
+      const swSrc = uri.fsPath;
+      const swDest = uri.fsPath;
+      try {
+        const test = await injectManifest({
+          swSrc,
+          swDest,
+          globDirectory: buildDir[0].fsPath
+        });
+      }
+      catch (err) {
+        console.log("error", err);
+      }
+
+      vscode.window.showInformationMessage(
+        "Your Service Worker will now precache your assets. Remember to tap the `Update Precache Manifest` button when you do a new build of your PWA"
+      );
+      
+    }
+    catch (err) {
+      await vscode.window.showErrorMessage(
+        `Error writing file to your PWA: ${err}`
+      );
+    }
+  }
+}
 
 export async function handleServiceWorkerCommand(): Promise<void> {
   //setup file watcher for workbox config file
@@ -43,23 +166,43 @@ export async function handleServiceWorkerCommand(): Promise<void> {
     }
   });
 
-  try {
-    vscode.window.withProgress(
+  const answer = await vscode.window.showQuickPick(
+    [
       {
-        location: vscode.ProgressLocation.Notification,
+        label: "Basic",
       },
-      async (progress) => {
-        progress.report({ message: "Generating Workbox Config..." });
-        await runWorkboxTool();
-        progress.report({ message: "Workbox Config added!" });
-      }
-    );
-  } catch (err) {
-    vscode.window.showErrorMessage(
-      err && (err as Error).message
-        ? (err as Error).message
-        : "There was an issue adding your service worker"
-    );
+      {
+        label: "Advanced",
+      },
+    ],
+    {
+      title:
+        "Would you like to generate a Basic or Advanced Service Worker? Basic is a good fit for most apps, however if you want to have full control over your Service Worker, Advanced is the best option.",
+    }
+  );
+
+  if (answer && answer.label === "Advanced") {
+    handleAdvServiceWorkerCommand();
+  }
+  else {
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Generating Workbox Config..." });
+          await runWorkboxTool();
+          progress.report({ message: "Workbox Config added!" });
+        }
+      );
+    } catch (err) {
+      vscode.window.showErrorMessage(
+        err && (err as Error).message
+          ? (err as Error).message
+          : "There was an issue adding your service worker"
+      );
+    }
   }
 }
 
@@ -100,25 +243,34 @@ export function getWorker() {
 export async function findWorker() {
   return new Promise<vscode.Uri>(async (resolve, reject) => {
     try {
-      const worker = await vscode.workspace.findFiles(
-        "**/sw.js"
-      );
+      const advWorker = await vscode.workspace.findFiles(
+        "**/pwabuilder-adv-sw.js"
+      );;
 
-      if (worker.length > 0) {
-        existingWorker = worker[0];
-      } else {
-        const workerTryTwo = await vscode.workspace.findFiles(
-          "**/pwabuilder-sw.ts"
+      if (advWorker.length > 0) {
+        existingWorker = advWorker[0];
+      }
+      else {
+        const worker = await vscode.workspace.findFiles(
+          "**/sw.js"
         );
-
-        if (workerTryTwo.length > 0) {
-          existingWorker = workerTryTwo[0];
+  
+        if (worker.length > 0) {
+          existingWorker = worker[0];
         } else {
-          const workerTryThree = await vscode.workspace.findFiles(
-            "**/service-worker.js"
+          const workerTryTwo = await vscode.workspace.findFiles(
+            "**/pwabuilder-sw.ts"
           );
-          if (workerTryThree.length > 0) {
-            existingWorker = workerTryThree[0];
+  
+          if (workerTryTwo.length > 0) {
+            existingWorker = workerTryTwo[0];
+          } else {
+            const workerTryThree = await vscode.workspace.findFiles(
+              "**/service-worker.js"
+            );
+            if (workerTryThree.length > 0) {
+              existingWorker = workerTryThree[0];
+            }
           }
         }
       }
