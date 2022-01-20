@@ -70,7 +70,7 @@ export function getWebviewContent() {
                 required
               />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
                 target="_blank"
                 rel="noopener"
               >
@@ -93,7 +93,7 @@ export function getWebviewContent() {
                 required
               />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
                 target="_blank"
                 rel="noopener"
               >
@@ -110,7 +110,7 @@ export function getWebviewContent() {
             <div class="input-area">
               <input type="text" name="scope" id="scope" value="/" required />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
                 target="_blank"
                 rel="noopener"
               >
@@ -133,7 +133,7 @@ export function getWebviewContent() {
                 required
               />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
                 target="_blank"
                 rel="noopener"
               >
@@ -150,7 +150,7 @@ export function getWebviewContent() {
             <div class="input-area">
               <input type="text" name="lang" id="lang" value="en" required />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/lang"
                 target="_blank"
                 rel="noopener"
               >
@@ -195,7 +195,7 @@ export function getWebviewContent() {
 placeholder description</textarea
             >
             <a
-              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+              href="https://developer.mozilla.org/en-US/docs/Web/Manifest/description"
               target="_blank"
               rel="noopener"
             >
@@ -218,7 +218,7 @@ placeholder description</textarea
                 required
               />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color"
                 target="_blank"
                 rel="noopener"
               >
@@ -241,7 +241,7 @@ placeholder description</textarea
                 required
               />
               <a
-                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
+                href="https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color"
                 target="_blank"
                 rel="noopener"
               >
