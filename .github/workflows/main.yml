@@ -43,7 +43,7 @@ jobs:
           vsce package --out package.vsix
           
       - name: Create Release With Asset
-        uses: Hs1r1us/Release-AIO@v1
+        uses: Hs1r1us/Release-AIO
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
