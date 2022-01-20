@@ -13,7 +13,7 @@ const noNpmWarning: string =
 const starterRepositoryURI: string =
   "https://github.com/pwa-builder/pwa-starter.git";
 
-var repositoryName: string | undefined = undefined;
+let repositoryName: string | undefined = undefined;
 const vsTerminal = vscode.window.createTerminal();
 
 export async function setUpLocalPwaStarterRepository(): Promise<void> {
@@ -48,7 +48,7 @@ function openRepositoryWithCode(): void {
 }
 
 function tryNpmInstall(): boolean {
-  var didNpmInstall: boolean = true;
+  let didNpmInstall: boolean = true;
   if (isNpmInstalled()) {
     npmInstall();
   } else {
@@ -69,7 +69,7 @@ function changeDirectory(pathToDirectory: string | undefined): void {
 }
 
 export function isNpmInstalled(): boolean {
-  var isNpmInstalled: boolean = true;
+  let isNpmInstalled: boolean = true;
 
   if (!shell.which("npm")) {
     isNpmInstalled = false;
@@ -79,7 +79,7 @@ export function isNpmInstalled(): boolean {
 }
 
 function tryCloneFromGithub(): boolean {
-  var wasCloned: boolean = true;
+  let wasCloned: boolean = true;
   if (isGitInstalled()) {
     cloneFromGithub();
   } else {
@@ -95,7 +95,7 @@ function cloneFromGithub(): void {
 }
 
 function isGitInstalled(): boolean {
-  var isGitInstalled: boolean = true;
+  let isGitInstalled: boolean = true;
 
   if (!shell.which("git")) {
     isGitInstalled = false;

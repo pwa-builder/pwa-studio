@@ -4,6 +4,10 @@ import * as path from "path";
 import { readFile } from "fs/promises";
 import { findWorker } from "../service-worker";
 
+/**
+ * This is the Service Worker Panel
+ */
+
 export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
   constructor(private workspaceRoot: string) {}
 

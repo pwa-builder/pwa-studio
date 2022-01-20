@@ -19,7 +19,7 @@ export async function setURL(url: string | undefined): Promise<void> {
   }
 }
 
-export async function askForUrl() {
+export async function askForUrl(): Promise<void> {
   // ask if user has a url
   const pwaUrlQuestion = await vscode.window.showQuickPick(["Yes", "No"], {
     placeHolder: "Have you published your PWA to the web?",
@@ -53,7 +53,7 @@ export async function askForUrl() {
 }
 
 // Opens the Azure Command Walkthrough
-async function azureCommandWalkthrough() {
+async function azureCommandWalkthrough(): Promise<void> {
   // ask if they have an azure account
   const azureAccountQuestion = await vscode.window.showQuickPick(
     ["Yes", "No"],
@@ -77,23 +77,27 @@ async function azureCommandWalkthrough() {
       const azureSWAQuestion = await vscode.window.showQuickPick(
         ["Open Documentation", "Cancel"],
         {
-          placeHolder: "Learn how to using the Azure Static Web Apps VSCode Extension!",
+          placeHolder:
+            "Learn how to using the Azure Static Web Apps VSCode Extension!",
         }
       );
 
       if (azureSWAQuestion !== undefined && azureSWAQuestion === "Learn How") {
         // remind about build directory for pwa-starter
-        await vscode.window.showInformationMessage("Using the PWABuilder pwa-starter? Set the build directory to /dist when asked");
+        await vscode.window.showInformationMessage(
+          "Using the PWABuilder pwa-starter? Set the build directory to /dist when asked"
+        );
 
         // open the walkthrough
         await vscode.commands.executeCommand(
           "vscode.open",
-          vscode.Uri.parse("https://docs.microsoft.com/en-us/azure/static-web-apps/getting-started?tabs=vanilla-javascript#install-azure-static-web-apps-extension")
+          vscode.Uri.parse(
+            "https://docs.microsoft.com/en-us/azure/static-web-apps/getting-started?tabs=vanilla-javascript#install-azure-static-web-apps-extension"
+          )
         );
       }
     }
-  }
-  else {
+  } else {
     // let user know they need to create an azure account
     // and open docs
     const answer = await vscode.window.showInformationMessage(
@@ -107,7 +111,7 @@ async function azureCommandWalkthrough() {
     );
 
     if (answer && answer.title === "Learn How") {
-     // open link
+      // open link
       await vscode.commands.executeCommand(
         "vscode.open",
         vscode.Uri.parse("https://azure.microsoft.com/free/")

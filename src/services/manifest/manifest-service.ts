@@ -111,9 +111,10 @@ export async function handleIcons(context: vscode.ExtensionContext) {
 
             // show manifest with vscode
             await vscode.window.showTextDocument(manifestFile);
-          }
-          else {
-            vscode.window.showErrorMessage("You first need a Web Manifest. Tap the Generate Manifest button at the bottom to get started.");
+          } else {
+            vscode.window.showErrorMessage(
+              "You first need a Web Manifest. Tap the Generate Manifest button at the bottom to get started."
+            );
           }
 
           return;

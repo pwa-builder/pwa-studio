@@ -5,6 +5,10 @@ import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
 import { findManifest, getManifest } from "../manifest/manifest-service";
 
+/**
+ * This is the Web Manifest Panel
+ */
+
 export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
   constructor(private workspaceRoot: string) {}
 
@@ -111,8 +115,11 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     return true;
   }
 
-  private _onDidChangeTreeData: vscode.EventEmitter<any | undefined | null | void> = new vscode.EventEmitter<any| undefined | null | void>();
-  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> = this._onDidChangeTreeData.event;
+  private _onDidChangeTreeData: vscode.EventEmitter<
+    any | undefined | null | void
+  > = new vscode.EventEmitter<any | undefined | null | void>();
+  readonly onDidChangeTreeData: vscode.Event<any | undefined | null | void> =
+    this._onDidChangeTreeData.event;
 
   refresh(ev: any): void {
     this._onDidChangeTreeData.fire(ev);
@@ -132,25 +139,26 @@ class ValidationItem extends vscode.TreeItem {
   }
 
   iconPath = {
-    light: this.version === "true"
-    ? path.join(
-        __filename,
-        "..",
-        "..",
-        "..",
-        "..",
-        "resources",
-        "checkmark-light.svg"
-      )
-    : path.join(
-        __filename,
-        "..",
-        "..",
-        "..",
-        "..",
-        "resources",
-        "warning-light.svg"
-      ),
+    light:
+      this.version === "true"
+        ? path.join(
+            __filename,
+            "..",
+            "..",
+            "..",
+            "..",
+            "resources",
+            "checkmark-light.svg"
+          )
+        : path.join(
+            __filename,
+            "..",
+            "..",
+            "..",
+            "..",
+            "resources",
+            "warning-light.svg"
+          ),
     dark:
       this.version === "true"
         ? path.join(

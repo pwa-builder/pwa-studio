@@ -4,7 +4,7 @@ import { Headers } from "node-fetch";
 import { MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
-import { AndroidPackageOptions } from "../services/package/package-android-app";
+import { AndroidPackageOptions } from "../android-interfaces";
 import { URL } from "url";
 
 export const WindowsDocsURL =
@@ -119,7 +119,8 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
 }
 
 export async function buildIOSPackage(options: IOSAppPackageOptions) {
-  const generateAppUrl = "https://pwabuilder-ios.azurewebsites.net/packages/create";
+  const generateAppUrl =
+    "https://pwabuilder-ios.azurewebsites.net/packages/create";
   const response = await fetch(generateAppUrl, {
     method: "POST",
     body: JSON.stringify(options),

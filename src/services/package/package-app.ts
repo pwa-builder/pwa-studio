@@ -1,14 +1,7 @@
-import * as vscode from "vscode";
 import { Buffer } from "buffer";
 import { writeFile } from "fs/promises";
+import * as vscode from "vscode";
 import { MsixInfo, Question } from "../../interfaces";
-
-import {
-  packageQuestion,
-  windowsDevQuestions,
-  windowsProdQuestions,
-} from "../../questions";
-
 import {
   buildAndroidOptions,
   buildIOSOptions,
@@ -18,16 +11,22 @@ import {
   packageForIOS,
   packageForWindows,
   validateIOSOptions,
-  WindowsDocsURL,
+  WindowsDocsURL
 } from "../../library/package-utils";
+import {
+  packageQuestion,
+  windowsDevQuestions,
+  windowsProdQuestions
+} from "../../questions";
+import { getManifest } from "../manifest/manifest-service";
+import { getWorker } from "../service-worker";
+import { getURL } from "../web-publish";
 import {
   AndroidDocsURL,
   packageForAndroid,
-  validateAndroidOptions,
+  validateAndroidOptions
 } from "./package-android-app";
-import { getURL } from "../web-publish";
-import { getWorker } from "../service-worker";
-import { getManifest } from "../manifest/manifest-service";
+import { AndroidPackageOptions } from "../../android-interfaces";
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -206,12 +205,12 @@ export async function packageApp(): Promise<void> {
   }
 }
 
-async function getAndroidPackageOptions() {
+async function getAndroidPackageOptions(): Promise<AndroidPackageOptions | undefined> {
   const options = await buildAndroidOptions();
   return options;
 }
 
-async function getIOSPackageOptions() {
+async function getIOSPackageOptions(): Promise<any> {
   const options = await buildIOSOptions();
   return options;
 }

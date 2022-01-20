@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 
-export async function handleWebhint() {
+export async function handleWebhint(): Promise<void> {
   // Hint library does not work in multiple different environments
   // because of puppeteer.
   // So we recommend the extension
