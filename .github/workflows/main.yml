@@ -1,0 +1,51 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v2.5.1
+        
+      - name: Get current version from package.json
+        uses: culshaw/read-package-node-version-actions@v1
+
+      - name: Increment Version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        with:
+          current-version: '${steps.package-node-version.outputs.version}'
+          version-fragment: 'bug'
+          
+      - name: Build
+        run: |
+          npm install vsce
+          vsce package --out package.vsix
+          
+      - name: Create Release With Asset
+        uses: Hs1r1us/Release-AIO@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          asset_files: './package.vsix'
