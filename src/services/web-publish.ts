@@ -1,3 +1,4 @@
+import { create } from "domain";
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
 
@@ -36,10 +37,7 @@ export async function askForUrl() {
     // let user know they need to publish their PWA
     // and open docs
     const answer = await vscode.window.showInformationMessage(
-      "You need to publish your PWA to the web.",
-      {
-        modal: true,
-      },
+      "You need to publish your PWA to the web. Would you like to get a tutorial of how to do this with the Azure Static Web Apps VSCode extension?",
       {
         title: "Learn How",
       },
@@ -49,10 +47,70 @@ export async function askForUrl() {
     );
 
     if (answer && answer.title === "Learn How") {
-      await vscode.env.openExternal(
-        vscode.Uri.parse(
-          "https://github.com/pwa-builder/pwa-starter/wiki/Deploying-to-the-Web-Azure-Static-Web-Apps"
-        )
+      azureCommandWalkthrough();
+    }
+  }
+}
+
+// Opens the Azure Command Walkthrough
+async function azureCommandWalkthrough() {
+  // ask if they have an azure account
+  const azureAccountQuestion = await vscode.window.showQuickPick(
+    ["Yes", "No"],
+    {
+      placeHolder: "Do you have an Azure account?",
+    }
+  );
+
+  if (azureAccountQuestion !== undefined && azureAccountQuestion === "Yes") {
+    // ask if they have the azure command line tool
+    const azureCommandQuestion = await vscode.window.showQuickPick(
+      ["Yes", "No"],
+      {
+        placeHolder:
+          "Want to learn how to deploy your PWA To Azure Static Web Apps? You get HTTPS by default and optional automated deployment with Github Actions!",
+      }
+    );
+
+    if (azureCommandQuestion !== undefined && azureCommandQuestion === "Yes") {
+      // first you need to create a new azure static web app
+      const azureSWAQuestion = await vscode.window.showQuickPick(
+        ["Open Documentation", "Cancel"],
+        {
+          placeHolder: "Learn how to using the Azure Static Web Apps VSCode Extension!",
+        }
+      );
+
+      if (azureSWAQuestion !== undefined && azureSWAQuestion === "Learn How") {
+        // remind about build directory for pwa-starter
+        await vscode.window.showInformationMessage("Using the PWABuilder pwa-starter? Set the build directory to /dist when asked");
+
+        // open the walkthrough
+        await vscode.commands.executeCommand(
+          "vscode.open",
+          vscode.Uri.parse("https://docs.microsoft.com/en-us/azure/static-web-apps/getting-started?tabs=vanilla-javascript#install-azure-static-web-apps-extension")
+        );
+      }
+    }
+  }
+  else {
+    // let user know they need to create an azure account
+    // and open docs
+    const answer = await vscode.window.showInformationMessage(
+      "First, you need to create an Azure account. Would you like to open the documentation on how to do this? You can get started for free using the free tier.",
+      {
+        title: "Learn How",
+      },
+      {
+        title: "OK",
+      }
+    );
+
+    if (answer && answer.title === "Learn How") {
+     // open link
+      await vscode.commands.executeCommand(
+        "vscode.open",
+        vscode.Uri.parse("https://azure.microsoft.com/free/")
       );
     }
   }
