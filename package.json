@@ -4,6 +4,7 @@
   "description": "PWABuilder in your VSCode!",
   "publisher": "PWABuilder",
   "version": "0.0.6",
+  "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/pwa-builder/pwabuilder-vscode"
