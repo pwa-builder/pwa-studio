@@ -42,10 +42,9 @@ jobs:
           npm install vsce
           vsce package --out package.vsix
           
-      - name: Create Release With Asset
-        uses: Hs1r1us/Release-AIO
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload
+        uses: actions/upload-artifact@v2
         with:
-          tag_name: ${{ github.ref }}
-          asset_files: './package.vsix'
+          name: vsix-package
+          path: package.vsix
+
