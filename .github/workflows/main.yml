@@ -30,6 +30,8 @@ jobs:
           
       - name: Build
         run: |
+          npm install
+          npm run build
           npx vsce package --out package.vsix
           
       - name: Upload
