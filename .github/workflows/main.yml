@@ -30,8 +30,7 @@ jobs:
           
       - name: Build
         run: |
-          npm install vsce
-          vsce package --out package.vsix
+          npx vsce package --out package.vsix
           
       - name: Upload
         uses: actions/upload-artifact@v2
