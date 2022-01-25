@@ -2,7 +2,8 @@
   "name": "pwa-studio",
   "displayName": "PWA Studio",
   "description": "PWABuilder in your VSCode!",
-  "version": "0.0.5",
+  "publisher": "PWABuilder",
+  "version": "0.0.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/pwa-builder/pwabuilder-vscode"
