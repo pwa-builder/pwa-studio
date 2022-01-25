@@ -27,15 +27,6 @@ jobs:
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.5.1
-        
-      - name: Get current version from package.json
-        uses: culshaw/read-package-node-version-actions@v1
-
-      - name: Increment Version
-        uses: christian-draeger/increment-semantic-version@1.0.2
-        with:
-          current-version: '${steps.package-node-version.outputs.version}'
-          version-fragment: 'bug'
           
       - name: Build
         run: |
