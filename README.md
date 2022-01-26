@@ -1,8 +1,7 @@
-# pwabuilder-vscode
+# PWA Studio 
+by the PWABuilder team
 
 Please use our [main repository for any issues/bugs/features suggestion](https://github.com/pwa-builder/PWABuilder/issues/new/choose).
-
-Welcome to the new PWABuilder VSCode Extension!
 
 This extension will turn your VSCode into the best developer environment for [Progressive Web Applications](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/). Everything you need, from starting a new PWA, to packaging your PWA for the app stores, can all be done right from VSCode!
 
@@ -27,17 +26,17 @@ This extension brings the features of [pwabuilder.com](https://pwabuilder.com/) 
 
 The quickest way to get started with the extension is by opening the PWABuilder panel. This can be done by clicking the PWABuilder icon on the left side of VSCode:
 
-![The PWABuilder icon on the right side of the VSCode Window](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/icon-view.png)
+![The PWABuilder icon on the right side of the VSCode Window](https://raw.githubusercontent.com/pwa-builder/pwabuilder-vscode/main/resources/icon-view.png)
 
 You should then see our three sections: Web Manifest, Service Worker, and your Store Ready Checklist. All three views have the top item checked off, then your PWA is ready to go:
 
-![The Web Manifest tree view in VSCode](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/validate.png)
+![The Web Manifest tree view in VSCode](https://raw.githubusercontent.com/pwa-builder/pwabuilder-vscode/main/resources/validate.png)
 
 If you are missing one of the items, no problem! The extension will provide you with a button to generate the needed asset:
 
-![The Generate Service Worker button](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/sw-button.png)
+![The Generate Service Worker button](https://raw. githubusercontent.com/pwa-builder/pwabuilder-vscode/main/resources/sw-button.png)
 
 Finally, the Extension also provides buttons at the bottom of VSCode to provide quick access to all of our features:
 
-![The quick actions](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/quick-actions.png)
+![The quick actions](https://raw.githubusercontent.com/pwa-builder/pwabuilder-vscode/main/resources/quick-actions.png)
 
