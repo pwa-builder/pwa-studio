@@ -1,5 +1,5 @@
 import { writeFile } from "fs/promises";
-import fetch from "node-fetch";
+import fetch, { Response } from "node-fetch";
 import { Headers } from "node-fetch";
 import { MsixInfo } from "../interfaces";
 
@@ -107,7 +107,7 @@ export function getPublisherMsixFromArray(...args: string[]): MsixInfo {
   };
 }
 
-export async function buildAndroidPackage(options: AndroidPackageOptions) {
+export async function buildAndroidPackage(options: AndroidPackageOptions): Promise<Response> {
   const generateAppUrl = `https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage`;
   const response = await fetch(generateAppUrl, {
     method: "POST",
@@ -118,7 +118,7 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
   return response;
 }
 
-export async function buildIOSPackage(options: IOSAppPackageOptions) {
+export async function buildIOSPackage(options: IOSAppPackageOptions): Promise<Response> {
   const generateAppUrl =
     "https://pwabuilder-ios.azurewebsites.net/packages/create";
   const response = await fetch(generateAppUrl, {
