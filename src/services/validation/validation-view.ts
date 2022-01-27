@@ -4,13 +4,14 @@ import * as path from "path";
 import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
 import { findManifest, getManifest } from "../manifest/manifest-service";
+import { pathExists } from "../../library/file-utils";
 
 /**
  * This is the Web Manifest Panel
  */
 
 export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
-  constructor(private workspaceRoot: string) {}
+  constructor(private workspaceRoot: string) { }
 
   getTreeItem(element: ValidationItem): vscode.TreeItem {
     return element;
@@ -26,12 +27,11 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
 
     // search for a manifest file in the root of the workspace
     const manifestPath: vscode.Uri = await findManifest();
-    const manifestExists = this.pathExists(manifestPath.path);
+    const manifestExists = await pathExists(manifestPath);
 
     if (element && manifestPath && manifestExists) {
       if (manifestPath) {
-        const manifestContents = await readFile(manifestPath.path, "utf8");
-        const testResults = await testManifest(manifestContents);
+        const testResults = await this.loadAndTestManifest(manifestPath.fsPath);
 
         return Promise.resolve(
           this.handleTestResults(
@@ -42,9 +42,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         );
       }
     } else if (manifestPath && manifestExists) {
-      const manifestContents = await readFile(manifestPath.path, "utf8");
-
-      const testResults = await testManifest(manifestContents);
+      const testResults = await this.loadAndTestManifest(manifestPath.fsPath);
 
       let requiredTestsFailed: any = [];
 
@@ -69,6 +67,21 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       );
     } else {
       return Promise.resolve([]);
+    }
+  }
+
+  /*
+  * Read and test manifest
+  */
+  private async loadAndTestManifest(manifestPath: string) {
+    try {
+      const manifestContents = await readFile(manifestPath, "utf8");
+      const testResults = await testManifest(manifestContents);
+
+      return testResults;
+    }
+    catch (err) {
+      throw `Error loading and testing manifest: ${err}`;
     }
   }
 
@@ -106,15 +119,6 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     return resultsData;
   }
 
-  private pathExists(p: string): boolean {
-    try {
-      fs.accessSync(p);
-    } catch (err) {
-      return false;
-    }
-    return true;
-  }
-
   private _onDidChangeTreeData: vscode.EventEmitter<
     any | undefined | null | void
   > = new vscode.EventEmitter<any | undefined | null | void>();
@@ -142,42 +146,42 @@ class ValidationItem extends vscode.TreeItem {
     light:
       this.version === "true"
         ? path.join(
-            __filename,
-            "..",
-            "..",
-            "..",
-            "..",
-            "resources",
-            "checkmark-light.svg"
-          )
+          __filename,
+          "..",
+          "..",
+          "..",
+          "..",
+          "resources",
+          "checkmark-light.svg"
+        )
         : path.join(
-            __filename,
-            "..",
-            "..",
-            "..",
-            "..",
-            "resources",
-            "warning-light.svg"
-          ),
+          __filename,
+          "..",
+          "..",
+          "..",
+          "..",
+          "resources",
+          "warning-light.svg"
+        ),
     dark:
       this.version === "true"
         ? path.join(
-            __filename,
-            "..",
-            "..",
-            "..",
-            "..",
-            "resources",
-            "checkmark-outline.svg"
-          )
+          __filename,
+          "..",
+          "..",
+          "..",
+          "..",
+          "resources",
+          "checkmark-outline.svg"
+        )
         : path.join(
-            __filename,
-            "..",
-            "..",
-            "..",
-            "..",
-            "resources",
-            "warning-outline.svg"
-          ),
+          __filename,
+          "..",
+          "..",
+          "..",
+          "..",
+          "resources",
+          "warning-outline.svg"
+        ),
   };
 }

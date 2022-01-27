@@ -3,6 +3,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { readFile } from "fs/promises";
 import { findWorker } from "../service-worker";
+import { pathExists } from "../../library/file-utils";
 
 /**
  * This is the Service Worker Panel
@@ -24,12 +25,12 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
     }
 
     const serviceWorkerId: vscode.Uri = await findWorker();
-    const serviceWorkerExists = this.pathExists(serviceWorkerId.path);
+    const serviceWorkerExists = await pathExists(serviceWorkerId);
 
     if (element && serviceWorkerId && serviceWorkerExists) {
       const items = [];
 
-      const swContents = await readFile(serviceWorkerId.path, "utf8");
+      const swContents = await readFile(serviceWorkerId.fsPath, "utf8");
 
       if (
         swContents.includes("preacache") ||
@@ -66,9 +67,9 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       }
 
       if (indexFile) {
-        const indexFileExists = this.pathExists(indexFile.path);
+        const indexFileExists = await pathExists(indexFile);
         if (indexFileExists) {
-          const indexContents = await readFile(indexFile.path, "utf8");
+          const indexContents = await readFile(indexFile.fsPath, "utf8");
 
           if (
             indexContents &&
@@ -96,7 +97,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       }
 
       return Promise.resolve(items);
-    } else if (serviceWorkerId.path && serviceWorkerExists) {
+    } else if (serviceWorkerId.fsPath && serviceWorkerExists) {
       return Promise.resolve([
         new ValidationItem(
           "Service Worker",
@@ -108,15 +109,6 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
     } else {
       return Promise.resolve([]);
     }
-  }
-
-  private pathExists(p: string): boolean {
-    try {
-      fs.accessSync(p);
-    } catch (err) {
-      return false;
-    }
-    return true;
   }
 
   private _onDidChangeTreeData: vscode.EventEmitter<
