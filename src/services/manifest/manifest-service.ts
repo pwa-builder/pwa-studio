@@ -148,7 +148,7 @@ export function getManifest(): any | undefined {
 export async function findManifest() {
   const mani = await vscode.workspace.findFiles(
     "**/manifest.json",
-    "**​/node_modules/**"
+    "/node_modules/"
   );
 
   if (mani.length > 0) {
@@ -156,7 +156,7 @@ export async function findManifest() {
   } else {
     const maniTryTwo = await vscode.workspace.findFiles(
       "**/web-manifest.json",
-      "**​/node_modules/**"
+      "/node_modules/"
     );
 
     if (maniTryTwo.length > 0) {
@@ -176,7 +176,7 @@ async function handleAddingManiToIndex(): Promise<void> {
   let indexFile: undefined | vscode.Uri;
   const indexFileData = await vscode.workspace.findFiles(
     "**/index.html",
-    "**/node_modules/**"
+    // "**/node_modules/**"
   );
 
   if (indexFileData && indexFileData.length > 0) {
