@@ -23,7 +23,7 @@ This extension brings the features of [pwabuilder.com](https://pwabuilder.com/) 
 - Use our snippets to quickly and easily implement native features that can improve the User Experience of your PWA
 
 ## Getting Started
-- [Install the extension from the VSCode Marketplace](    https://marketplace.visualstudio.com/itemsitemName=pwa-builder.vscode-pwa-builder)
+- [Install the extension from the VSCode Marketplace](https://marketplace.visualstudio.com/itemsitemName=pwa-builder.vscode-pwa-builder)
 
 The quickest way to get started with the extension is by opening the PWABuilder panel. This can be done by clicking the PWABuilder icon on the left side of VSCode:
 
