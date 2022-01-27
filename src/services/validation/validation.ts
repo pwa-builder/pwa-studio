@@ -5,9 +5,182 @@ import { handleIcons } from "../manifest/manifest-service";
 
 let manifestContents: any | undefined;
 
+/** Code that is used to associate diagnostic entries with code actions. */
+export const MANI_CODE = "mani_code";
+
+/** String to detect in the text document. */
+const maniTestValues = [
+  {
+    name: "name",
+    errorString: "name is required and should be a string with a length > 0",
+    test: (value: string) => {
+      console.log('value', value);
+      return value && typeof(value) === "string" && value.length > 0;
+    },
+  },
+  {
+    name: "short_name",
+    errorString:
+      "short_name is required and should be a string with a length > 0",
+    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+  },
+  {
+    name: "description",
+    errorString:
+      "description is required and should be a string with a length > 0",
+    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+  },
+  {
+    name: "icons",
+    errorString: "icons is required and should be an array with a length > 0",
+    test: (value: string) =>
+      value && Array.isArray(value) && value.length > 0 ? true : false,
+  },
+  {
+    name: "display",
+    errorString:
+      "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+    test: (value: string) => {
+      return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(value);
+    },
+  },
+  {
+    name: "orientation",
+    errorString:
+      "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+    test: (value: string) => {
+      return isStandardOrientation(value);
+    },
+  },
+  {
+    name: "background_color",
+    errorString: "background_color is required and should be a valid hex color",
+    test: (value: string) => {
+      const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      return hexRegex.test(value);
+    },
+  },
+  {
+    name: "theme_color",
+    errorString: "theme_color is required and should be a valid hex color",
+    test: (value: string) => {
+      const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+      return hexRegex.test(value);
+    },
+  },
+  {
+    name: "start_url",
+    errorString:
+      "start_url is required and should be a string with a length > 0",
+    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+  },
+];
+
+/**
+ * Analyzes the text document for problems.
+ */
+export function refreshDiagnostics(
+  doc: vscode.TextDocument,
+  emojiDiagnostics: vscode.DiagnosticCollection
+): void {
+  const diagnostics: vscode.Diagnostic[] = [];
+
+  for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
+    const lineOfText = doc.lineAt(lineIndex);
+    maniTestValues.forEach((testValue) => {
+      if (lineOfText.text.includes(testValue.name)) {
+        let diagnostic = createDiagnostic(
+          doc,
+          lineOfText,
+          lineIndex,
+          testValue.name
+        );
+        if (diagnostic) {
+          diagnostics.push(diagnostic);
+        }
+      }
+    });
+  }
+
+  emojiDiagnostics.set(doc.uri, diagnostics);
+}
+
+function createDiagnostic(
+  doc: vscode.TextDocument,
+  lineOfText: vscode.TextLine,
+  lineIndex: number,
+  testString: string
+): vscode.Diagnostic | undefined {
+  // find where in the line of text the value is mentioned
+  const index = lineOfText.text.indexOf(testString);
+
+  // create range that represents, where in the document the word is
+  const range = new vscode.Range(
+    lineIndex,
+    index,
+    lineIndex,
+    index + testString.length
+  );
+
+  // test
+  let testResult = undefined;
+  let test: any = undefined;
+  maniTestValues.forEach((testValue) => {
+    if (testValue.name === testString) {
+      testResult = testValue.test(JSON.parse(doc.getText())[testString]);
+      test = testValue;
+    }
+  });
+
+  if (testResult === false) {
+    const diagnostic = new vscode.Diagnostic(
+      range,
+      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
+      vscode.DiagnosticSeverity.Error
+    );
+    diagnostic.code = MANI_CODE;
+    return diagnostic;
+  }
+
+  return undefined;
+}
+
+export function subscribeToDocumentChanges(
+  context: vscode.ExtensionContext,
+  emojiDiagnostics: vscode.DiagnosticCollection
+): void {
+  if (vscode.window.activeTextEditor) {
+    refreshDiagnostics(
+      vscode.window.activeTextEditor.document,
+      emojiDiagnostics
+    );
+  }
+  context.subscriptions.push(
+    vscode.window.onDidChangeActiveTextEditor((editor) => {
+      if (editor) {
+        refreshDiagnostics(editor.document, emojiDiagnostics);
+      }
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeTextDocument((e) =>
+      refreshDiagnostics(e.document, emojiDiagnostics)
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.workspace.onDidCloseTextDocument((doc) =>
+      emojiDiagnostics.delete(doc.uri)
+    )
+  );
+}
+
 setupFileWatcher();
 
-export async function handleValidation(context: vscode.ExtensionContext): Promise<void> {
+export async function handleValidation(
+  context: vscode.ExtensionContext
+): Promise<void> {
   vscode.window.showInformationMessage(
     "Lets validate your PWA and make sure its installable and Store Ready"
   );
