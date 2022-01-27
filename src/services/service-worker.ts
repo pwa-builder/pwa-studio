@@ -326,7 +326,7 @@ async function handleAddingToIndex(): Promise<void> {
 
   const worker = await findWorker();
   if (worker) {
-    const goodPath = vscode.workspace.asRelativePath(worker.path);
+    const goodPath = vscode.workspace.asRelativePath(worker.fsPath);
 
     const registerCommand = `<script>navigator.serviceWorker.register("${goodPath}")</script> \n`;
 
