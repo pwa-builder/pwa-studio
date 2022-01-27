@@ -118,7 +118,11 @@
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWABuilder: Validate"
+        "title": "PWABuilder: Validate",
+        "icon": {
+          "dark": "resources/inspect-dark.svg",
+          "light": "resources/inspect-light.svg"
+        }
       },
       {
         "command": "pwa-studio.manifest",
@@ -138,7 +142,11 @@
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "PWABuilder: Package your PWA"
+        "title": "PWABuilder: Package your PWA",
+        "icon": {
+          "dark": "resources/build-dark.svg",
+          "light": "resources/build-light.svg"
+        }
       },
       {
         "command": "pwa-studio.maniItemDocs",
@@ -181,6 +189,10 @@
       {
         "view": "serviceWorkerPanel",
         "contents": "No Service Worker found [learn more](https://docs.microsoft.com/microsoft-edge/progressive-web-apps-chromium/how-to/service-workers).\n[I have a Service Worker](command:pwa-studio.chooseServiceWorker) \n[Generate a Service Worker](command:pwa-studio.serviceWorker)"
+      },
+      {
+        "view": "packagePanel",
+        "contents": "[Start a new PWA](command:pwa-studio.newPwaStarter)"
       }
     ],
     "viewsContainers": {
@@ -222,6 +234,11 @@
         },
         {
           "command": "pwa-studio.refreshEntry",
+          "when": "view == validationPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.validatePWA",
           "when": "view == validationPanel",
           "group": "navigation"
         },
