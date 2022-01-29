@@ -100,8 +100,10 @@ export async function handleIcons(context: vscode.ExtensionContext) {
 
             const manifestObject = JSON.parse(manifestFile.getText());
 
+            const newIconsData = await convertBaseToFile(iconsObject.icons);
+            
             // add icons to manifest
-            manifestObject.icons = iconsObject.icons;
+            manifestObject.icons = newIconsData.icons;
 
             // write manifest file
             await writeFile(
@@ -123,6 +125,56 @@ export async function handleIcons(context: vscode.ExtensionContext) {
     undefined,
     context.subscriptions
   );
+}
+
+async function convertBaseToFile(
+  iconsList: Array<any>
+): Promise<{ path: string; icons: Array<any> }> {
+    // ask user to choose a directory to save files to
+    const uri = await vscode.window.showSaveDialog({
+      defaultUri: vscode.Uri.file(
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}}/icons`
+      ),
+      saveLabel: "Choose Directory to Save Icons",
+      title: "Choose a directory to save generated icons to",
+    });
+
+    if (uri) {
+      // create directory based on uri
+      await vscode.workspace.fs.createDirectory(uri);
+    }
+
+    let newIconsList: Array<any> | undefined;
+
+    if (uri) {
+      newIconsList = iconsList.map((icon) => {
+        return new Promise(async (resolve) => {
+          // create file path to write file to
+          const iconFile = vscode.Uri.file(
+            `${uri.fsPath}/${icon.sizes}-icon.${icon.type.substring(
+              icon.type.indexOf("/") + 1
+            )}`
+          );
+
+          // create buffer from icon base64 data
+          const buff: Buffer = Buffer.from(icon.src.split(',')[1], "base64");
+
+          // write file to disk
+          await vscode.workspace.fs.writeFile(iconFile, buff);
+
+          icon.src = vscode.workspace.asRelativePath(iconFile.fsPath);
+
+          resolve(icon);
+        });
+      });
+
+      vscode.window.showInformationMessage(`Icons saved to ${uri.fsPath}`);
+
+      return ({ path: uri.fsPath, icons: await Promise.all(newIconsList) || [] });
+    }
+    else {
+      return ({ path: "", icons: [] });
+    }
 }
 
 export async function chooseManifest() {
@@ -175,7 +227,7 @@ export async function findManifest() {
 async function handleAddingManiToIndex(): Promise<void> {
   let indexFile: undefined | vscode.Uri;
   const indexFileData = await vscode.workspace.findFiles(
-    "**/index.html",
+    "**/index.html"
     // "**/node_modules/**"
   );
 
