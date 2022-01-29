@@ -106,11 +106,11 @@
     "commands": [
       {
         "command": "pwa-studio.newPwaStarter",
-        "title": "PWABuilder: New PWA"
+        "title": "PWA Studio: New PWA"
       },
       {
         "command": "pwa-studio.serviceWorker",
-        "title": "PWABuilder: Generate Service Worker",
+        "title": "PWA Studio: Generate Service Worker",
         "icon": {
           "dark": "resources/add-dark.svg",
           "light": "resources/add-outline.svg"
@@ -118,7 +118,7 @@
       },
       {
         "command": "pwa-studio.validatePWA",
-        "title": "PWABuilder: Validate",
+        "title": "PWA Studio: Validate",
         "icon": {
           "dark": "resources/inspect-dark.svg",
           "light": "resources/inspect-light.svg"
@@ -126,7 +126,7 @@
       },
       {
         "command": "pwa-studio.manifest",
-        "title": "PWABuilder: Generate Web Manifest",
+        "title": "PWA Studio: Generate Web Manifest",
         "icon": {
           "dark": "resources/add-dark.svg",
           "light": "resources/add-outline.svg"
@@ -134,15 +134,15 @@
       },
       {
         "command": "pwa-studio.chooseManifest",
-        "title": "PWABuilder: Choose existing Web Manifest"
+        "title": "PWA Studio: Choose existing Web Manifest"
       },
       {
         "command": "pwa-studio.chooseServiceWorker",
-        "title": "PWABuilder: Choose existing Service Worker"
+        "title": "PWA Studio: Choose existing Service Worker"
       },
       {
         "command": "pwa-studio.packageApp",
-        "title": "PWABuilder: Package your PWA",
+        "title": "PWA Studio: Package your PWA",
         "icon": {
           "dark": "resources/build-dark.svg",
           "light": "resources/build-light.svg"
@@ -178,7 +178,7 @@
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "PWABuilder: Set App URL"
+        "title": "PWA Studio: Set App URL"
       }
     ],
     "viewsWelcome": [
@@ -199,7 +199,7 @@
       "activitybar": [
         {
           "id": "pwabuilder-view",
-          "title": "PWABuilder",
+          "title": "PWA Studio",
           "icon": "resources/pwabuilder-icon.svg"
         }
       ]
