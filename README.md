@@ -19,8 +19,6 @@ If you already have VS Code installed, clicking install will prompt you to open 
 
 You can also search the extension and download it from within VS Code. Just go to the Extensions tab and search for the extension.
 
-<img src="images/extension-marketplace.png" width=500 />
-
 ---
 
 ## First Steps with PWA Studio
