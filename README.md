@@ -1,43 +1,51 @@
-# pwabuilder-vscode
+## Welcome to the PWA Studio VSCode Extension!
 
-Please use our [main repository for any issues/bugs/features suggestion](https://github.com/pwa-builder/PWABuilder/issues/new/choose).
+The PWA Studio Code Extension brings commands and interface to VSCode that are specific to developing progressive web applications, turning your go-to developer environment into a PWA workshop. The extension includes functionality for:
 
-Welcome to the new PWABuilder VSCode Extension!
+* Starting a new PWA
+* Converting an existing web app into a PWA
+* Managing your PWA's manifest and service workers
+* Packaging your PWA for the Microsoft, Google, and Apple Stores
+* **...and more!**
 
-This extension will turn your VSCode into the best developer environment for [Progressive Web Applications](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/). Everything you need, from starting a new PWA, to packaging your PWA for the app stores, can all be done right from VSCode!
+[Our documentation](https://github.com/pwa-builder/pwabuilder-vscode/wiki) contains all the info you need for working with the extension, including tutorials and more!
 
-** insert video **
+---
 
-[Documentation](https://github.com/pwa-builder/pwabuilder-vscode/wiki)
+## Getting the Extension
+The PWA Builder Code extension is available on the VSCode Extension Marketplace and can be downloaded [here.](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio)
 
-## Features
-This extension brings the features of [pwabuilder.com](https://pwabuilder.com/) to VSCode!
+If you already have VS Code installed, clicking install will prompt you to open VS Code and take you right to the extension. If you don't have VS Code but want to try developing PWAs with the extension, you can download Code [here.](https://code.visualstudio.com/)
 
-- [Start building a new PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Start-building-a-new-PWA), with all the best practices, an excellent developer experience and exceptional performance, in seconds using the [PWABuilder pwa-starter](https://aka.ms/pwa-starter).
-- [Learn how to publish your app to the Web](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Publish-your-PWA-to-the-web) with [Azure Static Web Apps](https://docs.microsoft.com/en-us/azure/static-web-apps/overview)
-- [Add a Web Manifest and Service Worker to your existing web app](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Add-a-Web-Manifest-and-Service-Worker-to-your-existing-web-app)
-- [Package your PWA for the Microsoft Store, Google Play, and Apple App Store](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Package-your-PWA-for-the-app-stores!)
-- [Generate Icons for your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Generate-Icons-for-your-PWA)
-- [Validate that your PWA is installable in the browser and is ready to publish to the app stores](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Validate-your-PWA)
-- [Learn more about the features of the Web Manifest to enable new features in your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Learn-more-about-the-features-of-the-Web-Manifest)
-- Use our snippets to quickly and easily implement native features that can improve the User Experience of your PWA
+You can also search the extension and download it from within VS Code. Just go to the Extensions tab and search for the extension.
 
-## Getting Started
-- [Install the extension from the VSCode Marketplace](https://marketplace.visualstudio.com/itemsitemName=pwa-builder.vscode-pwa-builder)
+<img src="images/extension-marketplace.png" width=500 />
 
-The quickest way to get started with the extension is by opening the PWABuilder panel. This can be done by clicking the PWABuilder icon on the left side of VSCode:
+---
 
-![The PWABuilder icon on the right side of the VSCode Window](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/icon-view.png)
+## First Steps with PWA Studio
+Here are a few places to check out in the documentation if you are using the extension for the first time:
+<br>
+<br>
+**Looking to build a new PWA from scratch?**
+<br>
+Check out how to [clone the PWA Starter application](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Start-building-a-new-PWA) with the extension.
 
-You should then see our three sections: Web Manifest, Service Worker, and your Store Ready Checklist. All three views have the top item checked off, then your PWA is ready to go:
+**Want to convert your web app into a PWA?**
+<br>
+Take a look at [adding a web manifest](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Make-a-Web-App-a-Progressive-Web-App) to your existing web applicatioon.
 
-![The Web Manifest tree view in VSCode](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/validate.png)
+**Have a PWA already and want to get it Store-ready?**
+<br>
+Learn how to [validate your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Validate-your-PWA) and then [package it for stores.](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Package-your-PWA-for-the-app-stores!)
 
-If you are missing one of the items, no problem! The extension will provide you with a button to generate the needed asset:
+---
 
-![The Generate Service Worker button](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/sw-button.png)
+## Resources and Links
+Check out some of these sites to learn more about PWAs and PWA Builder!
 
-Finally, the Extension also provides buttons at the bottom of VSCode to provide quick access to all of our features:
+[***PWA Builder***](https://www.pwabuilder.com/)
 
-![The quick actions](https://github.com/pwa-builder/pwabuilder-vscode/blob/main/resources/quick-actions.png)
+[***PWA Starter application***](https://github.com/pwa-builder/pwa-starter)
 
+[***Progressive Web App Overview***](https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/)
