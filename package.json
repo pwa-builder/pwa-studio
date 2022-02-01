@@ -3,7 +3,7 @@
   "displayName": "PWA Studio",
   "description": "PWABuilder in your VSCode!",
   "publisher": "PWABuilder",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
