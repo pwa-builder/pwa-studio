@@ -107,13 +107,13 @@ export async function handleAdvServiceWorkerCommand(): Promise<void> {
       const swSrc = uri.fsPath;
       const swDest = uri.fsPath;
       try {
-        const test = await injectManifest({
+        await injectManifest({
           swSrc,
           swDest,
           globDirectory: buildDir[0].fsPath,
         });
       } catch (err) {
-        console.log("error", err);
+        console.error("error", err);
       }
 
       vscode.window.showInformationMessage(

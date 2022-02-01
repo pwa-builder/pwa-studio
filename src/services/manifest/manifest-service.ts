@@ -31,7 +31,7 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
           manifestObject = message.manifestObject;
 
           const newIconsData = await convertBaseToFile(manifestObject.icons);
-            
+
           // add icons back to manifest
           manifestObject.icons = newIconsData.icons;
 
@@ -39,7 +39,7 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
             defaultUri: vscode.Uri.file(
               `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
             ),
-            
+
           });
 
           if (uri) {
@@ -54,9 +54,9 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
             } catch (err) {
               vscode.window.showErrorMessage(
                 "Could not write to file: " +
-                  uri.fsPath +
-                  ": " +
-                  (err as Error).message
+                uri.fsPath +
+                ": " +
+                (err as Error).message
               );
             }
 
@@ -107,7 +107,7 @@ export async function handleIcons(context: vscode.ExtensionContext) {
             const manifestObject = JSON.parse(manifestFile.getText());
 
             const newIconsData = await convertBaseToFile(iconsObject.icons);
-            
+
             // add icons to manifest
             manifestObject.icons = newIconsData.icons;
 
@@ -136,51 +136,51 @@ export async function handleIcons(context: vscode.ExtensionContext) {
 async function convertBaseToFile(
   iconsList: Array<any>
 ): Promise<{ path: string; icons: Array<any> }> {
-    // ask user to choose a directory to save files to
-    const uri = await vscode.window.showSaveDialog({
-      defaultUri: vscode.Uri.file(
-        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
-      ),
-      saveLabel: "Save Icons",
-      title: "Choose a directory to save generated icons to",
+  // ask user to choose a directory to save files to
+  const uri = await vscode.window.showSaveDialog({
+    defaultUri: vscode.Uri.file(
+      `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
+    ),
+    saveLabel: "Save Icons",
+    title: "Choose a directory to save generated icons to",
+  });
+
+  if (uri) {
+    // create directory based on uri
+    await vscode.workspace.fs.createDirectory(uri);
+  }
+
+  let newIconsList: Array<any> | undefined;
+
+  if (uri) {
+    newIconsList = iconsList.map((icon) => {
+      return new Promise(async (resolve) => {
+        // create file path to write file to
+        const iconFile = vscode.Uri.file(
+          `${uri.fsPath}/${icon.sizes}-icon.${icon.type.substring(
+            icon.type.indexOf("/") + 1
+          )}`
+        );
+
+        // create buffer from icon base64 data
+        const buff: Buffer = Buffer.from(icon.src.split(',')[1], "base64");
+
+        // write file to disk
+        await vscode.workspace.fs.writeFile(iconFile, buff);
+
+        icon.src = vscode.workspace.asRelativePath(iconFile.fsPath);
+
+        resolve(icon);
+      });
     });
 
-    if (uri) {
-      // create directory based on uri
-      await vscode.workspace.fs.createDirectory(uri);
-    }
+    vscode.window.showInformationMessage(`Icons saved to ${uri.fsPath}`);
 
-    let newIconsList: Array<any> | undefined;
-
-    if (uri) {
-      newIconsList = iconsList.map((icon) => {
-        return new Promise(async (resolve) => {
-          // create file path to write file to
-          const iconFile = vscode.Uri.file(
-            `${uri.fsPath}/${icon.sizes}-icon.${icon.type.substring(
-              icon.type.indexOf("/") + 1
-            )}`
-          );
-
-          // create buffer from icon base64 data
-          const buff: Buffer = Buffer.from(icon.src.split(',')[1], "base64");
-
-          // write file to disk
-          await vscode.workspace.fs.writeFile(iconFile, buff);
-
-          icon.src = vscode.workspace.asRelativePath(iconFile.fsPath);
-
-          resolve(icon);
-        });
-      });
-
-      vscode.window.showInformationMessage(`Icons saved to ${uri.fsPath}`);
-
-      return ({ path: uri.fsPath, icons: await Promise.all(newIconsList) || [] });
-    }
-    else {
-      return ({ path: "", icons: [] });
-    }
+    return ({ path: uri.fsPath, icons: await Promise.all(newIconsList) || [] });
+  }
+  else {
+    return ({ path: "", icons: [] });
+  }
 }
 
 export async function chooseManifest() {
@@ -190,12 +190,13 @@ export async function chooseManifest() {
     canSelectMany: false,
     title: "Select your Web Manifest",
     filters: {
-      JSON: ["json"],
+      JSON: ["json", "webmanifest"],
     },
   });
 
-  if (manifestFile) {
-    await findManifest();
+  if (manifestFile && manifestFile.length > 0 ) {
+    await findManifest(manifestFile);
+    // manifest = manifestFile[0];
   }
 }
 
@@ -203,28 +204,48 @@ export function getManifest(): any | undefined {
   return manifest;
 }
 
-export async function findManifest() {
-  const mani = await vscode.workspace.findFiles(
-    "**/manifest.json",
-    "/node_modules/"
-  );
+export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
+  if (manifest) {
+    return manifest;
+  }
 
-  if (mani.length > 0) {
-    manifest = mani[0];
-  } else {
-    const maniTryTwo = await vscode.workspace.findFiles(
-      "**/web-manifest.json",
+  if (manifestFile && manifestFile.length > 0) {
+    manifest = manifestFile[0];
+  }
+  else {
+    const mani = await vscode.workspace.findFiles(
+      "**/manifest.json",
       "/node_modules/"
     );
 
-    if (maniTryTwo.length > 0) {
-      manifest = maniTryTwo[0];
-    }
+    if (mani.length > 0) {
+      manifest = mani[0];
+    } else {
+      const maniTryTwo = await vscode.workspace.findFiles(
+        "**/web-manifest.json",
+        "/node_modules/"
+      );
+
+      if (maniTryTwo.length > 0) {
+        manifest = maniTryTwo[0];
+      }
+      else {
+        const maniTryThree = await vscode.workspace.findFiles(
+          "**/*.webmanifest",
+          "/node_modules/"
+        );
+
+        if (maniTryThree.length > 0) {
+          manifest = maniTryThree[0];
+        }
+      }
+    } 
   }
 
   if (manifest) {
     // do refreshPackageView command
     await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   }
 
   return manifest;

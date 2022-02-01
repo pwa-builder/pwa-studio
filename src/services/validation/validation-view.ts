@@ -26,23 +26,26 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     }
 
     // search for a manifest file in the root of the workspace
-    const manifestPath: vscode.Uri = await findManifest();
-    const manifestExists = await pathExists(manifestPath);
+    const manifestPath: vscode.Uri | undefined = await findManifest();
+
+    let manifestExists: boolean | undefined;
+
+    if (manifestPath) {
+      manifestExists = await pathExists(manifestPath);
+    }
 
     if (element && manifestPath && manifestExists) {
-      if (manifestPath) {
-        const testResults = await this.loadAndTestManifest(manifestPath.fsPath);
+      const testResults = await this.loadAndTestManifest((manifestPath as any).fsPath);
 
-        return Promise.resolve(
-          this.handleTestResults(
-            testResults,
-            vscode.TreeItemCollapsibleState.None,
-            true
-          )
-        );
-      }
+      return Promise.resolve(
+        this.handleTestResults(
+          testResults,
+          vscode.TreeItemCollapsibleState.None,
+          true
+        )
+      );
     } else if (manifestPath && manifestExists) {
-      const testResults = await this.loadAndTestManifest(manifestPath.fsPath);
+      const testResults = await this.loadAndTestManifest((manifestPath as any).fsPath);
 
       let requiredTestsFailed: any = [];
 
