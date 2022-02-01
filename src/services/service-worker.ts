@@ -236,8 +236,8 @@ export function getWorker(): vscode.Uri | PromiseLike<vscode.Uri> | vscode.Uri[]
   return existingWorker;
 }
 
-export async function findWorker(): Promise<any> {
-  return new Promise<vscode.Uri>(async (resolve, reject) => {
+export async function findWorker(): Promise<any | undefined> {
+  return new Promise<vscode.Uri | undefined>(async (resolve, reject) => {
     try {
       const advWorker = await vscode.workspace.findFiles(
         "**/pwabuilder-adv-sw.js"
@@ -273,6 +273,10 @@ export async function findWorker(): Promise<any> {
         await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
 
         resolve(existingWorker);
+      }
+      else {
+        // await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
+        resolve(undefined);
       }
     } catch (err) {
       reject(`Error adding service worker to index file: ${err}`);

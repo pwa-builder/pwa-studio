@@ -81,7 +81,7 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
       return testResults;
     }
     catch (err) {
-      throw `Error loading and testing manifest: ${err}`;
+      throw new Error(`Error loading and testing manifest: ${err}`);
     }
   }
 

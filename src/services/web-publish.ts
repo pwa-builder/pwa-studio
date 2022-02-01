@@ -82,9 +82,9 @@ async function azureCommandWalkthrough(): Promise<void> {
         }
       );
 
-      if (azureSWAQuestion !== undefined && azureSWAQuestion === "Learn How") {
+      if (azureSWAQuestion !== undefined && azureSWAQuestion === "Open Documentation") {
         // remind about build directory for pwa-starter
-        await vscode.window.showInformationMessage(
+        vscode.window.showInformationMessage(
           "Using the PWABuilder pwa-starter? Set the build directory to /dist when asked"
         );
 

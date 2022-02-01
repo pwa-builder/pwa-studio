@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
 import * as path from "path";
 import { readFile } from "fs/promises";
 import { findWorker } from "../service-worker";
@@ -97,7 +96,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       }
 
       return Promise.resolve(items);
-    } else if (serviceWorkerId.fsPath && serviceWorkerExists) {
+    } else if (serviceWorkerId && serviceWorkerId.fsPath && serviceWorkerExists) {
       return Promise.resolve([
         new ValidationItem(
           "Service Worker",
@@ -107,7 +106,8 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         ),
       ]);
     } else {
-      return Promise.resolve([]);
+      return Promise.resolve([
+      ]);
     }
   }
 
