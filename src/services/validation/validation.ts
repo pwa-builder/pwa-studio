@@ -125,10 +125,18 @@ function createDiagnostic(
   // test
   let testResult = undefined;
   let test: any = undefined;
+  let textToTest: any = undefined;
   maniTestValues.forEach((testValue) => {
     if (testValue.name === testString) {
-      testResult = testValue.test(JSON.parse(doc.getText())[testString]);
-      test = testValue;
+      try {
+        textToTest = JSON.parse(doc.getText());
+
+        testResult = testValue.test(textToTest[testString]);
+        test = testValue;
+      }
+      catch (err) {
+        console.error("Could not parse JSON value", err);
+      }
     }
   });
 
@@ -150,10 +158,13 @@ export function subscribeToDocumentChanges(
   emojiDiagnostics: vscode.DiagnosticCollection
 ): void {
   if (vscode.window.activeTextEditor) {
-    refreshDiagnostics(
-      vscode.window.activeTextEditor.document,
-      emojiDiagnostics
-    );
+    console.log(vscode.window.activeTextEditor.document.fileName);
+    if (vscode.window.activeTextEditor.document.fileName.includes("json")) {
+      refreshDiagnostics(
+        vscode.window.activeTextEditor.document,
+        emojiDiagnostics
+      );
+    }
   }
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
