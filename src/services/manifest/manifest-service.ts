@@ -32,8 +32,9 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
 
           const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(
-              `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}}/manifest.json`
+              `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
             ),
+            
           });
 
           if (uri) {
@@ -133,7 +134,7 @@ async function convertBaseToFile(
     // ask user to choose a directory to save files to
     const uri = await vscode.window.showSaveDialog({
       defaultUri: vscode.Uri.file(
-        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}}/icons`
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
       ),
       saveLabel: "Choose Directory to Save Icons",
       title: "Choose a directory to save generated icons to",
