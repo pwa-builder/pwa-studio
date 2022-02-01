@@ -141,7 +141,7 @@ async function convertBaseToFile(
       defaultUri: vscode.Uri.file(
         `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/icons`
       ),
-      saveLabel: "Choose Directory to Save Icons",
+      saveLabel: "Save Icons",
       title: "Choose a directory to save generated icons to",
     });
 

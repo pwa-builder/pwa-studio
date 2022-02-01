@@ -4,7 +4,10 @@ import { AndroidPackageOptions, AndroidPackageValidationError, AndroidSigningOpt
 
 export async function packageForAndroid(options: any): Promise<any> {
   const responseData = await buildAndroidPackage(options);
-  return await responseData.blob();
+
+  if (responseData) {
+    return await responseData.blob();
+  }
 }
 
 export const AndroidDocsURL =
