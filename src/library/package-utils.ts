@@ -263,7 +263,7 @@ export async function buildAndroidOptions(): Promise<
       const uri = await vscode.window.showSaveDialog({
         title: "Save advanced Android settings file to continue",
         defaultUri: vscode.Uri.file(
-          `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}}/android-settings.json`
+          `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/android-settings.json`
         ),
       });
       if (uri) {

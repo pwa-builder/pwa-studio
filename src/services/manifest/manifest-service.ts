@@ -30,6 +30,11 @@ export async function handleManifestCommand(context: vscode.ExtensionContext) {
         case "prompt":
           manifestObject = message.manifestObject;
 
+          const newIconsData = await convertBaseToFile(manifestObject.icons);
+            
+          // add icons back to manifest
+          manifestObject.icons = newIconsData.icons;
+
           const uri = await vscode.window.showSaveDialog({
             defaultUri: vscode.Uri.file(
               `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
