@@ -158,7 +158,6 @@ export function subscribeToDocumentChanges(
   emojiDiagnostics: vscode.DiagnosticCollection
 ): void {
   if (vscode.window.activeTextEditor) {
-    console.log(vscode.window.activeTextEditor.document.fileName);
     if (vscode.window.activeTextEditor.document.fileName.includes("json")) {
       refreshDiagnostics(
         vscode.window.activeTextEditor.document,
