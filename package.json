@@ -112,26 +112,17 @@
       {
         "command": "pwa-studio.serviceWorker",
         "title": "PWA Studio: Generate Service Worker",
-        "icon": {
-          "dark": "resources/add-dark.svg",
-          "light": "resources/add-outline.svg"
-        }
+        "icon": "$(add)"
       },
       {
         "command": "pwa-studio.validatePWA",
         "title": "PWA Studio: Validate",
-        "icon": {
-          "dark": "resources/inspect-dark.svg",
-          "light": "resources/inspect-light.svg"
-        }
+        "icon": "$(tools)"
       },
       {
         "command": "pwa-studio.manifest",
         "title": "PWA Studio: Generate Web Manifest",
-        "icon": {
-          "dark": "resources/add-dark.svg",
-          "light": "resources/add-outline.svg"
-        }
+        "icon": "$(add)"
       },
       {
         "command": "pwa-studio.chooseManifest",
@@ -144,42 +135,32 @@
       {
         "command": "pwa-studio.packageApp",
         "title": "PWA Studio: Package your PWA",
-        "icon": {
-          "dark": "resources/build-dark.svg",
-          "light": "resources/build-light.svg"
-        }
+        "icon": "$(wrench)"
       },
       {
         "command": "pwa-studio.maniItemDocs",
-        "title": "More Info"
+        "title": "More Info",
+        "icon": "$(info)"
       },
       {
         "command": "pwa-studio.refreshEntry",
         "title": "Refresh",
-        "icon": {
-          "light": "resources/refresh-outline.svg",
-          "dark": "resources/refresh-dark.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "pwa-studio.refreshSWView",
         "title": "Refresh",
-        "icon": {
-          "light": "resources/refresh-outline.svg",
-          "dark": "resources/refresh-dark.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "pwa-studio.refreshPackageView",
         "title": "Refresh",
-        "icon": {
-          "light": "resources/refresh-outline.svg",
-          "dark": "resources/refresh-dark.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "PWA Studio: Set App URL"
+        "title": "PWA Studio: Set App URL",
+        "icon": "$(gear)"
       },
       {
         "command": "pwa-studio.generateIcons",
