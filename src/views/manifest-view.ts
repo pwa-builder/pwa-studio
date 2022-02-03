@@ -1,8 +1,13 @@
+import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
+import {
+  convertBaseToFile,
+  findManifest,
+} from "../services/manifest/manifest-service";
 import { getUri } from "../utils";
 
-export class HelloWorldPanel {
-  public static currentPanel: HelloWorldPanel | undefined;
+export class ManiGenerationPanel {
+  public static currentPanel: ManiGenerationPanel | undefined;
   private readonly _panel: vscode.WebviewPanel;
   private _disposables: vscode.Disposable[] = [];
 
@@ -14,6 +19,63 @@ export class HelloWorldPanel {
     this._panel.webview.html = this._getWebviewContent(
       this._panel.webview,
       extensionUri
+    );
+
+    let iconsObject: any;
+    // Handle messages from the webview
+    this._panel.webview.onDidReceiveMessage(
+      async (message) => {
+        console.log("message", message);
+        switch (message.command) {
+          case "prompt":
+            iconsObject = message.iconsObject
+              ? message.iconsObject.icons
+              : message.manifestObject.icons;
+            console.log("iconsObject", iconsObject);
+            // const manifest: vscode.Uri = await findManifest();
+
+            if (message.manifestObject && iconsObject) {
+              const newIconsData = await convertBaseToFile(iconsObject);
+              console.log("newIconsData", newIconsData);
+
+              // add icons to manifest
+              message.manifestObject.icons = newIconsData.icons;
+
+              // ask user where they would like to save their manifest
+              const uri = await vscode.window.showSaveDialog({
+                defaultUri: vscode.Uri.file(
+                  `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
+                ),
+                saveLabel: "Save Web Manifest",
+              });
+
+              if (uri) {
+                // write manifest file
+                await writeFile(
+                  uri.fsPath,
+                  JSON.stringify(message.manifestObject, null, 2)
+                );
+
+                // show manifest with vscode
+                await vscode.window.showTextDocument(uri);
+
+                // do refreshPackageView command
+                await vscode.commands.executeCommand(
+                  "pwa-studio.refreshEntry"
+                );
+
+              }
+            } else {
+              vscode.window.showErrorMessage(
+                "There was an error generating your manifest. Please try again."
+              );
+            }
+
+            return;
+        }
+      },
+      undefined,
+      this._disposables
     );
   }
 
@@ -35,8 +97,6 @@ export class HelloWorldPanel {
     <html lang="en">
       <head>
         <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="https://glitch.com/favicon.ico" />
     
         <title>PWA VSCode Extension Manifest Form</title>
 
@@ -47,16 +107,22 @@ export class HelloWorldPanel {
       </head>
       <body>
         <div id="central">
-          <form id="manifest-options" onsubmit="handleSubmit(event)">
+
+        <div id="submit-block">
+          <h1>Generate a Web Manifest</h1>
+          <vscode-button onclick="handleSubmit()">Submit Manifest Options</vscode-button>
+        </div>
+
+          <form id="manifest-options">
             <div id="first-six">
               <div class="six">
                 <label for="dir">Dir:</label>
                 <div class="input-area">
-                  <select name="dir" id="dir" required>
-                    <option value="auto" selected>auto</option>
-                    <option value="ltr">ltr</option>
-                    <option value="rtl">rtl</option>
-                  </select>
+                  <vscode-dropdown name="dir" id="dir" required>
+                    <vscode-option value="auto" selected>auto</vscode-option>
+                    <vscode-option value="ltr">ltr</vscode-option>
+                    <vscode-option value="rtl">rtl</vscode-option>
+                  </vscode-dropdown>
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/dir"
                     target="_blank"
@@ -73,12 +139,12 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="display">Display:</label>
                 <div class="input-area">
-                  <select name="display" id="display" required>
-                    <option value="fullscreen">fullscreen</option>
-                    <option value="standalone" selected>standalone</option>
-                    <option value="minimal-ui">minimal-ui</option>
-                    <option value="browser">browser</option>
-                  </select>
+                  <vscode-dropdown name="display" id="display" required>
+                    <vscode-option value="fullscreen">fullscreen</vscode-option>
+                    <vscode-option value="standalone" selected>standalone</vscode-option>
+                    <vscode-option value="minimal-ui">minimal-ui</vscode-option>
+                    <vscode-option value="browser">browser</vscode-option>
+                  </vscode-dropdown>
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/display"
                     target="_blank"
@@ -95,13 +161,14 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="name">Name:</label>
                 <div class="input-area">
-                  <input
+   
+                  <vscode-text-field 
                     type="text"
                     name="name"
                     id="name"
                     value="placeholder"
-                    required
-                  />
+                    required></vscode-text-field>
+
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/name"
                     target="_blank"
@@ -118,13 +185,14 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="short_name">Short Name:</label>
                 <div class="input-area">
-                  <input
+
+                  <vscode-text-field 
                     type="text"
                     name="short_name"
                     id="short_name"
                     value="placeholder"
-                    required
-                  />
+                    required></vscode-text-field>
+
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name"
                     target="_blank"
@@ -141,7 +209,7 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="scope">Scope:</label>
                 <div class="input-area">
-                  <input type="text" name="scope" id="scope" value="/" required />
+                  <vscode-text-field type="text" name="scope" id="scope" value="/" required></vscode-text-field>
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/scope"
                     target="_blank"
@@ -158,13 +226,13 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="start_url">Start Url:</label>
                 <div class="input-area">
-                  <input
+                  <vscode-text-field
                     type="text"
                     name="start_url"
                     id="start_url"
                     value="/"
                     required
-                  />
+                  ></vscode-text-field>
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url"
                     target="_blank"
@@ -181,7 +249,7 @@ export class HelloWorldPanel {
               <div class="six">
                 <label for="lang">Default Language:</label>
                 <div class="input-area">
-                  <input type="text" name="lang" id="lang" value="en" required />
+                  <vscode-text-field type="text" name="lang" id="lang" value="en" required ></vscode-text-field>
                   <a
                     href="https://developer.mozilla.org/en-US/docs/Web/Manifest/lang"
                     target="_blank"
@@ -217,7 +285,7 @@ export class HelloWorldPanel {
             <div id="desc-box">
               <label for="description">Description:</label>
               <div class="input-area">
-                <textarea
+                <vscode-text-area
                   type="text"
                   name="description"
                   id="description"
@@ -225,7 +293,7 @@ export class HelloWorldPanel {
                   cols="60"
                   required
                 >
-    placeholder description</textarea
+    placeholder description</vscode-text-area
                 >
                 <a
                   href="https://developer.mozilla.org/en-US/docs/Web/Manifest/description"
@@ -287,10 +355,6 @@ export class HelloWorldPanel {
                 </div>
               </div>
             </div>
-    
-            <div id="submit-block">
-              <vscode-button type="submit">Submit Manifest Options</vscode-button>
-            </div>
           </form>
         </div>
         <script>
@@ -311,7 +375,7 @@ export class HelloWorldPanel {
             form.append("platform", "ios");
             form.append("colorChanged", "false");
             form.append("padding", "0");
-            // send formdata with http node module
+
             try {
               const response = await fetch(url, {
                 method: "POST",
@@ -330,8 +394,7 @@ export class HelloWorldPanel {
             });
           }
     
-          async function handleSubmit(event) {
-            event.preventDefault();
+          async function handleSubmit() {
             let dir = document.getElementById("dir").value;
             let display = document.getElementById("display").value;
             let name = document.getElementById("name").value;
@@ -366,7 +429,6 @@ export class HelloWorldPanel {
               text: "Your manifest has been created and added to your project.",
               manifestObject: maniObj,
             });
-            event.preventDefault();
           }
         </script>
       </body>
@@ -382,11 +444,20 @@ export class HelloWorldPanel {
         #central {
           padding: 1em;
           font-family: sans-serif;
+
+          margin-left: 2em;
+          margin-right: 2em;
         }
     
         #manifest-options {
           display: flex;
           flex-direction: column;
+        }
+
+        .color input {
+          width: 10em;
+          border: none;
+          background: transparent;
         }
     
         .input-area {
@@ -452,6 +523,8 @@ export class HelloWorldPanel {
         #file_input {
           border: none;
           color: currentColor;
+
+          width: 12em;
         }
     
         select {
@@ -482,15 +555,11 @@ export class HelloWorldPanel {
           padding: 1px;
         }
     
-        #bottom-four {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          grid-gap: 20px;
-        }
-    
         .color {
           display: flex;
           flex-direction: column;
+
+          margin-top: 1em;
         }
     
         #icon {
@@ -521,9 +590,25 @@ export class HelloWorldPanel {
     
         #submit-block {
           display: flex;
-          justify-content: flex-end;
+          justify-content: space-between;
           align-items: center;
           margin-top: 2em;
+
+          position: sticky;
+          top: 0;
+          z-index: 9;
+          background: #1e1e1e;
+          height: 100%;
+          padding-top: 10px;
+
+          border-bottom: solid 1px darkgrey;
+          padding-bottom: 10px;
+        }
+
+        #submit-block h1 {
+          font-size: 16px;
+          margin-top: 0;
+          margin-bottom: 0;
         }
     
         #submit-block button {
@@ -554,25 +639,27 @@ export class HelloWorldPanel {
   }
 
   public static render(extensionUri: vscode.Uri) {
-    if (HelloWorldPanel.currentPanel) {
-      HelloWorldPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
+    if (ManiGenerationPanel.currentPanel) {
+      ManiGenerationPanel.currentPanel._panel.reveal(vscode.ViewColumn.One);
     } else {
       const panel = vscode.window.createWebviewPanel(
-        "helloworld",
-        "Hello World",
+        "manifestview",
+        "Web Manifest",
         vscode.ViewColumn.One,
         {
-          // Empty for now
-          enableScripts: true
+          enableScripts: true,
         }
       );
 
-      HelloWorldPanel.currentPanel = new HelloWorldPanel(panel, extensionUri);
+      ManiGenerationPanel.currentPanel = new ManiGenerationPanel(
+        panel,
+        extensionUri
+      );
     }
   }
 
   public dispose() {
-    HelloWorldPanel.currentPanel = undefined;
+    ManiGenerationPanel.currentPanel = undefined;
 
     this._panel.dispose();
 

@@ -26,7 +26,7 @@ import { ServiceWorkerProvider } from "./services/validation/sw-view";
 import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
-import { HelloWorldPanel } from "./views/manifest-view";
+import { ManiGenerationPanel } from "./views/manifest-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -235,7 +235,7 @@ export function activate(context: vscode.ExtensionContext) {
     manifestCommandID,
     async () => {
       // await handleManifestCommand(context);
-      HelloWorldPanel.render(context.extensionUri);
+      ManiGenerationPanel.render(context.extensionUri);
     }
   );
   

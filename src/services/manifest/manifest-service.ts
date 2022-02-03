@@ -133,7 +133,7 @@ export async function handleIcons(context: vscode.ExtensionContext) {
   );
 }
 
-async function convertBaseToFile(
+export async function convertBaseToFile(
   iconsList: Array<any>
 ): Promise<{ path: string; icons: Array<any> }> {
     // ask user to choose a directory to save files to
