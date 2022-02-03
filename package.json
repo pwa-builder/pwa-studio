@@ -27,6 +27,7 @@
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
+    "onCommand:pwa-studio.updateAdvWorker",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
@@ -159,12 +160,18 @@
       },
       {
         "command": "pwa-studio.setWebURL",
-        "title": "PWA Studio: Set App URL",
+        "title": "PWA Studio: Publish To Web",
         "icon": "$(gear)"
       },
       {
         "command": "pwa-studio.generateIcons",
-        "title": "PWA Studio: Generate Icons"
+        "title": "PWA Studio: Generate Icons",
+        "icon": "$(settings-edit)"
+      },
+      {
+        "command": "pwa-studio.updateAdvWorker",
+        "title": "PWA Studio: Update Service Worker",
+        "icon": "$(refresh)"
       }
     ],
     "viewsWelcome": [
@@ -214,6 +221,11 @@
           "group": "navigation"
         },
         {
+          "command": "pwa-studio.generateIcons",
+          "when": "view == validationPanel",
+          "group": "navigation"
+        },
+        {
           "command": "pwa-studio.manifest",
           "when": "view == validationPanel",
           "group": "navigation"
@@ -230,6 +242,11 @@
         },
         {
           "command": "pwa-studio.refreshSWView",
+          "when": "view == serviceWorkerPanel",
+          "group": "navigation"
+        },
+        {
+          "command": "pwa-studio.updateAdvWorker",
           "when": "view == serviceWorkerPanel",
           "group": "navigation"
         },
