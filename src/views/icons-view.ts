@@ -123,6 +123,8 @@ export class IconGenerationPanel {
       </form>
     </div>
     <script>
+      const vscode = acquireVsCodeApi();
+
       let file = undefined;
       document.querySelector("#file_input").addEventListener("change", (ev) => {
         file = ev.target.files[0];
@@ -160,13 +162,19 @@ export class IconGenerationPanel {
       }
 
       async function handleSubmit() {
+        // update button text
+        document.querySelector("#submit").innerText = "Generating...";
+
         const icons = await generateIcons();
+        
+        document.querySelector("#submit").innerText = "Generate Icons";
 
         let maniObj = {
           icons: icons,
         };
 
-        const vscode = acquireVsCodeApi();
+        console.log(vscode);
+
         vscode.postMessage({
           command: "prompt",
           text: "Your icons have been generated!",

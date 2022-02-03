@@ -61,20 +61,6 @@ export function activate(context: vscode.ExtensionContext) {
 		})
 	);
 
-  const serviceWorkerStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    150
-  );
-  serviceWorkerStatusBarItem.text = "Generate Service Worker";
-  serviceWorkerStatusBarItem.show();
-
-  const updateADVWorkerStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    450
-  );
-  updateADVWorkerStatusBarItem.text = "Update Precache Manifest";
-  updateADVWorkerStatusBarItem.show();
-
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     100
@@ -82,33 +68,12 @@ export function activate(context: vscode.ExtensionContext) {
   packageStatusBarItem.text = "Package PWA";
   packageStatusBarItem.show();
 
-  const manifestStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    200
-  );
-  manifestStatusBarItem.text = "Generate Web Manifest";
-  manifestStatusBarItem.show();
-
-  const generateIconsStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    350
-  );
-  generateIconsStatusBarItem.text = "Generate Icons";
-  generateIconsStatusBarItem.show();
-
   const generateAppStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     250
   );
   generateAppStatusBarItem.text = "Start new PWA";
   generateAppStatusBarItem.show();
-
-  const publishToWebStatusBarItem = vscode.window.createStatusBarItem(
-    vscode.StatusBarAlignment.Left,
-    300
-  );
-  publishToWebStatusBarItem.text = "Publish to Web";
-  publishToWebStatusBarItem.show();
 
   if (
     vscode.workspace.workspaceFolders &&
@@ -171,7 +136,6 @@ export function activate(context: vscode.ExtensionContext) {
       IconGenerationPanel.render(context.extensionUri);
     }
   );
-  generateIconsStatusBarItem.command = handleIconsCommmandID;
 
   const chooseServiceWorkerCommand = vscode.commands.registerCommand(
     chooseServiceWorkerCommandID,
@@ -184,10 +148,8 @@ export function activate(context: vscode.ExtensionContext) {
     serviceWorkerCommandId,
     async () => {
       await handleServiceWorkerCommand();
-      serviceWorkerStatusBarItem.show();
     }
   );
-  serviceWorkerStatusBarItem.command = serviceWorkerCommandId;
 
   const generateWorker = vscode.commands.registerCommand(
     generateWorkerCommandId,
@@ -209,7 +171,6 @@ export function activate(context: vscode.ExtensionContext) {
       updateAdvServiceWorker();
     }
   );
-  updateADVWorkerStatusBarItem.command = updateADVWorkerCommandID;
 
   let packageAppCommand = vscode.commands.registerCommand(
     packageCommandId,
@@ -236,8 +197,6 @@ export function activate(context: vscode.ExtensionContext) {
       ManiGenerationPanel.render(context.extensionUri);
     }
   );
-  
-  manifestStatusBarItem.command = manifestCommandID;
 
   let setAppURLCommand = vscode.commands.registerCommand(
     setAppURLCommandID,
@@ -245,13 +204,11 @@ export function activate(context: vscode.ExtensionContext) {
       await askForUrl();
     }
   );
-  publishToWebStatusBarItem.command = setAppURLCommandID;
 
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
   context.subscriptions.push(addServiceWorker);
   context.subscriptions.push(chooseServiceWorkerCommand);
-  context.subscriptions.push(serviceWorkerStatusBarItem);
   context.subscriptions.push(packageAppCommand);
   context.subscriptions.push(validationCommand);
   context.subscriptions.push(generateWorker);

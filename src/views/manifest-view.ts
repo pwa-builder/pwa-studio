@@ -110,7 +110,7 @@ export class ManiGenerationPanel {
 
         <div id="submit-block">
           <h1>Generate a Web Manifest</h1>
-          <vscode-button onclick="handleSubmit()">Submit Manifest Options</vscode-button>
+          <vscode-button id="submit" onclick="handleSubmit()">Submit Manifest Options</vscode-button>
         </div>
 
           <form id="manifest-options">
@@ -406,8 +406,12 @@ export class ManiGenerationPanel {
             let theme_color = document.getElementById("theme_color").value;
             let background_color =
               document.getElementById("background_color").value;
+
+            document.querySelector("#submit").innerText = "Generating...";
     
             const icons = await generateIcons();
+
+            document.querySelector("#submit").innerText = "Submit Manifest Options";
     
             let maniObj = {
               dir: dir,
