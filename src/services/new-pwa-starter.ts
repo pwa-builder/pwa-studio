@@ -21,7 +21,22 @@ export async function setUpLocalPwaStarterRepository(): Promise<void> {
 
   if (repositoryName !== undefined) {
     initStarterRepository();
+    offerDocumentation();
     openRepositoryWithCode();
+  }
+}
+
+async function offerDocumentation() {
+  // offer documentation
+  const documentationLink = "https://aka.ms/starter-docs";
+  const documentationLinkButton = "Open Documentation";
+  const documentationLinkResponse = await vscode.window.showInformationMessage(
+    "Your app is ready to go, would you like to view the documentation?",
+    documentationLinkButton
+  );
+
+  if (documentationLinkResponse === documentationLinkButton) {
+    vscode.commands.executeCommand("vscode.open", documentationLink);
   }
 }
 
