@@ -13,7 +13,6 @@ const maniTestValues = [
     name: "name",
     errorString: "name is required and should be a string with a length > 0",
     test: (value: string) => {
-      console.log('value', value);
       return value && typeof(value) === "string" && value.length > 0;
     },
   },
@@ -157,7 +156,6 @@ export function subscribeToDocumentChanges(
   emojiDiagnostics: vscode.DiagnosticCollection
 ): void {
   if (vscode.window.activeTextEditor) {
-    console.log(vscode.window.activeTextEditor.document.fileName);
     if (vscode.window.activeTextEditor.document.fileName.includes("json")) {
       refreshDiagnostics(
         vscode.window.activeTextEditor.document,

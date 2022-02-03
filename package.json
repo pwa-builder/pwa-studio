@@ -3,7 +3,7 @@
   "displayName": "PWA Studio",
   "description": "PWABuilder in your VSCode!",
   "publisher": "PWABuilder",
-  "version": "0.1.2",
+  "version": "0.1.5",
   "icon": "store_assets/icon_512.png",
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "onCommand:pwa-studio.generateWorker",
     "onCommand:pwa-studio.chooseManifest",
     "onCommand:pwa-studio.chooseServiceWorker",
+    "onCommand:pwa-studio.generateIcons",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
@@ -179,6 +180,10 @@
       {
         "command": "pwa-studio.setWebURL",
         "title": "PWA Studio: Set App URL"
+      },
+      {
+        "command": "pwa-studio.generateIcons",
+        "title": "PWA Studio: Generate Icons"
       }
     ],
     "viewsWelcome": [

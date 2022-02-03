@@ -9,7 +9,7 @@ const noNameSelectedWarning: string =
 const noGitWarning: string =
   "This command requires git. Install git at https://git-scm.com/";
 const noNpmWarning: string =
-  "This command requires npm. Install git at https://www.npmjs.com/";
+  "This command requires npm. Install npm at https://www.npmjs.com/";
 const starterRepositoryURI: string =
   "https://github.com/pwa-builder/pwa-starter.git";
 

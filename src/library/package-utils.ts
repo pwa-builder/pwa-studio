@@ -1,6 +1,6 @@
 import { writeFile } from "fs/promises";
 import fetch from "node-fetch";
-import { Headers } from "node-fetch";
+import { Headers, Response } from "node-fetch";
 import { MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
@@ -11,6 +11,10 @@ export const WindowsDocsURL =
   "https://blog.pwabuilder.com/docs/windows-platform/";
 
 export const iosDocsURL = "https://blog.pwabuilder.com/docs/ios-platform/";
+
+/*
+* To-Do: More code re-use
+*/
 
 const advancedAndroidSettings: AndroidPackageOptions = {
   appVersion: "1.0.0.0",
@@ -62,14 +66,26 @@ const advancedAndroidSettings: AndroidPackageOptions = {
 };
 
 export async function packageForWindows(options: any) {
-  const response = await fetch(
-    "https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip",
-    {
-      method: "POST",
-      body: JSON.stringify(options),
-      headers: new Headers({ "content-type": "application/json" }),
-    }
-  );
+  let response: Response | undefined;
+
+  try {
+    response = await fetch(
+      "https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip",
+      {
+        method: "POST",
+        body: JSON.stringify(options),
+        headers: new Headers({ "content-type": "application/json" }),
+      }
+    );
+  }
+  catch (err) {
+    vscode.window.showErrorMessage(
+      `
+        There was an error packaging for Windows: ${err}
+      `
+    );
+  }
+
 
   return response;
 }
@@ -109,11 +125,23 @@ export function getPublisherMsixFromArray(...args: string[]): MsixInfo {
 
 export async function buildAndroidPackage(options: AndroidPackageOptions) {
   const generateAppUrl = `https://pwabuilder-cloudapk.azurewebsites.net/generateAppPackage`;
-  const response = await fetch(generateAppUrl, {
-    method: "POST",
-    body: JSON.stringify(options),
-    headers: new Headers({ "content-type": "application/json" }),
-  });
+
+  let response: Response | undefined;
+
+  try {
+    response = await fetch(generateAppUrl, {
+      method: "POST",
+      body: JSON.stringify(options),
+      headers: new Headers({ "content-type": "application/json" }),
+    });
+  }
+  catch (err) {
+    vscode.window.showErrorMessage(
+      `
+        There was an error packaging for Android: ${err}
+      `
+    );
+  }
 
   return response;
 }
@@ -121,18 +149,33 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
 export async function buildIOSPackage(options: IOSAppPackageOptions) {
   const generateAppUrl =
     "https://pwabuilder-ios.azurewebsites.net/packages/create";
-  const response = await fetch(generateAppUrl, {
-    method: "POST",
-    body: JSON.stringify(options),
-    headers: new Headers({ "content-type": "application/json" }),
-  });
+
+  let response: Response | undefined;
+
+  try {
+    response = await fetch(generateAppUrl, {
+      method: "POST",
+      body: JSON.stringify(options),
+      headers: new Headers({ "content-type": "application/json" }),
+    });
+  }
+  catch (err) {
+    vscode.window.showErrorMessage(
+      `
+        There was an error packaging for iOS: ${err}
+      `
+    );
+  }
 
   return response;
 }
 
 export async function packageForIOS(options: any): Promise<any> {
   const responseData = await buildIOSPackage(options);
-  return await responseData.blob();
+
+  if (responseData) {
+    return await responseData.blob();
+  }
 }
 
 export async function buildIOSOptions(): Promise<any | undefined> {
@@ -153,8 +196,22 @@ export async function buildIOSOptions(): Promise<any | undefined> {
 
   if (manifestUrl) {
     // fetch manifest from manifestUrl using node-fetch
-    const manifestData = await (await fetch(manifestUrl)).json();
-    manifest = manifestData;
+    let manifestData: undefined | any;
+
+    try {
+      manifestData = await (await fetch(manifestUrl)).json();
+      manifest = manifestData;
+    }
+    catch (err) {
+      // show error message
+      vscode.window.showErrorMessage(
+        `Error generating package: The Web Manifest could not be found at the URL entered.
+          This most likely means that the URL you entered for your Web Manifest is incorrect.
+          However, it can also mean that your Web Manifest is being served with the incorrect mimetype by
+          your web server or hosting service. More info: ${err}
+            `
+      );
+    }
 
     const host =
       [appUrl, manifestUrl].map((i) => tryGetHost(i)).find((i) => !!i) || "";
@@ -227,8 +284,23 @@ export async function buildAndroidOptions(): Promise<
 
   if (manifestUrl && packageId) {
     // fetch manifest from manifestUrl using node-fetch
-    const manifestData = await (await fetch(manifestUrl)).json();
-    const manifest = manifestData;
+
+    let manifestData: any | undefined;
+    let manifest: any | undefined;
+    try {
+      manifestData = await (await fetch(manifestUrl)).json();
+      manifest = manifestData;
+    }
+    catch (err) {
+      // show error message
+      vscode.window.showErrorMessage(
+        `Error generating package: The Web Manifest could not be found at the URL entered.
+          This most likely means that the URL you entered for your Web Manifest is incorrect.
+          However, it can also mean that your Web Manifest is being served with the incorrect mimetype by
+          your web server or hosting service. More info: ${err}
+        `
+      );
+    }
 
     // find icon with a size of 512x512 from manifest.icons
     const icon = manifest.icons.find((icon: any) => {

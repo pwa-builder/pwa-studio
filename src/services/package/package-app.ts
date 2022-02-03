@@ -28,6 +28,10 @@ import {
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
 
+/*
+* To-do Justin: More re-use
+*/
+
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
 
@@ -232,7 +236,11 @@ async function platformQuestionQuickPick(): Promise<string> {
 }
 
 async function packageWithPwaBuilder(): Promise<any> {
-  return (await packageForWindows(packageInfo)).blob();
+  const packageData = await packageForWindows(packageInfo);
+
+  if (packageData) {
+    return packageData.blob();
+  }
 }
 
 async function convertPackageToZip(
