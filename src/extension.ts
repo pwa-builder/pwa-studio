@@ -27,6 +27,7 @@ import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { ManiGenerationPanel } from "./views/manifest-view";
+import { IconGenerationPanel } from "./views/icons-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -169,7 +170,7 @@ export function activate(context: vscode.ExtensionContext) {
   const generateIconsCommand = vscode.commands.registerCommand(
     handleIconsCommmandID,
     async () => {
-      await handleIcons(context);
+      IconGenerationPanel.render(context.extensionUri);
     }
   );
   generateIconsStatusBarItem.command = handleIconsCommmandID;
@@ -234,7 +235,6 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      // await handleManifestCommand(context);
       ManiGenerationPanel.render(context.extensionUri);
     }
   );
