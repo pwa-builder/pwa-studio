@@ -10,9 +10,7 @@ import {
   updateAdvServiceWorker,
 } from "./services/service-worker";
 import {
-  handleManifestCommand,
   chooseManifest,
-  handleIcons,
 } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
