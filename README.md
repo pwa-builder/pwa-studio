@@ -10,6 +10,8 @@ The PWA Studio Code Extension brings commands and interface to VSCode that are s
 
 [Our documentation](https://github.com/pwa-builder/pwabuilder-vscode/wiki) contains all the info you need for working with the extension, including tutorials and more!
 
+[Found a bug?](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
+
 ---
 
 ## Getting the Extension
