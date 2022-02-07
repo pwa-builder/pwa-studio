@@ -1,3 +1,4 @@
+import { rejects } from "assert";
 import * as vscode from "vscode";
 const shell = require("shelljs");
 
@@ -16,14 +17,24 @@ const starterRepositoryURI: string =
 let repositoryName: string | undefined = undefined;
 const vsTerminal = vscode.window.createTerminal();
 
-export async function setUpLocalPwaStarterRepository(): Promise<void> {
-  await getRepositoryNameFromInputBox();
+export async function setUpLocalPwaStarterRepository(name?: string): Promise<void> {
+  return new Promise(async (resolve, reject) => {
+    const appName = await getRepositoryNameFromInputBox(name ? name : undefined);
 
-  if (repositoryName !== undefined) {
-    initStarterRepository();
-    offerDocumentation();
-    openRepositoryWithCode();
-  }
+    if (repositoryName !== undefined) {
+      try {
+        initStarterRepository();
+        offerDocumentation();
+        openRepositoryWithCode();
+
+        // @ts-ignore
+        resolve(appName);
+      }
+      catch (err) {
+        reject(err);
+      }
+    }
+  });
 }
 
 async function offerDocumentation() {
@@ -40,15 +51,22 @@ async function offerDocumentation() {
   }
 }
 
-async function getRepositoryNameFromInputBox(): Promise<void> {
-  repositoryName = await vscode.window.showInputBox({
-    prompt: repositoryInputPrompt,
-    placeHolder: repositoryInputPlaceholder,
-  });
+async function getRepositoryNameFromInputBox(name?: string): Promise<string | undefined> {
+  if (name) {
+    repositoryName = name;
+  }
+  else {
+    repositoryName = await vscode.window.showInputBox({
+      prompt: repositoryInputPrompt,
+      placeHolder: repositoryInputPlaceholder,
+    });
+  }
 
   if (repositoryName === undefined) {
     inputCanelledWarning();
   }
+
+  return repositoryName;
 }
 
 function initStarterRepository(): void {
