@@ -5,6 +5,8 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 // import * as myExtension from '../../extension';
 
+// import * as PWAStudio from '../../extension';
+
 suite('Extension Test Suite', () => {
 	vscode.window.showInformationMessage('Start all tests.');
 
@@ -12,4 +14,8 @@ suite('Extension Test Suite', () => {
 		assert.strictEqual([1, 2, 3].indexOf(5), -1);
 		assert.strictEqual([1, 2, 3].indexOf(0), -1);
 	});
+
+    test('Generate Icons', () => {
+        
+    })
 });
