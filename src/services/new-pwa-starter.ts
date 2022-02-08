@@ -164,7 +164,3 @@ function noGitInstalledWarning(): void {
 export function noNpmInstalledWarning(): void {
   vscode.window.showWarningMessage(noNpmWarning);
 }
-function folders(arg0: () => void, readonly: any, folders: any, arg3: readonly vscode.WorkspaceFolder[] | undefined): vscode.Disposable {
-  throw new Error("Function not implemented.");
-}
-
