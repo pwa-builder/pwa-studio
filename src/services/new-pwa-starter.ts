@@ -14,7 +14,8 @@ const starterRepositoryURI: string =
   "https://github.com/pwa-builder/pwa-starter.git";
 
 let repositoryName: string | undefined = undefined;
-const vsTerminal = vscode.window.createTerminal();
+const terminal = vscode.window.createTerminal();
+const gitFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${repositoryName}/.git/**`);
 
 export async function setUpLocalPwaStarterRepository(): Promise<void> {
   await getRepositoryNameFromInputBox();
@@ -23,6 +24,7 @@ export async function setUpLocalPwaStarterRepository(): Promise<void> {
     initStarterRepository();
     offerDocumentation();
     openRepositoryWithCode();
+    setupLocalRepository();
   }
 }
 
@@ -52,14 +54,35 @@ async function getRepositoryNameFromInputBox(): Promise<void> {
 }
 
 function initStarterRepository(): void {
-  vsTerminal.show();
+  terminal.show();
   if (tryCloneFromGithub()) {
     tryNpmInstall();
   }
 }
 
 function openRepositoryWithCode(): void {
-  vsTerminal.sendText(`code ${repositoryName}`);
+  let workspaceChangeDisposable: vscode.Disposable = vscode.workspace.onDidChangeWorkspaceFolders(removeGitFolderListener);
+
+  gitFileWatcher.onDidDelete(() => {
+    workspaceChangeDisposable.dispose();
+    gitFileWatcher.dispose();
+  });
+
+  terminal.sendText(`code --add ${repositoryName}`);
+}
+
+function removeGitFolderListener(): any {
+  if(vscode.workspace.workspaceFolders)
+  {
+    let i = 0;
+    while(i < vscode.workspace.workspaceFolders.length)
+    {
+      if(vscode.workspace.workspaceFolders[i].name == repositoryName)
+        break;
+      i++;
+    }
+    vscode.workspace.fs.delete(vscode.Uri.file(`${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`), {recursive: true});
+  }
 }
 
 function tryNpmInstall(): boolean {
@@ -75,12 +98,12 @@ function tryNpmInstall(): boolean {
 
 function npmInstall(): void {
   changeDirectory(repositoryName);
-  vsTerminal.sendText("npm install");
+  terminal.sendText("npm install");
   changeDirectory("..");
 }
 
 function changeDirectory(pathToDirectory: string | undefined): void {
-  vsTerminal.sendText(`cd ${pathToDirectory}`);
+  terminal.sendText(`cd ${pathToDirectory}`);
 }
 
 export function isNpmInstalled(): boolean {
@@ -106,7 +129,14 @@ function tryCloneFromGithub(): boolean {
 }
 
 function cloneFromGithub(): void {
-  vsTerminal.sendText(cloneCommand());
+  terminal.sendText(cloneCommand());
+}
+
+function setupLocalRepository(): void {
+  changeDirectory(repositoryName);
+  terminal.sendText("git init .")
+  terminal.sendText("git add .")
+  terminal.sendText("git commit -m \"First PWA Starter commit.\"")
 }
 
 function isGitInstalled(): boolean {
@@ -134,3 +164,7 @@ function noGitInstalledWarning(): void {
 export function noNpmInstalledWarning(): void {
   vscode.window.showWarningMessage(noNpmWarning);
 }
+function folders(arg0: () => void, readonly: any, folders: any, arg3: readonly vscode.WorkspaceFolder[] | undefined): vscode.Disposable {
+  throw new Error("Function not implemented.");
+}
+
