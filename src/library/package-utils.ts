@@ -70,7 +70,7 @@ export async function packageForWindows(options: any) {
 
   try {
     response = await fetch(
-      "https://pwabuilder-win-chromium-platform.centralus.cloudapp.azure.com/msix/generatezip",
+      "https://pwabuilder-winserver.centralus.cloudapp.azure.com/msix/generatezip",
       {
         method: "POST",
         body: JSON.stringify(options),
