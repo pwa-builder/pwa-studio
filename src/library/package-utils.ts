@@ -1,7 +1,7 @@
 import { writeFile } from "fs/promises";
 import fetch from "node-fetch";
 import { Headers, Response } from "node-fetch";
-import { MsixInfo } from "../interfaces";
+import { Manifest, MsixInfo } from "../interfaces";
 
 import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../android-interfaces";
@@ -13,8 +13,8 @@ export const WindowsDocsURL =
 export const iosDocsURL = "https://blog.pwabuilder.com/docs/ios-platform/";
 
 /*
-* To-Do: More code re-use
-*/
+ * To-Do: More code re-use
+ */
 
 const advancedAndroidSettings: AndroidPackageOptions = {
   appVersion: "1.0.0.0",
@@ -77,15 +77,13 @@ export async function packageForWindows(options: any) {
         headers: new Headers({ "content-type": "application/json" }),
       }
     );
-  }
-  catch (err) {
+  } catch (err) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for Windows: ${err}
       `
     );
   }
-
 
   return response;
 }
@@ -134,8 +132,7 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
       body: JSON.stringify(options),
       headers: new Headers({ "content-type": "application/json" }),
     });
-  }
-  catch (err) {
+  } catch (err) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for Android: ${err}
@@ -158,8 +155,7 @@ export async function buildIOSPackage(options: IOSAppPackageOptions) {
       body: JSON.stringify(options),
       headers: new Headers({ "content-type": "application/json" }),
     });
-  }
-  catch (err) {
+  } catch (err) {
     vscode.window.showErrorMessage(
       `
         There was an error packaging for iOS: ${err}
@@ -192,17 +188,19 @@ export async function buildIOSOptions(): Promise<any | undefined> {
     prompt: "Enter the URL to your manifest",
   });
 
-  let manifest = undefined;
+  let manifest: Manifest | undefined = undefined;
 
   if (manifestUrl) {
     // fetch manifest from manifestUrl using node-fetch
-    let manifestData: undefined | any;
+    let manifestData: Manifest | undefined | any;
 
     try {
       manifestData = await (await fetch(manifestUrl)).json();
-      manifest = manifestData;
-    }
-    catch (err) {
+
+      if (manifestData) {
+        manifest = manifestData;
+      }
+    } catch (err) {
       // show error message
       vscode.window.showErrorMessage(
         `Error generating package: The Web Manifest could not be found at the URL entered.
@@ -217,25 +215,31 @@ export async function buildIOSOptions(): Promise<any | undefined> {
       [appUrl, manifestUrl].map((i) => tryGetHost(i)).find((i) => !!i) || "";
 
     // find icon with a size of 512x512 from manifest.icons
-    const icon = manifest.icons.find((icon: any) => {
+    const icon = manifest?.icons?.find((icon: any) => {
       if (icon.sizes && icon.sizes.includes("512x512")) {
         return icon;
       }
     });
 
-    return {
-      name: manifest.short_name || manifest.name || "My PWA",
-      bundleId: iosGenerateBundleId(host),
-      url: new URL(manifest.start_url || "/", manifestUrl).toString(),
-      imageUrl: `${appUrl}/${icon.src}`,
-      splashColor: manifest.background_color || "#ffffff",
-      progressBarColor: manifest.theme_color || "#000000",
-      statusBarColor:
-        manifest.theme_color || manifest.background_color || "#ffffff",
-      permittedUrls: [],
-      manifestUrl: manifestUrl,
-      manifest: manifest,
-    };
+    let packageResults = undefined;
+
+    if (manifest && icon) {
+      packageResults = {
+        name: manifest.short_name || manifest.name || "My PWA",
+        bundleId: iosGenerateBundleId(host),
+        url: new URL(manifest.start_url || "/", manifestUrl).toString(),
+        imageUrl: `${appUrl}/${icon.src}`,
+        splashColor: manifest.background_color || "#ffffff",
+        progressBarColor: manifest.theme_color || "#000000",
+        statusBarColor:
+          manifest.theme_color || manifest.background_color || "#ffffff",
+        permittedUrls: [],
+        manifestUrl: manifestUrl,
+        manifest: manifest,
+      };
+    }
+
+    return packageResults;
   } else {
     return undefined;
   }
@@ -285,13 +289,15 @@ export async function buildAndroidOptions(): Promise<
   if (manifestUrl && packageId) {
     // fetch manifest from manifestUrl using node-fetch
 
-    let manifestData: any | undefined;
-    let manifest: any | undefined;
+    let manifestData: Manifest | undefined;
+    let manifest: Manifest | undefined;
     try {
       manifestData = await (await fetch(manifestUrl)).json();
-      manifest = manifestData;
-    }
-    catch (err) {
+
+      if (manifestData) {
+        manifest = manifestData;
+      }
+    } catch (err) {
       // show error message
       vscode.window.showErrorMessage(
         `Error generating package: The Web Manifest could not be found at the URL entered.
@@ -303,13 +309,13 @@ export async function buildAndroidOptions(): Promise<
     }
 
     // find icon with a size of 512x512 from manifest.icons
-    const icon = manifest.icons.find((icon: any) => {
+    const icon = manifest?.icons?.find((icon: any) => {
       if (icon.sizes && icon.sizes.includes("512x512")) {
         return icon;
       }
     });
 
-    const maskableIcon = manifest.icons.find((icon: any) => {
+    const maskableIcon = manifest?.icons?.find((icon: any) => {
       if (icon.purpose && icon.purpose.includes("maskable")) {
         return icon;
       }
@@ -376,56 +382,63 @@ export async function buildAndroidOptions(): Promise<
       }
     }
 
-    return {
-      appVersion: version || "1.0.0.0",
-      appVersionCode: 1,
-      backgroundColor:
-        manifest.background_color || manifest.theme_color || "#FFFFFF",
-      display: manifest.display,
-      enableNotifications: true,
-      enableSiteSettingsShortcut: true,
-      fallbackType: "customtabs",
-      features: {
-        locationDelegation: {
-          enabled: true,
+    let packageResults : AndroidPackageOptions | undefined = undefined;
+
+    if (manifest && icon) {
+      packageResults = {
+        appVersion: version || "1.0.0.0",
+        appVersionCode: 1,
+        backgroundColor:
+          manifest.background_color || manifest.theme_color || "#FFFFFF",
+        display: manifest.display || "standalone",
+        enableNotifications: true,
+        enableSiteSettingsShortcut: true,
+        fallbackType: "customtabs",
+        features: {
+          locationDelegation: {
+            enabled: true,
+          },
+          playBilling: {
+            enabled: false,
+          },
         },
-        playBilling: {
-          enabled: false,
+        host: appUrl,
+        iconUrl: `${appUrl}/${icon.src}`,
+        maskableIconUrl: maskableIcon ? `${appUrl}/${maskableIcon.src}` : null,
+        monochromeIconUrl: null,
+        includeSourceCode: false,
+        isChromeOSOnly: false,
+        launcherName: manifest.short_name?.substring(0, 30) || manifest.name || "", // launcher name should be the short name. If none is available, fallback to the full app name.
+        name: manifest.name || "My PWA",
+        navigationColor: manifest.background_color || manifest.theme_color || "#FFFFFF",
+        navigationColorDark: manifest.background_color || manifest.theme_color || "#FFFFFF",
+        navigationDividerColor:
+          manifest.background_color || manifest.theme_color || "#FFFFFF",
+        navigationDividerColorDark:
+          manifest.background_color || manifest.theme_color || "#FFFFFF",
+        orientation: manifest.orientation || "default",
+        packageId: packageId || "com.android.pwa",
+        shortcuts: manifest.shortcuts || [],
+        signing: {
+          file: null,
+          alias: "my-key-alias",
+          fullName: `${manifest.short_name || manifest.name || "App"} Admin`,
+          organization: manifest.name || "PWABuilder",
+          organizationalUnit: "Engineering",
+          countryCode: "US",
+          keyPassword: "", // If empty, one will be generated by CloudAPK service
+          storePassword: "", // If empty, one will be generated by CloudAPK service
         },
-      },
-      host: appUrl,
-      iconUrl: `${appUrl}/${icon.src}`,
-      maskableIconUrl: maskableIcon ? `${appUrl}/${maskableIcon.src}` : null,
-      monochromeIconUrl: null,
-      includeSourceCode: false,
-      isChromeOSOnly: false,
-      launcherName: manifest.short_name.substring(0, 30), // launcher name should be the short name. If none is available, fallback to the full app name.
-      name: manifest.name,
-      navigationColor: manifest.background_color || manifest.theme_color,
-      navigationColorDark: manifest.background_color || manifest.theme_color,
-      navigationDividerColor: manifest.background_color || manifest.theme_color,
-      navigationDividerColorDark:
-        manifest.background_color || manifest.theme_color,
-      orientation: manifest.orientation || "default",
-      packageId: packageId || "com.android.pwa",
-      shortcuts: manifest.shortcuts || [],
-      signing: {
-        file: null,
-        alias: "my-key-alias",
-        fullName: `${manifest.short_name || manifest.name || "App"} Admin`,
-        organization: manifest.name || "PWABuilder",
-        organizationalUnit: "Engineering",
-        countryCode: "US",
-        keyPassword: "", // If empty, one will be generated by CloudAPK service
-        storePassword: "", // If empty, one will be generated by CloudAPK service
-      },
-      signingMode: "new",
-      splashScreenFadeOutDuration: 300,
-      startUrl: manifest.start_url,
-      themeColor: manifest.theme_color || "#FFFFFF",
-      shareTarget: manifest.share_target || [],
-      webManifestUrl: manifestUrl,
-    };
+        signingMode: "new",
+        splashScreenFadeOutDuration: 300,
+        startUrl: manifest.start_url || "/",
+        themeColor: manifest.theme_color || "#FFFFFF",
+        shareTarget: manifest.share_target || [],
+        webManifestUrl: manifestUrl,
+      };
+    }
+
+    return packageResults;
   }
 }
 
