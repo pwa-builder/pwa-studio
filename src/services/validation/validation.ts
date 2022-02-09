@@ -1,8 +1,9 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
+import { Manifest } from "../../interfaces";
 import { handleWebhint } from "../../library/handle-webhint";
 
-let manifestContents: any | undefined;
+let manifestFileRead: string | undefined;
 
 /** Code that is used to associate diagnostic entries with code actions. */
 export const MANI_CODE = "mani_code";
@@ -236,8 +237,8 @@ export async function handleValidation(
     });
 
     if (manifestFile) {
-      manifestContents = await readFile(manifestFile[0].fsPath, "utf8");
-      const results = await testManifest(manifestContents);
+      manifestFileRead = await readFile(manifestFile[0].fsPath, "utf8");
+      const results = await testManifest(manifestFile);
 
       await gatherResults(results, manifestFile, context);
     } else {
@@ -334,8 +335,8 @@ function setupFileWatcher(): void {
   const watcher = vscode.workspace.createFileSystemWatcher("**/manifest.json");
 
   watcher.onDidChange(async (manifestFile) => {
-    manifestContents = await readFile(manifestFile.fsPath, "utf8");
-    await testManifest(manifestContents);
+    manifestFileRead = await readFile(manifestFile.fsPath, "utf8");
+    await testManifest(manifestFileRead);
     await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   });
 }
@@ -380,9 +381,9 @@ async function gatherResults(
       );
     });
 
-    if (manifestContents) {
+    if (manifestFileRead) {
       // check for a 512x512 icon in manifestFile
-      const fiveTwelveCheck = JSON.parse(manifestContents).icons.forEach(
+      const fiveTwelveCheck = JSON.parse(manifestFileRead).icons.forEach(
         (icon: any) => {
           if (icon.sizes === "512x512") {
             return icon;
