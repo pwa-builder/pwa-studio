@@ -1,4 +1,3 @@
-import { rejects } from "assert";
 import * as vscode from "vscode";
 const shell = require("shelljs");
 
@@ -36,6 +35,7 @@ export async function setUpLocalPwaStarterRepository(name?: string): Promise<voi
       }
     }
   });
+}
 
 async function offerDocumentation() {
   // offer documentation
@@ -88,16 +88,14 @@ function openRepositoryWithCode(): void {
 }
 
 function removeGitFolderListener(): any {
-  if(vscode.workspace.workspaceFolders)
-  {
+  if (vscode.workspace.workspaceFolders) {
     let i = 0;
-    while(i < vscode.workspace.workspaceFolders.length)
-    {
-      if(vscode.workspace.workspaceFolders[i].name == repositoryName)
+    while (i < vscode.workspace.workspaceFolders.length) {
+      if (vscode.workspace.workspaceFolders[i].name == repositoryName)
         break;
       i++;
     }
-    vscode.workspace.fs.delete(vscode.Uri.file(`${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`), {recursive: true});
+    vscode.workspace.fs.delete(vscode.Uri.file(`${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`), { recursive: true });
   }
 }
 
