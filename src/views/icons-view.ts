@@ -1,5 +1,6 @@
 import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
+import { Manifest } from "../interfaces";
 import {
   convertBaseToFile,
   findManifest,
@@ -36,7 +37,7 @@ export class IconGenerationPanel {
                 manifest
               );
 
-              const manifestObject = JSON.parse(manifestFile.getText());
+              const manifestObject: Manifest = JSON.parse(manifestFile.getText());
 
               const newIconsData = await convertBaseToFile(iconsObject.icons);
 

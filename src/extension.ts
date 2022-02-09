@@ -118,7 +118,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const maniDocs = vscode.commands.registerCommand(
     maniDocsCommandID,
-    async (event: any) => {
+    async (event) => {
       await handleManiDocsCommand(event);
     }
   );

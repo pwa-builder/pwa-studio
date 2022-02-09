@@ -47,7 +47,7 @@ export interface AndroidPackageOptions {
   display: "standalone" | "fullscreen" | "fullscreen-sticky";
   enableNotifications: boolean;
   enableSiteSettingsShortcut: boolean;
-  fallbackType: "customtabs" | "webview";
+  fallbackType: string;
   features: {
     appsFlyer?: {
       enabled: boolean;
@@ -86,7 +86,7 @@ export interface AndroidPackageOptions {
   "landscape-primary" |
   "landscape-secondary";
   packageId: string;
-  shareTarget?: ShareTarget;
+  shareTarget?: ShareTarget | Array<any>;
   shortcuts: ShortcutItem[];
   signing: AndroidSigningOptions;
   signingMode: "new" | "none" | "mine";
