@@ -42,6 +42,10 @@
       {
         "language": "javascript",
         "path": "/snippets/pwa-windows.js.code-snippets"
+      },
+      {
+        "language": "typescript",
+        "path": "/snippets/pwa-windows.js.code-snippets"
       }
     ],
     "walkthroughs": [
