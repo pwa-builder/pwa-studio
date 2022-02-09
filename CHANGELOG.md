@@ -2,7 +2,13 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [v0.2.1]
+
+- Fixed: https://github.com/pwa-builder/PWABuilder/issues/2579
+- Fixed: https://github.com/pwa-builder/PWABuilder/issues/2557
+
+- Setup tests: https://github.com/pwa-builder/PWABuilder/issues/2588
+- Better Typescript usage: https://github.com/pwa-builder/PWABuilder/issues/2595
 
 ## [v0.2.0]
 
