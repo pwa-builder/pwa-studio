@@ -1,28 +1,18 @@
-## Welcome to the PWA Studio VSCode Extension
+## Welcome!
 
-The PWA Studio Code Extension brings commands and interface to VSCode that are specific to developing progressive web applications, turning your go-to developer environment into a PWA workshop. The extension includes functionality for:
+PWA Studio makes VSCode the BEST developer environment for building Progressive Web Apps. Using it, you can:
 
-* Starting a new PWA
-* Converting an existing web app into a PWA
-* Managing your PWA's manifest and service workers
-* Packaging your PWA for the Microsoft, Google, and Apple Stores
-* **...and more!**
+* Start building a brand new PWA using the [pwa-starter](https://aka.ms/pwa-starter) template
+* Convert an existing web app into a PWA
+* Audit your PWA to ensure it is app store ready and installable!
+* Publish your PWA to the web using [Azure Static Web Apps](https://azure.microsoft.com/en-us/services/app-service/static/)
+* Package your PWA for the Microsoft, Google, and Apple App Stores
+* Generate a Service Worker so that your PWA works offline
+* Generate ALL the correct sized Icons for a PWA
 
 [Our documentation](https://github.com/pwa-builder/pwabuilder-vscode/wiki) contains all the info you need for working with the extension, including tutorials and more!
 
 [Found a bug?](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
-
----
-
-## Getting the Extension
-
-The PWA Builder Code extension is available on the VSCode Extension Marketplace and can be downloaded [here.](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio)
-
-If you already have VS Code installed, clicking install will prompt you to open VS Code and take you right to the extension. If you don't have VS Code but want to try developing PWAs with the extension, you can download Code [here.](https://code.visualstudio.com/)
-
-You can also search the extension and download it from within VS Code. Just go to the Extensions tab and search for the extension.
-
----
 
 ## First Steps with PWA Studio
 
