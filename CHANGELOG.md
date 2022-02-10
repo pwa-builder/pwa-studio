@@ -2,6 +2,15 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v0.2.3]
+
+- Updated readme for VSCode Marketplace
+
+
+## [v0.2.2]
+
+- Updated the Windows packaging URL to our new Windows packaging server
+
 ## [v0.2.1]
 
 - Fixed: https://github.com/pwa-builder/PWABuilder/issues/2579
