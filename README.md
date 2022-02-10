@@ -1,4 +1,4 @@
-## Welcome to the PWA Studio VSCode Extension!
+## Welcome to the PWA Studio VSCode Extension
 
 The PWA Studio Code Extension brings commands and interface to VSCode that are specific to developing progressive web applications, turning your go-to developer environment into a PWA workshop. The extension includes functionality for:
 
@@ -15,6 +15,7 @@ The PWA Studio Code Extension brings commands and interface to VSCode that are s
 ---
 
 ## Getting the Extension
+
 The PWA Builder Code extension is available on the VSCode Extension Marketplace and can be downloaded [here.](https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio)
 
 If you already have VS Code installed, clicking install will prompt you to open VS Code and take you right to the extension. If you don't have VS Code but want to try developing PWAs with the extension, you can download Code [here.](https://code.visualstudio.com/)
@@ -24,6 +25,7 @@ You can also search the extension and download it from within VS Code. Just go t
 ---
 
 ## First Steps with PWA Studio
+
 Here are a few places to check out in the documentation if you are using the extension for the first time:
 <br>
 <br>
@@ -42,6 +44,7 @@ Learn how to [validate your PWA](https://github.com/pwa-builder/pwabuilder-vscod
 ---
 
 ## Resources and Links
+
 Check out some of these sites to learn more about PWAs and PWA Builder!
 
 [***PWA Builder***](https://www.pwabuilder.com/)
