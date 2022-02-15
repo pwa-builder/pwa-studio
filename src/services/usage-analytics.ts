@@ -1,7 +1,7 @@
 // @ts-ignore
 import fetch from "node-fetch";
 
-declare var $ANALYTICS_CODE$: any;
+const code: string = "$ANALYTICS_CODE$";
 
 export interface PackageTypes {
   androidPackage: boolean;
@@ -27,7 +27,7 @@ export async function captureUsage(
   windowsPackageType?: "StorePackage" | "TestPackage"
 ) {
   try {
-    const testValue = process.env.ANALYTICS_CODE || $ANALYTICS_CODE$;
+    const testValue = process.env.ANALYTICS_CODE || code;
     await fetch(
       `https://pwabuilder-url-logger.azurewebsites.net/api/logurl?code=${testValue}`,
       {
