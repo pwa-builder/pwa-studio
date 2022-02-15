@@ -607,7 +607,6 @@ export class ManiGenerationPanel {
           position: sticky;
           top: 0;
           z-index: 9;
-          background: #1e1e1e;
           height: 100%;
           padding-top: 10px;
 
