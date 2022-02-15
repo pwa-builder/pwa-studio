@@ -4,6 +4,7 @@ import {
   convertBaseToFile,
   findManifest,
 } from "../services/manifest/manifest-service";
+import { captureUsage } from "../services/usage-analytics";
 import { getUri } from "../utils";
 
 export class ManiGenerationPanel {
@@ -28,15 +29,20 @@ export class ManiGenerationPanel {
         console.log("message", message);
         switch (message.command) {
           case "prompt":
+
             iconsObject = message.iconsObject
               ? message.iconsObject.icons
               : message.manifestObject.icons;
-            console.log("iconsObject", iconsObject);
-            // const manifest: vscode.Uri = await findManifest();
+
+            if (message.iconsObject) {
+              captureUsage("generate-icons");
+            }
+            else {
+              captureUsage("generate-manifest");
+            }
 
             if (message.manifestObject && iconsObject) {
               const newIconsData = await convertBaseToFile(iconsObject);
-              console.log("newIconsData", newIconsData);
 
               // add icons to manifest
               message.manifestObject.icons = newIconsData.icons;
@@ -601,7 +607,6 @@ export class ManiGenerationPanel {
           position: sticky;
           top: 0;
           z-index: 9;
-          background: #1e1e1e;
           height: 100%;
           padding-top: 10px;
 
