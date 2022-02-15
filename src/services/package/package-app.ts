@@ -107,7 +107,6 @@ export async function packageApp(): Promise<void> {
 
   captureUsage(
     "package",
-    url,
     true,
     true,
     {

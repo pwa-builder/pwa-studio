@@ -29,11 +29,17 @@ export class ManiGenerationPanel {
         console.log("message", message);
         switch (message.command) {
           case "prompt":
-            captureUsage("generate-manifest");
 
             iconsObject = message.iconsObject
               ? message.iconsObject.icons
               : message.manifestObject.icons;
+
+            if (message.iconsObject) {
+              captureUsage("generate-icons");
+            }
+            else {
+              captureUsage("generate-manifest");
+            }
 
             if (message.manifestObject && iconsObject) {
               const newIconsData = await convertBaseToFile(iconsObject);
