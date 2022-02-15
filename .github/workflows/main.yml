@@ -35,6 +35,7 @@ jobs:
         with:
           tokenPrefix: __
           tokenSuffix: __
+          files: '["**/*.js"]'
         env: 
           __ANALYTICS_CODE__: "testValue"
           
