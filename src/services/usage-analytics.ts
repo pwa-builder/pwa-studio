@@ -1,5 +1,6 @@
 // @ts-ignore
 import fetch from "node-fetch";
+import { getURL } from "./web-publish";
 
 const code: string = "$ANALYTICS_CODE$";
 
@@ -17,9 +18,10 @@ export interface PackageErrors {
   windowsPackageError: string;
 }
 
+const appURL = getURL();
+
 export async function captureUsage(
   action: string,
-  url?: string,
   manifestDetected?: boolean,
   serviceWorkerDetected?: boolean,
   packaged?: PackageTypes,
@@ -36,7 +38,7 @@ export async function captureUsage(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          url,
+          url: appURL || "/",
           action,
           source: "PWA Studio",
           date: new Date().toISOString(),
