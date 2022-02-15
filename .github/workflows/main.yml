@@ -40,7 +40,7 @@ jobs:
         with:
           tokenPrefix: $
           tokenSuffix: $
-          files: '["usage-analytics.js"]'
+          files: '["**/usage-analytics.js"]'
         env: 
           __ANALYTICS_CODE__: "testValue"
       
