@@ -11,12 +11,12 @@ import {
   packageForIOS,
   packageForWindows,
   validateIOSOptions,
-  WindowsDocsURL
+  WindowsDocsURL,
 } from "../../library/package-utils";
 import {
   packageQuestion,
   windowsDevQuestions,
-  windowsProdQuestions
+  windowsProdQuestions,
 } from "../../questions";
 import { getManifest } from "../manifest/manifest-service";
 import { getWorker } from "../service-worker";
@@ -24,13 +24,14 @@ import { getURL } from "../web-publish";
 import {
   AndroidDocsURL,
   packageForAndroid,
-  validateAndroidOptions
+  validateAndroidOptions,
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
+import { captureUsage } from "../usage-analytics";
 
 /*
-* To-do Justin: More re-use
-*/
+ * To-do Justin: More re-use
+ */
 
 const inputCancelledMessage: string =
   "Input process cancelled. Try again if you wish to package your PWA";
@@ -103,6 +104,21 @@ export async function packageApp(): Promise<void> {
 
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
+
+  captureUsage(
+    "package",
+    url,
+    true,
+    true,
+    {
+      androidPackage: packageType === "Android",
+      iOSPackage: packageType === "iOS",
+      windowsPackage: packageType.includes("Windows"),
+      oculusPackage: packageType === "Oculus",
+    },
+    undefined,
+    packageType.includes("Windows Production") ? "StorePackage" : "TestPackage"
+  );
 
   if (packageType === "iOS") {
     try {
@@ -209,7 +225,9 @@ export async function packageApp(): Promise<void> {
   }
 }
 
-async function getAndroidPackageOptions(): Promise<AndroidPackageOptions | undefined> {
+async function getAndroidPackageOptions(): Promise<
+  AndroidPackageOptions | undefined
+> {
   const options = await buildAndroidOptions();
   return options;
 }
