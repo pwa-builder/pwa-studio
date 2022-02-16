@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { captureUsage } from "./usage-analytics";
 const shell = require("shelljs");
 
 const repositoryInputPrompt: string =
@@ -18,6 +19,8 @@ const terminal = vscode.window.createTerminal();
 const gitFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${repositoryName}/.git/**`);
 
 export async function setUpLocalPwaStarterRepository(name?: string): Promise<void> {
+  captureUsage("new-pwa-starter");
+  
   return new Promise(async (resolve, reject) => {
     const appName = await getRepositoryNameFromInputBox(name ? name : undefined);
 
