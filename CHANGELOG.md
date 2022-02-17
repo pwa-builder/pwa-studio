@@ -5,7 +5,7 @@ All notable changes to the "pwa-studio" extension will be documented in this fil
 ## [v0.2.6]
 
 - Workaround for analytics issue: https://github.com/pwa-builder/pwa-studio/compare/help-panel?expand=1#diff-3e1333fb5dae3594a3e5ba561f7937487c8fe8d3a1bba91c706e213b5b69e5b1L41
-- Manifest and Icon generation views will not generate until required fields are filled out, including icon file input
+- Manifest and Icon generation views will not generate until required fields are filled out, including icon file input: https://github.com/pwa-builder/PWABuilder/issues/2627
 
 ## [v0.2.5]
 
