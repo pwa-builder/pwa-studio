@@ -19,9 +19,12 @@ export class HelpViewPanel {
     // Handle messages from the webview
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
-          if (message.command === "generate") {
-              vscode.commands.executeCommand("pwa-studio.manifest");
-          }
+        if (message.command === "generate-manifest") {
+          vscode.commands.executeCommand("pwa-studio.manifest");
+        }
+        else if (message.command === "generate-worker") {
+          vscode.commands.executeCommand("pwa-studio.serviceWorker");
+        }
       },
       undefined,
       this._disposables
@@ -116,20 +119,22 @@ export class HelpViewPanel {
          <!-- manifest panel -->
          <vscode-panel-view id="view-2">
            <section class="container">
-              <h2>What is a Web Manifest?</h2>
 
-              <p>
-                A Web App Manifest of a website governs how your Progressive Web App (PWA) looks and behaves when installed on a device. 
-                The Web App Manifest provides information such as the name of your app, the file location of icons that represent your app in system menus, 
-                and the theme colors that the operating system (OS) uses in the title bar. <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests">Learn more about Web Manifests</vscode-link>
-              </p>
+              <div class="side-by-side">
+                <div class="example-side">
+                  <h2>What is a Web Manifest?</h2>
 
-              <vscode-button id="generate">Generate a Web Manifest</vscode-button>
+                  <p>
+                    A Web Manifest governs how your Progressive Web App (PWA) looks and behaves when installed on a device. 
+                    The Web App Manifest provides information such as the name of your app, your app's icons, 
+                    and the theme colors that the operating system uses in the title bar. <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests">Learn more about Web Manifests</vscode-link>
+                  </p>
+  
+                  <vscode-button class="generate">Generate a Web Manifest</vscode-button>
 
-              <div id="side-by-side">
-                <div id="example-side">
-                <vscode-tag style="width: 36em;">All the places in Windows that your Web Manifest assets are used</vscode-tag>
-                <img style="width: 30.5em;" src="${imageUri}" alt="Showing all the different places your icons are used in Windows">
+
+                  <vscode-tag style="width: 36em;">All the places in Windows that your Web Manifest assets are used</vscode-tag>
+                  <img style="width: 30.5em;" src="${imageUri}" alt="Showing all the different places your icons are used in Windows">
                 </div>
 
                 <div>
@@ -163,12 +168,21 @@ export class HelpViewPanel {
 
          <!-- service worker -->
          <vscode-panel-view id="view-3">
-           <h2>What is a Service Worker?</h2>
+           <section class="container">
+             <div class="example-side">
+                <h2>What is a Service Worker?</h2>
 
-           <p>
-             Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all network requests using the Fetch API. 
-             Service Workers can access the Cache API, and asynchronous client-side data stores, such as IndexedDB, to store resources.
-           </p>
+                <p>
+                  Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all network requests using the Fetch API. 
+                  Service Workers can access the Cache API, and asynchronous client-side data stores, such as IndexedDB, to store resources.
+                </p>
+
+                <vscode-button class="generate-worker">Generate a Service Worker</vscode-button>
+              </div>
+
+              <div>
+              </div>
+           </section>
          </vscode-panel-view>
 
 
@@ -180,10 +194,16 @@ export class HelpViewPanel {
     <script>
       const vscode = acquireVsCodeApi();
 
-      document.querySelector("#generate").addEventListener("click", () => {
+      document.querySelector(".generate").addEventListener("click", () => {
           vscode.postMessage({
-                command: 'generate'
+                command: 'generate-manifest'
             });
+      })
+
+      document.querySelector(".generate-worker").addEventListener("click", () => {
+        vscode.postMessage({
+          command: 'generate-worker'
+        })
       })
 
       let file = undefined;
@@ -201,18 +221,19 @@ export class HelpViewPanel {
       color: white;
     }
 
-    #side-by-side {
+    .side-by-side {
         display: flex;
     align-items: baseline;
     justify-content: left;
     column-gap: 11em;
     }
 
-    #generate {
-        width: 14em;
+    .generate, .generate-worker {
+      width: 14em;
+      margin-bottom: 2em;
     }
 
-    #example-side {
+    .example-side {
         display: flex;
     flex-direction: column;
     margin-top: 1em;
