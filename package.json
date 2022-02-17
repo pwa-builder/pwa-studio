@@ -28,7 +28,6 @@
     "onCommand:pwa-studio.chooseServiceWorker",
     "onCommand:pwa-studio.generateIcons",
     "onCommand:pwa-studio.updateAdvWorker",
-    "onCommand:pwa-studio.help",
     "onView:validationPanel",
     "onView:serviceWorkerPanel",
     "onView:packagePanel"
@@ -177,11 +176,6 @@
         "command": "pwa-studio.updateAdvWorker",
         "title": "PWA Studio: Update Service Worker",
         "icon": "$(refresh)"
-      },
-      {
-        "command": "pwa-studio.help",
-        "title": "PWA Studio: Help",
-        "icon": "$(help)"
       }
     ],
     "viewsWelcome": [
