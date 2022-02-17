@@ -114,12 +114,13 @@ export class ManiGenerationPanel {
       <body>
         <div id="central">
 
-        <div id="submit-block">
-          <h1>Generate a Web Manifest</h1>
-          <vscode-button id="submit" onclick="handleSubmit()">Submit Manifest Options</vscode-button>
-        </div>
+          <form onsubmit="handleSubmit(event)" id="manifest-options">
+            <div id="submit-block">
+              <h1>Generate a Web Manifest</h1>
 
-          <form id="manifest-options">
+              <button type="submit">Submit Manifest Options</button>
+            </div>
+
             <div id="first-six">
               <div class="six">
                 <label for="dir">Dir:</label>
@@ -400,7 +401,9 @@ export class ManiGenerationPanel {
             });
           }
     
-          async function handleSubmit() {
+          async function handleSubmit(event) {
+            event.preventDefault();
+
             let dir = document.getElementById("dir").value;
             let display = document.getElementById("display").value;
             let name = document.getElementById("name").value;
@@ -439,6 +442,8 @@ export class ManiGenerationPanel {
               text: "Your manifest has been created and added to your project.",
               manifestObject: maniObj,
             });
+
+            event.preventDefault();
           }
         </script>
       </body>
@@ -604,8 +609,6 @@ export class ManiGenerationPanel {
           align-items: center;
           margin-top: 2em;
 
-          position: sticky;
-          top: 0;
           z-index: 9;
           height: 100%;
           padding-top: 10px;

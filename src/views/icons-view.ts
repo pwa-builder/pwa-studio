@@ -96,12 +96,13 @@ export class IconGenerationPanel {
   </head>
   <body>
     <div id="central">
+      <form id="manifest-options" onsubmit="handleSubmit(event)">
+
       <div id="submit-block">
         <h1>Generate Icons</h1>
-        <vscode-button onclick="handleSubmit()" id="submit" type="submit">Generate Icons</vscode-button>
+        <button type="submit" id="submit" type="submit">Generate Icons</vscode-button>
       </div>
 
-      <form id="manifest-options" onsubmit="handleSubmit(event)">
         <div id="first-six">
           <div class="six">
             <label for="file_input">Choose a 512x512 icon:</label>
@@ -162,7 +163,8 @@ export class IconGenerationPanel {
         });
       }
 
-      async function handleSubmit() {
+      async function handleSubmit(event) {
+        event.preventDefault();
         // update button text
         document.querySelector("#submit").innerText = "Generating...";
 
@@ -174,13 +176,13 @@ export class IconGenerationPanel {
           icons: icons,
         };
 
-        console.log(vscode);
-
         vscode.postMessage({
           command: "prompt",
           text: "Your icons have been generated!",
           iconsObject: maniObj,
         });
+
+        event.preventDefault();
       }
     </script>
   </body>
@@ -396,7 +398,7 @@ export class IconGenerationPanel {
       const panel = vscode.window.createWebviewPanel(
         "iconsview",
         "Generate Icons",
-        vscode.ViewColumn.One,
+        vscode.ViewColumn.Beside,
         {
           enableScripts: true,
         }

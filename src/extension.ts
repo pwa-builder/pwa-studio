@@ -26,6 +26,7 @@ import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
+// import { HelpViewPanel } from "./views/help-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -43,6 +44,7 @@ const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
+// const helpCommandID = "pwa-studio.help";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -137,6 +139,13 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
+  /*const helpCommand = vscode.commands.registerCommand(
+    helpCommandID,
+    async () => {
+      HelpViewPanel.render(context.extensionUri);
+    }
+  );*/
+
   const chooseServiceWorkerCommand = vscode.commands.registerCommand(
     chooseServiceWorkerCommandID,
     async () => {
@@ -218,6 +227,7 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateIconsCommand);
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
+  // context.subscriptions.push(helpCommand);
 }
 
 export function deactivate() {}

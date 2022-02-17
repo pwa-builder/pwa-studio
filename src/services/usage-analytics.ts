@@ -38,7 +38,7 @@ export async function captureUsage(
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          url: appURL || "/",
+          url: `PWA Studio: ${action}`,
           action,
           source: "PWA Studio",
           date: new Date().toISOString(),
