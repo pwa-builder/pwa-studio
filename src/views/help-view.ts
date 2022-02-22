@@ -25,6 +25,9 @@ export class HelpViewPanel {
         else if (message.command === "generate-worker") {
           vscode.commands.executeCommand("pwa-studio.serviceWorker");
         }
+        else if (message.command === "generate-icons") {
+          vscode.commands.executeCommand("pwa-studio.generateIcons");
+        }
       },
       undefined,
       this._disposables
@@ -127,7 +130,7 @@ export class HelpViewPanel {
                   <p>
                     A Web Manifest governs how your Progressive Web App (PWA) looks and behaves when installed on a device. 
                     The Web App Manifest provides information such as the name of your app, your app's icons, 
-                    and the theme colors that the operating system uses in the title bar. <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests">Learn more about Web Manifests</vscode-link>
+                    and the theme colors that the operating system uses in the title bar. <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests">Learn More</vscode-link>
                   </p>
   
                   <vscode-button class="generate">Generate a Web Manifest</vscode-button>
@@ -138,29 +141,69 @@ export class HelpViewPanel {
                 </div>
 
                 <div>
-                <h2>Manifest Properties Library</h2>
-                <ul>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/background_color">background_color</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/categories">categories</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/description">description</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/dir">dir</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/display">display</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/display_override">display_override</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/iarc_rating_id">iarc_rating_id</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/icons">icons</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/lang">lang</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/name">name</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/orientation">orientation</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/prefer_related_applications">prefer_related_applications</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/protocol_handlers">protocol_handlers</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/related_applications">related_applications</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/scope">scope</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/screenshots">screenshots</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/short_name">short_name</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/shortcuts">shortcuts</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/start_url">start_url</vscode-link></li>
-                    <li><vscode-link href="https://developer.mozilla.org/docs/Web/Manifest/theme_color">theme_color</vscode-link></li>
-                </ul>
+                  <h2>Web Manifest FAQ</h2>
+                  <ul>
+                    <li>
+                      <h3>What size icons do I need?</h3>
+
+                      <p>
+                        While there is not a standard list, you need at'least a 512x512 PNG icon for your PWA to be installable.
+                        For your app to have specific icon sizes for other places in the operating system, such as the start menu on Windows or app drawer in Android,
+                        you can generate the right sized icons from your 512x512 icon by tapping the button below.
+                      </p>
+
+                      <vscode-button class="generate-icons">Generate Icons</vscode-button>
+
+                      <vscode-link href="https://developer.mozilla.org/en-US/docs/Web/Manifest/icons">More Documentation</vscode-link>
+                    </li>
+
+                    <li>
+                      <h3>My browser or PWABuilder does not see my Web Manifest?</h3>
+
+                      <ul>
+                        <li>
+                          <p>
+                            Check your Web Manifest is registered on your index.html. You should see the below code, or something similar
+                            in your index.html. If you dont, copy and paste the below code into your index.html.
+                          </p>
+
+                          <code><link rel="manifest" href="/manifest.json"></code>
+
+                          <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests">More Documentation</vscode-link>
+                        </li>
+
+                        <li>
+                          <p>
+                            Check that your Web Manifest is being served correctly. 
+                            The manifest file's content must be valid JSON, but the file can also be named like app_name.webmanifest. 
+                            If you choose to use the webmanifest extension, verify that your HTTP server serves it with the application/manifest+json MIME type.
+                          </p>
+                        </li>
+                      </ul>
+                    </li>
+
+                    <li>
+                      <h3>Common Web Manifest features</h3>
+
+                      <ul>
+                        <li>
+                          <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests#use-shortcuts-to-provide-quick-access-to-features">Shortcuts</vscode-link>
+                        </li>
+
+                        <li>
+                          <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/web-app-manifests#identify-your-app-as-a-share-target">Receive shared content from other apps</vscode-link>
+                        </li>
+
+                        <li>
+                          <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/handle-protocols">Protocol Handlers</vscode-link>
+                        </li>
+
+                        <li>
+                          <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/window-controls-overlay">Customize the title-bar</vscode-link>
+                        </li>
+                      </ul>
+                    </li>
+                  </ul>
                 </div>
               </div>
            </section>
@@ -169,24 +212,118 @@ export class HelpViewPanel {
          <!-- service worker -->
          <vscode-panel-view id="view-3">
            <section class="container">
-             <div class="example-side">
+             <div class="side-by-side">
+              <div class="example-side">
                 <h2>What is a Service Worker?</h2>
 
                 <p>
-                  Service Workers are a special type of Web Worker with the ability to intercept, modify, and respond to all network requests using the Fetch API. 
-                  Service Workers can access the Cache API, and asynchronous client-side data stores, such as IndexedDB, to store resources.
+                  Service Workers are a worker with the ability to intercept and respond to all network requests. 
+                  Service Workers can be thought of as a proxy between your app and the network. <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/service-workers">Learn More</vscode-link>
                 </p>
 
                 <vscode-button class="generate-worker">Generate a Service Worker</vscode-button>
               </div>
 
               <div>
+                <h2>Service Worker FAQ</h2>
+
+                <ul>
+                  <li>
+                    <h3>My browser or PWABuilder does not see my Service Worker?</h3>
+
+                    <p>
+                      Check your Service Worker is registered. You should see the below code, or something similar. If you dont, copy and paste the below code into your index.html,
+                      ensuring that the path to your Service Worker file is correct.
+                    </p>
+
+                    <code>
+                      if ( "serviceWorker" in navigator ) {
+                        navigator.serviceWorker.register( "/serviceworker.js" );
+                      } 
+                    </code>
+                  </li>
+
+                  <li>
+                    <h3>My Service Worker fails to register</h3>
+
+                    <p>
+                      This can happen for multiple reasons. The most common
+                      is that you have a syntax error in your Service Worker code.
+                      If you are sure your syntax is correct, check the link below for troubleshooting tips.
+                    </p>
+
+                    <vscode-link href="https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API/Using_Service_Workers#:~:text=Why%20is%20my%20service%20worker%20failing%20to%20register%3F">Troubleshooting Tips</vscode-link>
+                  </li>
+
+                  <li>
+                    <h3>Do I need a Service Worker?</h3>
+
+                    <p>
+                      For your PWA to be installable in the browser you will need a Service Worker. Also,
+                      to make use of features such as Push Notifications, your app working offline, background sync,
+                      background downloads etc, you will need a service worker.
+                    </p>
+                  </li>
+
+                  <li>
+                    <h3>Common Service Worker features</h3>
+                    
+                    <ul>
+                      <li>
+                        <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/notifications-badges">Badges and Push Notifications</vscode-link>
+                      </li>
+
+                      <li>
+                        <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/background-syncs#use-the-background-sync-api-to-synchronize-data-with-the-server">Replay requests when back online</vscode-link>
+                      </li>
+
+                      <li>
+                        <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/background-syncs#use-the-periodic-background-sync-api-to-regularly-get-fresh-content">Regularly sync data in the background</vscode-link>
+                      </li>
+
+                      <li>
+                        <vscode-link href="https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/background-syncs#use-the-background-fetch-api-to-fetch-large-files-when-the-app-or-service-worker-isnt-running">Background Downloads</vscode-link>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+                </div>
               </div>
            </section>
          </vscode-panel-view>
 
 
-         <vscode-panel-view id="view-4"> Terminal Content </vscode-panel-view>
+         <vscode-panel-view id="view-4">
+            <section class="container">
+              <div class="side-by-side">
+                <div class="example-side">
+                  <h2>PWA Studio</h2>
+
+                  <vscode-link href="https://marketplace.visualstudio.com/items?itemName=PWABuilder.pwa-studio&ssr=false#review-details">Rate and Review</vscode-link>
+                </div>
+
+                <div>
+                  <h2>PWA Studio FAQ</h2>
+
+                  <ul>
+                    <li>
+                      <h3>Workbox is not working</h3>
+
+                      <p>
+                         Do you have Node.js installed? Do you have NPM installed? If not, you will need to install these first.
+                         <vscode-link href="https://nodejs.org/">Install Node and NPM</vscode-link>
+                      </p>
+
+                      <p>
+                        Still not working? <vscode-link href="">Open an Issue</vscode-link>
+                      </p>
+
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </section>
+         </vscode-panel-view>
        </vscode-panels>
       </main>
 
@@ -195,16 +332,22 @@ export class HelpViewPanel {
       const vscode = acquireVsCodeApi();
 
       document.querySelector(".generate").addEventListener("click", () => {
-          vscode.postMessage({
-                command: 'generate-manifest'
-            });
-      })
+        vscode.postMessage({
+          command: 'generate-manifest'
+        });
+      });
 
       document.querySelector(".generate-worker").addEventListener("click", () => {
         vscode.postMessage({
           command: 'generate-worker'
         })
-      })
+      });
+
+      document.querySelector(".generate-icons").addEventListener("click", () => {
+        vscode.postMessage({
+          command: 'generate-icons'
+        })
+      });
 
       let file = undefined;
       document.querySelector("#file_input").addEventListener("change", (ev) => {
