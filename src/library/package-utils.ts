@@ -382,7 +382,7 @@ export async function buildAndroidOptions(): Promise<
       }
     }
 
-    let packageResults : AndroidPackageOptions | undefined = undefined;
+    let packageResults: AndroidPackageOptions | undefined = undefined;
 
     if (manifest && icon) {
       packageResults = {
@@ -408,10 +408,13 @@ export async function buildAndroidOptions(): Promise<
         monochromeIconUrl: null,
         includeSourceCode: false,
         isChromeOSOnly: false,
-        launcherName: manifest.short_name?.substring(0, 30) || manifest.name || "", // launcher name should be the short name. If none is available, fallback to the full app name.
+        launcherName:
+          manifest.short_name?.substring(0, 30) || manifest.name || "", // launcher name should be the short name. If none is available, fallback to the full app name.
         name: manifest.name || "My PWA",
-        navigationColor: manifest.background_color || manifest.theme_color || "#FFFFFF",
-        navigationColorDark: manifest.background_color || manifest.theme_color || "#FFFFFF",
+        navigationColor:
+          manifest.background_color || manifest.theme_color || "#FFFFFF",
+        navigationColorDark:
+          manifest.background_color || manifest.theme_color || "#FFFFFF",
         navigationDividerColor:
           manifest.background_color || manifest.theme_color || "#FFFFFF",
         navigationDividerColorDark:

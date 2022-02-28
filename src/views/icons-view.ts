@@ -37,7 +37,9 @@ export class IconGenerationPanel {
                 manifest
               );
 
-              const manifestObject: Manifest = JSON.parse(manifestFile.getText());
+              const manifestObject: Manifest = JSON.parse(
+                manifestFile.getText()
+              );
 
               const newIconsData = await convertBaseToFile(iconsObject.icons);
 

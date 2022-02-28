@@ -105,5 +105,8 @@ class ValidationItem extends vscode.TreeItem {
     this.command = command;
   }
 
-  iconPath = this.desc.toString() === "true" ? new vscode.ThemeIcon("check") : new vscode.ThemeIcon("warning");
+  iconPath =
+    this.desc.toString() === "true"
+      ? new vscode.ThemeIcon("check")
+      : new vscode.ThemeIcon("warning");
 }

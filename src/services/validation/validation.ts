@@ -14,20 +14,22 @@ const maniTestValues = [
     name: "name",
     errorString: "name is required and should be a string with a length > 0",
     test: (value: string) => {
-      return value && typeof(value) === "string" && value.length > 0;
+      return value && typeof value === "string" && value.length > 0;
     },
   },
   {
     name: "short_name",
     errorString:
       "short_name is required and should be a string with a length > 0",
-    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+    test: (value: string) =>
+      value && typeof value === "string" && value.length > 0,
   },
   {
     name: "description",
     errorString:
       "description is required and should be a string with a length > 0",
-    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+    test: (value: string) =>
+      value && typeof value === "string" && value.length > 0,
   },
   {
     name: "icons",
@@ -40,7 +42,9 @@ const maniTestValues = [
     errorString:
       "display is required and should be either fullscreen, standalone, minimal-ui, browser",
     test: (value: string) => {
-      return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(value);
+      return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
+        value
+      );
     },
   },
   {
@@ -71,7 +75,8 @@ const maniTestValues = [
     name: "start_url",
     errorString:
       "start_url is required and should be a string with a length > 0",
-    test: (value: string) => value && typeof(value) === "string" && value.length > 0,
+    test: (value: string) =>
+      value && typeof value === "string" && value.length > 0,
   },
 ];
 
@@ -132,8 +137,7 @@ function createDiagnostic(
 
         testResult = testValue.test(textToTest[testString]);
         test = testValue;
-      }
-      catch (err) {
+      } catch (err) {
         console.error("Could not parse JSON value", err);
       }
     }

@@ -50,8 +50,7 @@ export async function updateAdvServiceWorker(): Promise<void> {
           swDest,
           globDirectory: buildDir[0].fsPath,
         });
-      }
-      catch (err) {
+      } catch (err) {
         await Promise.reject(err);
       }
     } else {
@@ -129,7 +128,6 @@ export async function handleAdvServiceWorkerCommand(): Promise<void> {
 }
 
 export async function handleServiceWorkerCommand(): Promise<void> {
-
   captureUsage("generate-service-worker");
 
   //setup file watcher for workbox config file
@@ -236,7 +234,11 @@ export async function chooseServiceWorker(): Promise<void> {
   }
 }
 
-export function getWorker(): vscode.Uri | PromiseLike<vscode.Uri> | vscode.Uri[] | undefined {
+export function getWorker():
+  | vscode.Uri
+  | PromiseLike<vscode.Uri>
+  | vscode.Uri[]
+  | undefined {
   return existingWorker;
 }
 
@@ -277,8 +279,7 @@ export async function findWorker(): Promise<any | undefined> {
         await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
 
         resolve(existingWorker);
-      }
-      else {
+      } else {
         // await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
         resolve(undefined);
       }

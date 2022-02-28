@@ -48,10 +48,18 @@ export async function captureUsage(
           iOSPackage: packaged ? packaged.iOSPackage : false,
           oculusPackage: packaged ? packaged.oculusPackage : false,
           windowsPackage: packaged ? packaged.windowsPackage : false,
-          androidPackageError: packageErrors ? packageErrors.androidPackageError: undefined,
-          iOSPackageError: packageErrors ? packageErrors.iOSPackageError : undefined,
-          oculusPackageError: packageErrors ? packageErrors.oculusPackageError : undefined,
-          windowsPackageError: packageErrors ? packageErrors.windowsPackageError : undefined,
+          androidPackageError: packageErrors
+            ? packageErrors.androidPackageError
+            : undefined,
+          iOSPackageError: packageErrors
+            ? packageErrors.iOSPackageError
+            : undefined,
+          oculusPackageError: packageErrors
+            ? packageErrors.oculusPackageError
+            : undefined,
+          windowsPackageError: packageErrors
+            ? packageErrors.windowsPackageError
+            : undefined,
           windowsPackageType,
         }),
       }

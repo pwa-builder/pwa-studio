@@ -1,6 +1,4 @@
 import * as vscode from "vscode";
-import * as fs from "fs";
-import * as path from "path";
 import { readFile } from "fs/promises";
 import { testManifest } from "./validation";
 import { findManifest, getManifest } from "../manifest/manifest-service";
@@ -11,7 +9,7 @@ import { pathExists } from "../../library/file-utils";
  */
 
 export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
-  constructor(private workspaceRoot: string) { }
+  constructor(private workspaceRoot: string) {}
 
   getTreeItem(element: ValidationItem): vscode.TreeItem {
     return element;
@@ -35,7 +33,9 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
     }
 
     if (element && manifestPath && manifestExists) {
-      const testResults = await this.loadAndTestManifest((manifestPath as any).fsPath);
+      const testResults = await this.loadAndTestManifest(
+        (manifestPath as any).fsPath
+      );
 
       return Promise.resolve(
         this.handleTestResults(
@@ -45,7 +45,9 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         )
       );
     } else if (manifestPath && manifestExists) {
-      const testResults = await this.loadAndTestManifest((manifestPath as any).fsPath);
+      const testResults = await this.loadAndTestManifest(
+        (manifestPath as any).fsPath
+      );
 
       let requiredTestsFailed: any = [];
 
@@ -74,16 +76,15 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
   }
 
   /*
-  * Read and test manifest
-  */
+   * Read and test manifest
+   */
   private async loadAndTestManifest(manifestPath: string) {
     try {
       const manifestContents = await readFile(manifestPath, "utf8");
       const testResults = await testManifest(manifestContents);
 
       return testResults;
-    }
-    catch (err) {
+    } catch (err) {
       throw new Error(`Error loading and testing manifest: ${err}`);
     }
   }
@@ -145,5 +146,8 @@ class ValidationItem extends vscode.TreeItem {
     this.description = this.version;
   }
 
-  iconPath = this.version === "true" ? new vscode.ThemeIcon("check") : new vscode.ThemeIcon("warning");;
+  iconPath =
+    this.version === "true"
+      ? new vscode.ThemeIcon("check")
+      : new vscode.ThemeIcon("warning");
 }

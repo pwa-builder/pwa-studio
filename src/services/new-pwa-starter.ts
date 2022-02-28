@@ -16,13 +16,19 @@ const starterRepositoryURI: string =
 
 let repositoryName: string | undefined = undefined;
 const terminal = vscode.window.createTerminal();
-const gitFileWatcher = vscode.workspace.createFileSystemWatcher(`**/${repositoryName}/.git/**`);
+const gitFileWatcher = vscode.workspace.createFileSystemWatcher(
+  `**/${repositoryName}/.git/**`
+);
 
-export async function setUpLocalPwaStarterRepository(name?: string): Promise<void> {
+export async function setUpLocalPwaStarterRepository(
+  name?: string
+): Promise<void> {
   captureUsage("new-pwa-starter");
-  
+
   return new Promise(async (resolve, reject) => {
-    const appName = await getRepositoryNameFromInputBox(name ? name : undefined);
+    const appName = await getRepositoryNameFromInputBox(
+      name ? name : undefined
+    );
 
     if (repositoryName !== undefined) {
       try {
@@ -32,8 +38,7 @@ export async function setUpLocalPwaStarterRepository(name?: string): Promise<voi
 
         // @ts-ignore
         resolve(appName);
-      }
-      catch (err) {
+      } catch (err) {
         reject(err);
       }
     }
@@ -54,11 +59,12 @@ async function offerDocumentation() {
   }
 }
 
-async function getRepositoryNameFromInputBox(name?: string): Promise<string | undefined> {
+async function getRepositoryNameFromInputBox(
+  name?: string
+): Promise<string | undefined> {
   if (name) {
     repositoryName = name;
-  }
-  else {
+  } else {
     repositoryName = await vscode.window.showInputBox({
       prompt: repositoryInputPrompt,
       placeHolder: repositoryInputPlaceholder,
@@ -80,7 +86,8 @@ function initStarterRepository(): void {
 }
 
 function openRepositoryWithCode(): void {
-  let workspaceChangeDisposable: vscode.Disposable = vscode.workspace.onDidChangeWorkspaceFolders(removeGitFolderListener);
+  let workspaceChangeDisposable: vscode.Disposable =
+    vscode.workspace.onDidChangeWorkspaceFolders(removeGitFolderListener);
 
   gitFileWatcher.onDidDelete(() => {
     workspaceChangeDisposable.dispose();
@@ -94,11 +101,15 @@ function removeGitFolderListener(): any {
   if (vscode.workspace.workspaceFolders) {
     let i = 0;
     while (i < vscode.workspace.workspaceFolders.length) {
-      if (vscode.workspace.workspaceFolders[i].name == repositoryName)
-        break;
+      if (vscode.workspace.workspaceFolders[i].name == repositoryName) break;
       i++;
     }
-    vscode.workspace.fs.delete(vscode.Uri.file(`${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`), { recursive: true });
+    vscode.workspace.fs.delete(
+      vscode.Uri.file(
+        `${vscode.workspace.workspaceFolders[i].uri.fsPath}/.git`
+      ),
+      { recursive: true }
+    );
   }
 }
 
@@ -151,9 +162,9 @@ function cloneFromGithub(): void {
 
 function setupLocalRepository(): void {
   changeDirectory(repositoryName);
-  terminal.sendText("git init .")
-  terminal.sendText("git add .")
-  terminal.sendText("git commit -m \"First PWA Starter commit.\"")
+  terminal.sendText("git init .");
+  terminal.sendText("git add .");
+  terminal.sendText('git commit -m "First PWA Starter commit."');
 }
 
 function isGitInstalled(): boolean {

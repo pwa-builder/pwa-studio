@@ -1,6 +1,10 @@
 import { URL } from "url";
 import { buildAndroidPackage } from "../../library/package-utils";
-import { AndroidPackageOptions, AndroidPackageValidationError, AndroidSigningOptions } from "../../android-interfaces";
+import {
+  AndroidPackageOptions,
+  AndroidPackageValidationError,
+  AndroidSigningOptions,
+} from "../../android-interfaces";
 
 export async function packageForAndroid(options: any): Promise<any> {
   const responseData = await buildAndroidPackage(options);
