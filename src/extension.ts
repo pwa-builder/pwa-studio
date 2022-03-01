@@ -9,9 +9,7 @@ import {
   handleAdvServiceWorkerCommand,
   updateAdvServiceWorker,
 } from "./services/service-worker";
-import {
-  chooseManifest,
-} from "./services/manifest/manifest-service";
+import { chooseManifest } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
   MANI_CODE,
@@ -26,7 +24,7 @@ import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
 import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
-// import { HelpViewPanel } from "./views/help-view";
+import { HelpViewPanel } from "./views/help-view";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -44,7 +42,7 @@ const generateADVWorkerCommandID = "pwa-studio.generateAdvWorker";
 const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
-// const helpCommandID = "pwa-studio.help";
+const helpCommandID = "pwa-studio.help";
 
 export let storageManager: LocalStorageService | undefined = undefined;
 
@@ -52,16 +50,21 @@ export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
   // used for web manifest validation
-  const manifestDiagnostics = vscode.languages.createDiagnosticCollection("webmanifest");
-	context.subscriptions.push(manifestDiagnostics);
-  
+  const manifestDiagnostics =
+    vscode.languages.createDiagnosticCollection("webmanifest");
+  context.subscriptions.push(manifestDiagnostics);
+
   subscribeToDocumentChanges(context, manifestDiagnostics);
 
-	context.subscriptions.push(
-		vscode.languages.registerCodeActionsProvider('json', new ManifestInfoProvider(), {
-			providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds
-		})
-	);
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      "json",
+      new ManifestInfoProvider(),
+      {
+        providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
+      }
+    )
+  );
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -139,12 +142,12 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  /*const helpCommand = vscode.commands.registerCommand(
+  const helpCommand = vscode.commands.registerCommand(
     helpCommandID,
     async () => {
       HelpViewPanel.render(context.extensionUri);
     }
-  );*/
+  );
 
   const chooseServiceWorkerCommand = vscode.commands.registerCommand(
     chooseServiceWorkerCommandID,
@@ -227,28 +230,34 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(generateIconsCommand);
   context.subscriptions.push(generateAdvWorkerCommand);
   context.subscriptions.push(updateAdvWorkerCommand);
-  // context.subscriptions.push(helpCommand);
+  context.subscriptions.push(helpCommand);
 }
 
 export function deactivate() {}
 
 export class ManifestInfoProvider implements vscode.CodeActionProvider {
+  public static readonly providedCodeActionKinds = [
+    vscode.CodeActionKind.QuickFix,
+  ];
 
-	public static readonly providedCodeActionKinds = [
-		vscode.CodeActionKind.QuickFix
-	];
+  provideCodeActions(
+    document: vscode.TextDocument,
+    range: vscode.Range | vscode.Selection,
+    context: vscode.CodeActionContext,
+    token: vscode.CancellationToken
+  ): vscode.CodeAction[] {
+    // for each diagnostic entry that has the matching `code`, create a code action command
+    return context.diagnostics
+      .filter((diagnostic) => diagnostic.code === MANI_CODE)
+      .map((diagnostic) => this.createCommandCodeAction(diagnostic));
+  }
 
-	provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.CodeAction[] {
-		// for each diagnostic entry that has the matching `code`, create a code action command
-		return context.diagnostics
-			.filter(diagnostic => diagnostic.code === MANI_CODE)
-			.map(diagnostic => this.createCommandCodeAction(diagnostic));
-	}
-
-	private createCommandCodeAction(diagnostic: vscode.Diagnostic): vscode.CodeAction {
-		const action = new vscode.CodeAction('', vscode.CodeActionKind.Empty);
-		action.diagnostics = [diagnostic];
-		action.isPreferred = true;
-		return action;
-	}
+  private createCommandCodeAction(
+    diagnostic: vscode.Diagnostic
+  ): vscode.CodeAction {
+    const action = new vscode.CodeAction("", vscode.CodeActionKind.Empty);
+    action.diagnostics = [diagnostic];
+    action.isPreferred = true;
+    return action;
+  }
 }

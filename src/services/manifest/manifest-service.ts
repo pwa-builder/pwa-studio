@@ -32,7 +32,7 @@ export async function convertBaseToFile(
         );
 
         // create buffer from icon base64 data
-        const buff: Buffer = Buffer.from(icon.src.split(',')[1], "base64");
+        const buff: Buffer = Buffer.from(icon.src.split(",")[1], "base64");
 
         // write file to disk
         await vscode.workspace.fs.writeFile(iconFile, buff);
@@ -45,10 +45,9 @@ export async function convertBaseToFile(
 
     vscode.window.showInformationMessage(`Icons saved to ${uri.fsPath}`);
 
-    return ({ path: uri.fsPath, icons: await Promise.all(newIconsList) || [] });
-  }
-  else {
-    return ({ path: "", icons: [] });
+    return { path: uri.fsPath, icons: (await Promise.all(newIconsList)) || [] };
+  } else {
+    return { path: "", icons: [] };
   }
 }
 
@@ -63,7 +62,7 @@ export async function chooseManifest() {
     },
   });
 
-  if (manifestFile && manifestFile.length > 0 ) {
+  if (manifestFile && manifestFile.length > 0) {
     await findManifest(manifestFile);
     // manifest = manifestFile[0];
   }
@@ -80,8 +79,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
 
   if (manifestFile && manifestFile.length > 0) {
     manifest = manifestFile[0];
-  }
-  else {
+  } else {
     const mani = await vscode.workspace.findFiles(
       "**/manifest.json",
       "/node_modules/"
@@ -97,8 +95,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
 
       if (maniTryTwo.length > 0) {
         manifest = maniTryTwo[0];
-      }
-      else {
+      } else {
         const maniTryThree = await vscode.workspace.findFiles(
           "**/*.webmanifest",
           "/node_modules/"
@@ -108,7 +105,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
           manifest = maniTryThree[0];
         }
       }
-    } 
+    }
   }
 
   if (manifest) {

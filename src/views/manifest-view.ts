@@ -29,15 +29,13 @@ export class ManiGenerationPanel {
         console.log("message", message);
         switch (message.command) {
           case "prompt":
-
             iconsObject = message.iconsObject
               ? message.iconsObject.icons
               : message.manifestObject.icons;
 
             if (message.iconsObject) {
               captureUsage("generate-icons");
-            }
-            else {
+            } else {
               captureUsage("generate-manifest");
             }
 
@@ -66,10 +64,7 @@ export class ManiGenerationPanel {
                 await vscode.window.showTextDocument(uri);
 
                 // do refreshPackageView command
-                await vscode.commands.executeCommand(
-                  "pwa-studio.refreshEntry"
-                );
-
+                await vscode.commands.executeCommand("pwa-studio.refreshEntry");
               }
             } else {
               vscode.window.showErrorMessage(

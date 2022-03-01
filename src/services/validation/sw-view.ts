@@ -96,7 +96,11 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
       }
 
       return Promise.resolve(items);
-    } else if (serviceWorkerId && serviceWorkerId.fsPath && serviceWorkerExists) {
+    } else if (
+      serviceWorkerId &&
+      serviceWorkerId.fsPath &&
+      serviceWorkerExists
+    ) {
       return Promise.resolve([
         new ValidationItem(
           "Service Worker",
@@ -106,8 +110,7 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
         ),
       ]);
     } else {
-      return Promise.resolve([
-      ]);
+      return Promise.resolve([]);
     }
   }
 
@@ -136,5 +139,8 @@ class ValidationItem extends vscode.TreeItem {
     this.command = command;
   }
 
-  iconPath = this.desc.toString() === "true" ? new vscode.ThemeIcon("check") : new vscode.ThemeIcon("warning");
+  iconPath =
+    this.desc.toString() === "true"
+      ? new vscode.ThemeIcon("check")
+      : new vscode.ThemeIcon("warning");
 }

@@ -76,15 +76,16 @@ export interface AndroidPackageOptions {
   navigationColorDark: string;
   navigationDividerColor: string;
   navigationDividerColorDark: string;
-  orientation: "default" |
-  "any" |
-  "natural" |
-  "landscape" |
-  "portrait" |
-  "portrait-primary" |
-  "portrait-secondary" |
-  "landscape-primary" |
-  "landscape-secondary";
+  orientation:
+    | "default"
+    | "any"
+    | "natural"
+    | "landscape"
+    | "portrait"
+    | "portrait-primary"
+    | "portrait-secondary"
+    | "landscape-primary"
+    | "landscape-secondary";
   packageId: string;
   shareTarget?: ShareTarget | Array<any>;
   shortcuts: ShortcutItem[];
