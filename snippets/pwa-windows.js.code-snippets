@@ -90,7 +90,7 @@
             "// When your app is launched by the OS after a file was opened, you can use the launchQueue object to access the file content.",
             "if ('launchQueue' in window) {",
             "\tconsole.log('File Handling API is supported!');",
-            "\tlaunchQueue.setConsumer(launchParams => {",
+            "\twindow.launchQueue.setConsumer(launchParams => {",
             "\t\thandleFiles(launchParams.files);",
             "\t});",
             "} else {",
@@ -102,7 +102,7 @@
             "\t\tconst blob = await file.getFile();",
             "\t\tblob.handle = file;",
             "\t\tconst text = await blob.text();",
-            "\t\tconsole.log(`${file.name} handled, content: ${text}`);",
+            "\t\tconsole.log(file.name + ' ' + text);",
             "\t}",
             "}"
         ],
