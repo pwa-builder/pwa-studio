@@ -490,7 +490,8 @@ export class ManiGenerationPanel {
     
         .toolTip {
           visibility: hidden;
-          width: 200px;
+          width: 160px;
+          left: 70%;
           background-color: #f8f8f8;
           color: black;
           text-align: center;
