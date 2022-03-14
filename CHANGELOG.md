@@ -2,6 +2,13 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v0.3.0]
+
+- Fixed: https://github.com/pwa-builder/PWABuilder/issues/2626
+- Fixed: https://github.com/pwa-builder/PWABuilder/issues/2424
+- New Help Panel feature: https://github.com/pwa-builder/PWABuilder/issues/2514
+- PWA Starter now uses [Vite](https://github.com/pwa-builder/pwa-starter/wiki): https://github.com/pwa-builder/PWABuilder/issues/2670
+
 ## [v0.2.6]
 
 - Workaround for analytics issue: https://github.com/pwa-builder/pwa-studio/compare/help-panel?expand=1#diff-3e1333fb5dae3594a3e5ba561f7937487c8fe8d3a1bba91c706e213b5b69e5b1L41
