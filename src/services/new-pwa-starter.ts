@@ -5,7 +5,7 @@ const shell = require("shelljs");
 const repositoryInputPrompt: string =
   "Enter the name you would like to use for your PWA's repository.";
 const directoryInputPrompt: string = 
-  "Where would you like your PWA to live?"
+  "Where would you like your PWA to live?";
 const repositoryInputPlaceholder: string = "Enter your repository name here.";
 const noNameSelectedWarning: string =
   "No repository name provided. New PWA Starter process cancelled.";
