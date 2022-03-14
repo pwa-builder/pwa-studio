@@ -15,29 +15,27 @@ const starterRepositoryURI: string =
   "https://github.com/pwa-builder/pwa-starter.git";
 
 let repositoryName: string | undefined = undefined;
+let repositoryParentURI: vscode.Uri | undefined = undefined;
+
 const terminal = vscode.window.createTerminal();
 const gitFileWatcher = vscode.workspace.createFileSystemWatcher(
   `**/${repositoryName}/.git/**`
 );
 
-export async function setUpLocalPwaStarterRepository(
-  name?: string
-): Promise<void> {
+export async function setUpLocalPwaStarterRepository(): Promise<void> {
   captureUsage("new-pwa-starter");
 
   return new Promise(async (resolve, reject) => {
-    const appName = await getRepositoryNameFromInputBox(
-      name ? name : undefined
-    );
+    await getRepositoryInfoFromInput();
 
-    if (repositoryName !== undefined) {
+    if (repositoryName && repositoryParentURI) {
       try {
         initStarterRepository();
         offerDocumentation();
         openRepositoryWithCode();
+        setupLocalRepository();
 
-        // @ts-ignore
-        resolve(appName);
+        resolve();
       } catch (err) {
         reject(err);
       }
@@ -59,27 +57,45 @@ async function offerDocumentation() {
   }
 }
 
-async function getRepositoryNameFromInputBox(
-  name?: string
-): Promise<string | undefined> {
-  if (name) {
-    repositoryName = name;
-  } else {
+async function getRepositoryInfoFromInput(): Promise<void> {
+  await getRepositoryNameFromInputBox()
+    .then(getRepositoryDirectoryFromDialog)
+    .catch(inputCanelledWarning);
+}
+
+async function getRepositoryNameFromInputBox(): Promise<void> {
+
+  return new Promise<void>( async (resolve, reject) => {
     repositoryName = await vscode.window.showInputBox({
       prompt: repositoryInputPrompt,
       placeHolder: repositoryInputPlaceholder,
     });
-  }
+  
+    repositoryName ? resolve() : reject();
+  });
+  
+}
 
-  if (repositoryName === undefined) {
-    inputCanelledWarning();
-  }
+async function getRepositoryDirectoryFromDialog(): Promise<void> {
+  return new Promise<void>(async (resolve, reject) => {
+    let directories: vscode.Uri[] | undefined = await vscode.window.showOpenDialog({
+      canSelectFolders: true,
+      canSelectFiles: false,
+      canSelectMany: false
+    });
 
-  return repositoryName;
+    if(directories) {
+      repositoryParentURI = directories[0];
+      resolve();
+    } else {
+      reject();
+    }
+  });
 }
 
 function initStarterRepository(): void {
   terminal.show();
+  changeDirectory(repositoryParentURI?.path.slice(1));
   if (tryCloneFromGithub()) {
     tryNpmInstall();
   }

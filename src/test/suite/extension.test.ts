@@ -13,9 +13,5 @@ suite("Extension Test Suite", () => {
     assert.strictEqual([1, 2, 3].indexOf(5), -1);
     assert.strictEqual([1, 2, 3].indexOf(0), -1);
   });
-
-  test("Start new app", async () => {
-    const appName = await setUpLocalPwaStarterRepository("test-app");
-    assert.deepStrictEqual(appName, "test-app");
-  });
+  
 });
