@@ -2,6 +2,9 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v0.3.1]
+- Fixed: https://github.com/pwa-builder/PWABuilder/issues/2635 
+
 ## [v0.3.0]
 
 - Fixed: https://github.com/pwa-builder/PWABuilder/issues/2626
