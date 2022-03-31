@@ -1,0 +1,13 @@
+{
+    "Web Manifest": {
+        "scope": "json",
+        "prefix": "pwa-manifest",
+        "body": [
+            "{",
+            "\"name\": \"${1:The name of your application}\",",
+            "\"short_name\": \"${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}\",",
+            "}",
+        ],
+        "description": "To generate a Web App Manifest"
+    }
+}

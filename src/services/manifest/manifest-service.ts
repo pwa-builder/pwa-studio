@@ -1,6 +1,67 @@
+import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
 
 let manifest: any | undefined;
+
+export async function generateManifest(context: vscode.ExtensionContext) {
+  console.log(context);
+
+  // ask user where they would like to save their manifest
+  const uri = await vscode.window.showSaveDialog({
+    defaultUri: vscode.Uri.file(
+      `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
+    ),
+    saveLabel: "Generate Web Manifest",
+  });
+
+  if (uri) {
+    // write empty manifest file
+    await writeFile(
+      uri.fsPath,
+      JSON.stringify("", null, 2)
+    );
+
+    // show manifest with vscode
+    const editor = await vscode.window.showTextDocument(uri);
+
+    // do refreshPackageView command
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
+
+    // insert interactive manfiest snippet
+    const maniSnippet = new vscode.SnippetString(
+      "{" +
+        "\n" +
+        "\"name\": \"${1:The name of your application}\"," +
+        "\n" +
+        "\"short_name\": \"${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}\"," +
+        "\n" +
+        "\"start_url\": \"${3:The URL that should be loaded when your application is opened}\"," +
+        "\n" +
+        "\"display\": \"${4|standalone,fullscreen,minimal-ui,browser|}\"," +
+        "\n" +
+        "\"description\": \"${5:A description for your application}\"," +
+        "\n" +
+        "\"theme_color\": \"${6:This controls the color your apps titlebar}\"," +
+        "\n" +
+        "\"background_color\": \"${7:This controls the color your apps background and splash screen on supported platforms}\"," +
+        "\n" +
+        "\"orientation\": \"${8|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\"," +
+        "\n" +
+        "\"related_applications\": [\"" +
+        "\n" +
+        "\t\t{" +
+        "\n" +
+        "\t\t\t\"platform\": 9|windows,play|\"" +
+        "\n" +
+        "\t\t\t\"url\": \"${10: The URL to your app in that app store}}\"," +
+        "\n" +
+        "\"]\"" +
+      "}",
+    );
+
+    editor.insertSnippet(maniSnippet);
+  }
+}
 
 export async function convertBaseToFile(
   iconsList: Array<any>

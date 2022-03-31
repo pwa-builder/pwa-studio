@@ -85,7 +85,7 @@ const maniTestValues = [
  */
 export function refreshDiagnostics(
   doc: vscode.TextDocument,
-  emojiDiagnostics: vscode.DiagnosticCollection
+  maniDiagnostics: vscode.DiagnosticCollection
 ): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
@@ -106,7 +106,7 @@ export function refreshDiagnostics(
     });
   }
 
-  emojiDiagnostics.set(doc.uri, diagnostics);
+  maniDiagnostics.set(doc.uri, diagnostics);
 }
 
 function createDiagnostic(
@@ -158,33 +158,35 @@ function createDiagnostic(
 
 export function subscribeToDocumentChanges(
   context: vscode.ExtensionContext,
-  emojiDiagnostics: vscode.DiagnosticCollection
+  maniDiagnostics: vscode.DiagnosticCollection
 ): void {
   if (vscode.window.activeTextEditor) {
-    if (vscode.window.activeTextEditor.document.fileName.includes("json")) {
+    if (vscode.window.activeTextEditor.document.fileName.includes("manifest.json") || 
+    vscode.window.activeTextEditor.document.fileName.includes("manifest.webmanifest")) {
       refreshDiagnostics(
         vscode.window.activeTextEditor.document,
-        emojiDiagnostics
+        maniDiagnostics
       );
     }
   }
+  
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
-        refreshDiagnostics(editor.document, emojiDiagnostics);
+        refreshDiagnostics(editor.document, maniDiagnostics);
       }
     })
   );
 
   context.subscriptions.push(
     vscode.workspace.onDidChangeTextDocument((e) =>
-      refreshDiagnostics(e.document, emojiDiagnostics)
+      refreshDiagnostics(e.document, maniDiagnostics)
     )
   );
 
   context.subscriptions.push(
     vscode.workspace.onDidCloseTextDocument((doc) =>
-      emojiDiagnostics.delete(doc.uri)
+      maniDiagnostics.delete(doc.uri)
     )
   );
 }

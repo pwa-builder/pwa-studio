@@ -9,7 +9,7 @@ import {
   handleAdvServiceWorkerCommand,
   updateAdvServiceWorker,
 } from "./services/service-worker";
-import { chooseManifest } from "./services/manifest/manifest-service";
+import { chooseManifest, generateManifest } from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
   MANI_CODE,
@@ -206,7 +206,8 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      ManiGenerationPanel.render(context.extensionUri);
+      // ManiGenerationPanel.render(context.extensionUri);
+      await generateManifest(context);
     }
   );
 
