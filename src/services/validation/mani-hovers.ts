@@ -6,7 +6,6 @@ class ManiHoverProvider implements vscode.HoverProvider {
         document: vscode.TextDocument, position: vscode.Position, token: vscode.CancellationToken):
         Thenable<vscode.Hover | undefined> {
         const lineOfText = document.lineAt(position);
-        console.log("lineOfText", lineOfText.text);
 
         // search through maniHoverValues for lineOfText.text
         const hoverInfo = maniHoverValues.find(
@@ -20,7 +19,7 @@ class ManiHoverProvider implements vscode.HoverProvider {
         }
         else {
             return new Promise(resolve => {
-                resolve(new vscode.Hover(`PWA Studio: ${hoverInfo.infoString}`));
+                resolve(new vscode.Hover(new vscode.MarkdownString(`**PWA Studio**: ${hoverInfo.infoString} [Learn More](${hoverInfo.docsLink})`)));
             });
         }
     }

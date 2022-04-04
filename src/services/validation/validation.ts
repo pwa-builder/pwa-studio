@@ -8,6 +8,8 @@ let manifestFileRead: string | undefined;
 /** Code that is used to associate diagnostic entries with code actions. */
 export const MANI_CODE = "mani_code";
 
+setupFileWatcher();
+
 /** String to detect in the text document. */
 const maniTestValues = [
   {
@@ -190,8 +192,6 @@ export function subscribeToDocumentChanges(
     )
   );
 }
-
-setupFileWatcher();
 
 export async function handleValidation(
   context: vscode.ExtensionContext

@@ -26,6 +26,7 @@ import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/validation/mani-hovers";
+import { initSuggestions } from "./services/validation/mani-suggestions";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -210,7 +211,6 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      // ManiGenerationPanel.render(context.extensionUri);
       await generateManifest(context);
     }
   );
@@ -221,6 +221,9 @@ export function activate(context: vscode.ExtensionContext) {
       await askForUrl();
     }
   );
+
+  // init manifest improvement suggestion
+  initSuggestions();
 
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
