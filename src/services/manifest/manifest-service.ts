@@ -41,21 +41,46 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         "\"description\": \"${5:A description for your application}\"," +
         "\n" +
-        "\"theme_color\": \"${6:This controls the color your apps titlebar}\"," +
+        "\"lang\": \"${6: The default language of your application}\"," +
         "\n" +
-        "\"background_color\": \"${7:This controls the color your apps background and splash screen on supported platforms}\"," +
+        "\"dir\": \"${7|auto, ltr, rtl|}\"," +
         "\n" +
-        "\"orientation\": \"${8|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\"," +
+        "\"theme_color\": \"${8:This controls the color your apps titlebar}\"," +
         "\n" +
-        "\"related_applications\": [\"" +
+        "\"background_color\": \"${9:This controls the color your apps background and splash screen on supported platforms}\"," +
         "\n" +
-        "\t\t{" +
+        "\"orientation\": \"${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\"," +
         "\n" +
-        "\t\t\t\"platform\": 9|windows,play|\"" +
+        "\"icons\": \"${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}\"," +
         "\n" +
-        "\t\t\t\"url\": \"${10: The URL to your app in that app store}}\"," +
+        "\"related_applications\": [" +
         "\n" +
-        "\"]\"" +
+        "\t{" +
+        "\n" +
+        "\t\t\"platform\":\"${12|windows,play|}\"," +
+        "\n" +
+        "\t\t\"url\": \"${13: The URL to your app in that app store}\"" +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]," +
+        "\n" +
+        "\"prefer_related_applications\": \"${14|false, true|}\"," +
+        "\n" +
+        "\"Shortcuts\": [" +
+        "\n" +
+        "\t{" +
+        "\n" +
+        "\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\"," +
+        "\n" +
+        "\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\"," +
+        "\n" +
+        "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"" +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]" +
+        "\n" +
       "}",
     );
 
