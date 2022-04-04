@@ -1,4 +1,4 @@
-import { writeFile } from "fs/promises";
+import { open } from "fs/promises";
 import * as vscode from "vscode";
 
 let manifest: any | undefined;
@@ -16,9 +16,9 @@ export async function generateManifest(context: vscode.ExtensionContext) {
 
   if (uri) {
     // write empty manifest file
-    await writeFile(
+    await open(
       uri.fsPath,
-      JSON.stringify("", null, 2)
+      "w+"
     );
 
     // show manifest with vscode
