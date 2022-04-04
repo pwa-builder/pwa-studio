@@ -67,7 +67,7 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         "\"prefer_related_applications\": \"${14|false, true|}\"," +
         "\n" +
-        "\"Shortcuts\": [" +
+        "\"shortcuts\": [" +
         "\n" +
         "\t{" +
         "\n" +
