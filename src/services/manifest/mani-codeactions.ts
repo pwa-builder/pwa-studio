@@ -15,7 +15,8 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                 resolve([]);
             }
             else {
-                resolve([new vscode.CodeAction(`PWA Studio: ${hoverInfo.infoString}`, vscode.CodeActionKind.QuickFix)]);
+                
+                resolve([new vscode.CodeAction("", vscode.CodeActionKind.QuickFix)]);
             }
         });
     }
