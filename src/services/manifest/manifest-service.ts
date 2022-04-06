@@ -77,7 +77,7 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"" +
         "\n" +
-        "\t}" +
+        "\t}"+
         "\n" +
         "]" +
         "\n" +

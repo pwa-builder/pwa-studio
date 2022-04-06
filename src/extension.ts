@@ -25,8 +25,8 @@ import { askForUrl } from "./services/web-publish";
 import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
-import { hoversActivate } from "./services/validation/mani-hovers";
-import { initSuggestions } from "./services/validation/mani-suggestions";
+import { hoversActivate } from "./services/manifest/mani-hovers";
+import { initSuggestions } from "./services/manifest/mani-suggestions";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -223,7 +223,8 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   // init manifest improvement suggestion
-  initSuggestions();
+  // to-do: integrate into sideview panel
+  // initSuggestions();
 
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
