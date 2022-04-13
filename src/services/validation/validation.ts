@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../../library/handle-webhint";
-import { maniTestValues } from "../../manifest-utils";
+import { maniTestValues, maniHoverValues } from "../../manifest-utils";
 
 let manifestFileRead: string | undefined;
 
@@ -19,15 +19,40 @@ export function refreshDiagnostics(
 ): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
+  const mani = JSON.parse(doc.getText());
+
+  // check for required fields
+  maniHoverValues.forEach((hoverValue) => {
+    if (Object.keys(mani).includes(hoverValue.member) === false && hoverValue.category === "required") {
+      let diagnostic = createDiagnostic(
+        doc, 
+        doc.lineAt(1),
+        1, 
+        hoverValue.member, 
+        true
+      );
+
+      if (diagnostic) {
+        diagnostics.push(
+          diagnostic
+        );
+      }
+    }
+  });
+
+
+  // diagnostics for manifest.json
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
+
     maniTestValues.forEach((testValue) => {
       if (lineOfText.text.includes(testValue.name)) {
         let diagnostic = createDiagnostic(
           doc,
           lineOfText,
           lineIndex,
-          testValue.name
+          testValue.name,
+          false
         );
         if (diagnostic) {
           diagnostics.push(diagnostic);
@@ -43,8 +68,25 @@ function createDiagnostic(
   doc: vscode.TextDocument,
   lineOfText: vscode.TextLine,
   lineIndex: number,
-  testString: string
+  testString: string,
+  globalManifestProblem: boolean
 ): vscode.Diagnostic | undefined {
+  // if globalManifestProblem === true, we dont need to find a range, we just want to return a diagnostic
+  if (globalManifestProblem === true) {
+    const diagnostic = new vscode.Diagnostic(
+      // range for whole document
+      new vscode.Range(
+        new vscode.Position(0, 0),
+        new vscode.Position(doc.lineCount, 0)
+      ),
+      `Your Web Manifest is missing the ${testString} field`,
+      vscode.DiagnosticSeverity.Error
+    );
+    diagnostic.code = "global";
+    diagnostic.source = testString;
+    return diagnostic;
+  }
+
   // find where in the line of text the value is mentioned
   const index = lineOfText.text.indexOf(testString);
 
