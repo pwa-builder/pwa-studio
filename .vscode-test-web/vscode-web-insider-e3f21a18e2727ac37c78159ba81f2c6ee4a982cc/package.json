@@ -1,0 +1,19 @@
+{
+	"name": "Code - Insiders",
+	"version": "1.67.0-insider",
+	"private": true,
+	"dependencies": {
+		"@microsoft/applicationinsights-web": "^2.6.4",
+		"@vscode/iconv-lite-umd": "0.7.0",
+		"@vscode/vscode-languagedetection": "1.0.21",
+		"jschardet": "3.0.0",
+		"tas-client-umd": "0.1.4",
+		"vscode-oniguruma": "1.6.1",
+		"vscode-regexp-languagedetection": "https://github.com/microsoft/vscode-regexp-languagedetection.git#f3c27768b1e027af049b200e46181418ae3f9fdd",
+		"vscode-textmate": "7.0.1",
+		"xterm": "4.19.0-beta.20",
+		"xterm-addon-search": "0.9.0-beta.18",
+		"xterm-addon-unicode11": "0.4.0-beta.3",
+		"xterm-addon-webgl": "0.12.0-beta.27"
+	}
+}

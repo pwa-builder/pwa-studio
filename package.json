@@ -33,6 +33,7 @@
     "onView:packagePanel"
   ],
   "main": "./out/main.js",
+  "browser": "./out/main.js",
   "contributes": {
     "snippets": [
       {
@@ -299,7 +300,8 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./"
+    "test-compile": "tsc -p ./",
+    "open-in-browser": "vscode-test-web --extensionDevelopmentPath=. ."
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
@@ -312,6 +314,7 @@
     "@typescript-eslint/eslint-plugin": "^5.1.0",
     "@typescript-eslint/parser": "^5.1.0",
     "@vscode/test-electron": "^1.6.2",
+    "@vscode/test-web": "^0.0.24",
     "esbuild": "^0.14.28",
     "eslint": "^8.1.0",
     "glob": "^7.1.7",
