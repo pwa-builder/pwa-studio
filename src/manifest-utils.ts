@@ -42,7 +42,7 @@ export const maniHoverValues = [
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
         category: "recommended",
         member: "background_color",
-        defaultValue: "black",
+        defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
     },
@@ -50,7 +50,7 @@ export const maniHoverValues = [
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
         category: "recommended",
         member: "theme_color",
-        defaultValue: "black",
+        defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
     },

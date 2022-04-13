@@ -79,7 +79,7 @@ function createDiagnostic(
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
       vscode.DiagnosticSeverity.Error
     );
-    diagnostic.code = MANI_CODE;
+    diagnostic.code = test.name;
     return diagnostic;
   }
 

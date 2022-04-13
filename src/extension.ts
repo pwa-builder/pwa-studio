@@ -26,6 +26,7 @@ import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
+import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 import { initSuggestions } from "./services/manifest/mani-suggestions";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -70,6 +71,9 @@ export function activate(context: vscode.ExtensionContext) {
 
   // web manifest hovers
   hoversActivate(context);
+
+  // web manifest code actions
+  codeActionsActivate(context);
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
