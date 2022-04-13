@@ -9,12 +9,14 @@ export const maniHoverValues = [
             {
                 "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
                 "sizes": "192x192",
-                "type": "image/png"
+                "type": "image/png",
+                "purpose": "any"
             },
             {
                 "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
                 "sizes": "512x512",
-                "type": "image/png"
+                "type": "image/png",
+                "purpose": "maskable"
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
