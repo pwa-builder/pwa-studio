@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../../library/handle-webhint";
-import { maniTestValues, maniHoverValues } from "../../manifest-utils";
+import { maniHoverValues } from "../../manifest-utils";
 
 let manifestFileRead: string | undefined;
 
@@ -45,13 +45,13 @@ export function refreshDiagnostics(
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
 
-    maniTestValues.forEach((testValue) => {
-      if (lineOfText.text.includes(testValue.name)) {
+    maniHoverValues.forEach((testValue) => {
+      if (lineOfText.text.includes(testValue.member)) {
         let diagnostic = createDiagnostic(
           doc,
           lineOfText,
           lineIndex,
-          testValue.name,
+          testValue.member,
           false
         );
         if (diagnostic) {
@@ -102,12 +102,13 @@ function createDiagnostic(
   let testResult = undefined;
   let test: any = undefined;
   let textToTest: any = undefined;
-  maniTestValues.forEach((testValue) => {
-    if (testValue.name === testString) {
+  maniHoverValues.forEach((testValue) => {
+    if (testValue.member === testString && testValue.test) {
       try {
         textToTest = JSON.parse(doc.getText());
 
         testResult = testValue.test(textToTest[testString]);
+        console.log('testResult', testResult, testValue.member);
         test = testValue;
       } catch (err) {
         console.error("Could not parse JSON value", err);
@@ -121,7 +122,7 @@ function createDiagnostic(
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
       vscode.DiagnosticSeverity.Error
     );
-    diagnostic.code = test.name;
+    diagnostic.code = test.member;
     return diagnostic;
   }
 

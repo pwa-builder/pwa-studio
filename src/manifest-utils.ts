@@ -20,6 +20,29 @@ export const maniHoverValues = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+        errorString: "icons should be an array with a length > 0, should not include webp images and should have atleast one maskable icon",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+
+            let hasWebp = undefined;
+            let hasMaskable = undefined;
+
+            // check image types dont include webp
+            if (isArray) {
+                hasWebp = value.some(icon => icon.type === "image/webp");
+                hasMaskable = value.some(icon => icon.purpose === "maskable");
+
+                if (hasWebp === true || hasMaskable === false) {
+                    return false;
+                }
+                else {
+                    return true;
+                }
+            }
+            else {
+                return false;
+            }
+        }
     },
     {
         infoString: "The name member is a string that represents the name of the web application as it is usually displayed to the user (e.g., amongst a list of other applications, or as a label for an icon)",
@@ -27,6 +50,10 @@ export const maniHoverValues = [
         member: "name",
         defaultValue: "placeholder name",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+        errorString: "name is required and should be a string with a length > 0",
+        test: (value: string) => {
+            return value && typeof value === "string" && value.length > 0;
+        }
     },
     {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
@@ -35,6 +62,10 @@ export const maniHoverValues = [
         defaultValue: "placeholder",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
+        errorString:
+            "short_name is required and should be a string with a length > 0",
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0,
     },
     {
         infoString: "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",
@@ -43,6 +74,10 @@ export const maniHoverValues = [
         defaultValue: "/",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
+        errorString:
+            "start_url is required and should be a string with a length > 0",
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0
     },
     {
         infoString: "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
@@ -50,6 +85,13 @@ export const maniHoverValues = [
         member: "display",
         defaultValue: "standalone",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
+        errorString:
+            "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+        test: (value: string) => {
+            return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
+                value
+            );
+        },
     },
     {
         infoString: "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
@@ -58,6 +100,11 @@ export const maniHoverValues = [
         defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
+        errorString: "background_color is required and should be a valid hex color",
+        test: (value: string) => {
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            return hexRegex.test(value);
+        },
     },
     {
         infoString: "The theme_color member is a string that defines the default theme color for the application.",
@@ -66,6 +113,11 @@ export const maniHoverValues = [
         defaultValue: "#000000",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
+        errorString: "theme_color is required and should be a valid hex color",
+        test: (value: string) => {
+            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+            return hexRegex.test(value);
+        },
     },
     {
         infoString: "The orientation mode changes the default orientation of the app. For example, if set to 'portrait', the app will be displayed in landscape mode by default.",
@@ -74,6 +126,11 @@ export const maniHoverValues = [
         defaultValue: "any",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
+        errorString:
+            "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+        test: (value: string) => {
+            return isStandardOrientation(value);
+        },
     },
     {
         infoString: "The screenshots member defines an array of screenshots intended to showcase the application.",
@@ -101,6 +158,9 @@ export const maniHoverValues = [
         ]),
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
+        errorString: "screenshots is required and should be an array with a length > 0",
+        test: (value: string) =>
+            value && Array.isArray(value) && value.length > 0 ? true : false,
     },
     {
         infoString: "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
@@ -109,6 +169,20 @@ export const maniHoverValues = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+        test: (value: any[]) => {
+            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
+            if (isArray === true) {
+                // check image types dont include webp
+                const hasWebp = value.some(icon => icon.type === "image/webp");
+                if (hasWebp) {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
     },
     {
         infoString: "The iarc_rating_id member is a string that represents the International Age Rating Coalition (IARC) certification code of the web application. It is intended to be used to determine which ages the web application is appropriate for.",
@@ -133,6 +207,9 @@ export const maniHoverValues = [
         defaultValue: "en-US",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
+        errorString: "lang is required and should be set to a valid language code",
+        test: (value: string) =>
+                value && typeof value === "string" && value.length > 0
     },
     {
         member: "dir",
@@ -149,6 +226,10 @@ export const maniHoverValues = [
         defaultValue: "",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
+        errorString:
+            "description and should be a string with a length > 0",
+        test: (value: string) =>
+            value && typeof value === "string" && value.length > 0,
     },
     {
         member: "protocol_handlers",
@@ -165,126 +246,5 @@ export const maniHoverValues = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
-    }
-];
-
-export const maniTestValues = [
-    {
-        name: "name",
-        errorString: "name is required and should be a string with a length > 0",
-        test: (value: string) => {
-            return value && typeof value === "string" && value.length > 0;
-        },
-    },
-    {
-        name: "short_name",
-        errorString:
-            "short_name is required and should be a string with a length > 0",
-        test: (value: string) =>
-            value && typeof value === "string" && value.length > 0,
-    },
-    {
-        name: "description",
-        errorString:
-            "description and should be a string with a length > 0",
-        test: (value: string) =>
-            value && typeof value === "string" && value.length > 0,
-    },
-    {
-        name: "icons",
-        errorString: "icons should be an array with a length > 0, should not include webp images and should have atleast one maskable icon",
-        test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-
-            let hasWebp = undefined;
-            let hasMaskable = undefined;
-            
-            // check image types dont include webp
-            if (isArray) {
-                hasWebp = value.some(icon => icon.type === "image/webp");
-                hasMaskable = value.some(icon => icon.purpose === "maskable");
-
-                if (hasWebp === true || hasMaskable === false) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    },
-    {
-        name: "shortcuts",
-        errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
-        test: (value: any[]) => {
-            const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
-            if (isArray === true) {
-                // check image types dont include webp
-                const hasWebp = value.some(icon => icon.type === "image/webp");
-                if (hasWebp) {
-                    return false;
-                }
-            }
-            else {
-                return false;
-            }
-        }
-    },
-    {
-        name: "screenshots",
-        errorString: "screenshots is required and should be an array with a length > 0",
-        test: (value: string) =>
-            value && Array.isArray(value) && value.length > 0 ? true : false,
-    },
-    {
-        name: "display",
-        errorString:
-            "display is required and should be either fullscreen, standalone, minimal-ui, browser",
-        test: (value: string) => {
-            return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
-                value
-            );
-        },
-    },
-    {
-        name: "orientation",
-        errorString:
-            "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
-        test: (value: string) => {
-            return isStandardOrientation(value);
-        },
-    },
-    {
-        name: "background_color",
-        errorString: "background_color is required and should be a valid hex color",
-        test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
-        },
-    },
-    {
-        name: "theme_color",
-        errorString: "theme_color is required and should be a valid hex color",
-        test: (value: string) => {
-            const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
-            return hexRegex.test(value);
-        },
-    },
-    {
-        name: "start_url",
-        errorString:
-            "start_url is required and should be a string with a length > 0",
-        test: (value: string) =>
-            value && typeof value === "string" && value.length > 0
-    },
-    {
-        name: "lang",
-        errorString: "lang is required and should be set to a valid language code",
-        test: (value: string) => 
-            value && typeof value === "string" && value.length > 0
-        
     }
 ];
