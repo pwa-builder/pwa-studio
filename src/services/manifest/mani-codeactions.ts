@@ -11,7 +11,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                 // check for a global problem before continuing
                 if (diagnostic.code === "global") {
                     for (const value of maniHoverValues) {
-                        if (value.member === diagnostic.source) {
+                        if (value.member === diagnostic.source && value.quickFix === true && value.category === "required") {
                             const fix = new vscode.CodeAction("Manifest missing a required member", vscode.CodeActionKind.QuickFix);
                             fix.diagnostics = [diagnostic];
                             fix.edit = new vscode.WorkspaceEdit();
@@ -24,7 +24,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                 }
 
                 for (const value of maniHoverValues) {
-                    if (diagnostic.code === value.member) {
+                    if (diagnostic.code === value.member && value.quickFix === true) {
                         // set up quick fix
                         const fix = new vscode.CodeAction(`${diagnostic.code}`, vscode.CodeActionKind.QuickFix);
                         fix.diagnostics = [diagnostic];
@@ -33,7 +33,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                         // figure out range of affected member
                         for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
                             const lineOfText = document.lineAt(lineIndex);
-                            if (lineOfText.text.includes(value.member)) {
+                            if (lineOfText.text === value.member) {
                                 // find range after the member + :
                                 const start = lineOfText.text.indexOf(':') + 1;
                                 const end = lineOfText.text.length;

@@ -20,24 +20,13 @@ export const maniHoverValues = [
             }
         ]),
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "icons should be an array with a length > 0, should not include webp images and should have atleast one maskable icon",
+        errorString: "icons should be an array with a length > 0",
+        quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
 
-            let hasWebp = undefined;
-            let hasMaskable = undefined;
-
-            // check image types dont include webp
             if (isArray) {
-                hasWebp = value.some(icon => icon.type === "image/webp");
-                hasMaskable = value.some(icon => icon.purpose === "maskable");
-
-                if (hasWebp === true || hasMaskable === false) {
-                    return false;
-                }
-                else {
-                    return true;
-                }
+                return true;
             }
             else {
                 return false;
@@ -51,6 +40,7 @@ export const maniHoverValues = [
         defaultValue: "placeholder name",
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
         errorString: "name is required and should be a string with a length > 0",
+        quickFix: true,
         test: (value: string) => {
             return value && typeof value === "string" && value.length > 0;
         }
@@ -60,6 +50,7 @@ export const maniHoverValues = [
         testName: "whitespace",
         category: "required",
         errorString: "name should not have any leading or trailing whitespace",
+        quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
                 return value.trim();
@@ -78,6 +69,7 @@ export const maniHoverValues = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
         errorString:
             "short_name is required and should be a string with a length > 0 and should not have any whitespace",
+        quickFix: true,
         test: (value: string) => {
           const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
           return existsAndLength;
@@ -88,6 +80,7 @@ export const maniHoverValues = [
         testName: "whitespace",
         category: "required",
         errorString: "short_name should not have any leading or trailing whitespace",
+        quickFix: true,
         test: (value: string) => {
             if (value.trim() !== value) {
                 return value.trim();
@@ -106,6 +99,7 @@ export const maniHoverValues = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
         errorString:
             "start_url is required and should be a string with a length > 0",
+        quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0
     },
@@ -117,6 +111,7 @@ export const maniHoverValues = [
         docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
         errorString:
             "display is required and should be either fullscreen, standalone, minimal-ui, browser",
+        quickFix: true,
         test: (value: string) => {
             return ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
                 value
@@ -131,6 +126,7 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
         errorString: "background_color is required and should be a valid hex color",
+        quickFix: true,
         test: (value: string) => {
             const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
             return hexRegex.test(value);
@@ -144,6 +140,7 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
         errorString: "theme_color is required and should be a valid hex color",
+        quickFix: true,
         test: (value: string) => {
             const hexRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
             return hexRegex.test(value);
@@ -158,6 +155,7 @@ export const maniHoverValues = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
         errorString:
             "orientation is required and should be either any, natural, landscape, landscape-primary, landscape-secondary, portrait, portrait-primary, portrait-secondary",
+        quickFix: true,
         test: (value: string) => {
             return isStandardOrientation(value);
         },
@@ -189,6 +187,7 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
         errorString: "screenshots is required and should be an array with a length > 0",
+        quickFix: true,
         test: (value: string) =>
             value && Array.isArray(value) && value.length > 0 ? true : false,
     },
@@ -200,6 +199,7 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
         errorString: "shortcuts should be an array with a length > 0 and should not include webp images",
+        quickFix: true,
         test: (value: any[]) => {
             const isArray = value && Array.isArray(value) && value.length > 0 ? true : false;
             if (isArray === true) {
@@ -221,6 +221,7 @@ export const maniHoverValues = [
         defaultValue: "",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+        quickFix: true,
     },
     {
         infoString: "The related_applications field is an array of objects specifying native applications that are installable by, or accessible to, the underlying platform — for example, a platform-specific (native) Windows application.",
@@ -229,6 +230,7 @@ export const maniHoverValues = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+        quickFix: true,
     },
     {
         member: "lang",
@@ -238,6 +240,7 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/lang",
         errorString: "lang is required and should be set to a valid language code",
+        quickFix: true,
         test: (value: string) =>
                 value && typeof value === "string" && value.length > 0
     },
@@ -248,6 +251,7 @@ export const maniHoverValues = [
         defaultValue: "ltr",
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/dir",
+        quickFix: true
     },
     {
         member: "description",
@@ -258,8 +262,24 @@ export const maniHoverValues = [
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/description",
         errorString:
             "description and should be a string with a length > 0",
+        quickFix: true,
         test: (value: string) =>
             value && typeof value === "string" && value.length > 0,
+    },
+    {
+        member: "description",
+        testName: "whitespace",
+        category: "required",
+        errorString: "description should not have any leading or trailing whitespace",
+        quickFix: true,
+        test: (value: string) => {
+            if (value.trim() !== value) {
+                return value.trim();
+            }
+            else {
+                return true;
+            }
+        }
     },
     {
         member: "protocol_handlers",
@@ -268,6 +288,7 @@ export const maniHoverValues = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/protocol_handlers",
+        quickFix: true
     },
     {
         member: "display_override",
@@ -276,5 +297,6 @@ export const maniHoverValues = [
         defaultValue: [],
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/display_override",
+        quickFix: true,
     }
 ];
