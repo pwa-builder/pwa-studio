@@ -56,6 +56,20 @@ export const maniHoverValues = [
         }
     },
     {
+        member: "name",
+        testName: "whitespace",
+        category: "required",
+        errorString: "name should not have any leading or trailing whitespace",
+        test: (value: string) => {
+            if (value.trim() !== value) {
+                return value.trim();
+            }
+            else {
+                return true;
+            }
+        }
+    },
+    {
         infoString: "The short_name member is a string that represents the name of the web application displayed to the user if there is not enough space to display name. This name will show in the start menu on Windows and the homescreen on Android.",
         category: "required",
         member: "short_name",
@@ -63,9 +77,25 @@ export const maniHoverValues = [
         docsLink:
             "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
         errorString:
-            "short_name is required and should be a string with a length > 0",
-        test: (value: string) =>
-            value && typeof value === "string" && value.length > 0,
+            "short_name is required and should be a string with a length > 0 and should not have any whitespace",
+        test: (value: string) => {
+          const existsAndLength = value && typeof value === "string" && value.length > 0 && value.trim() === value;
+          return existsAndLength;
+        },
+    },
+    {
+        member: "short_name",
+        testName: "whitespace",
+        category: "required",
+        errorString: "short_name should not have any leading or trailing whitespace",
+        test: (value: string) => {
+            if (value.trim() !== value) {
+                return value.trim();
+            }
+            else {
+                return true;
+            }
+        }
     },
     {
         infoString: "The start_url member is a string that represents the start URL of the web application — the preferred URL that should be loaded when the user launches the web application",

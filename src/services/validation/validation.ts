@@ -90,7 +90,7 @@ function createDiagnostic(
   // find where in the line of text the value is mentioned
   const index = lineOfText.text.indexOf(testString);
 
-  // create range that represents, where in the document the word is
+  // create range that represents where in the document the word is
   const range = new vscode.Range(
     lineIndex,
     index,
@@ -108,7 +108,6 @@ function createDiagnostic(
         textToTest = JSON.parse(doc.getText());
 
         testResult = testValue.test(textToTest[testString]);
-        console.log('testResult', testResult, testValue.member);
         test = testValue;
       } catch (err) {
         console.error("Could not parse JSON value", err);
@@ -116,12 +115,26 @@ function createDiagnostic(
     }
   });
 
-  if (testResult === false) {
+  // secondary tests
+  if (testResult !== undefined && typeof(testResult) !== "boolean") {
     const diagnostic = new vscode.Diagnostic(
       range,
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error
+      vscode.DiagnosticSeverity.Error,
     );
+
+    diagnostic.code = test.member;
+    diagnostic.source = testResult;
+
+    return diagnostic;
+  }
+  else if (testResult === false) {
+    const diagnostic = new vscode.Diagnostic(
+      range,
+      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
+      vscode.DiagnosticSeverity.Error,
+    );
+
     diagnostic.code = test.member;
     return diagnostic;
   }

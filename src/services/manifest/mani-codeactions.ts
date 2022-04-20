@@ -43,6 +43,11 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                                 if (value.member === "icons" || value.member === "screenshots") {
                                     fix.edit.replace(document.uri, range, `${value.defaultValue},`);
                                 }
+                                // handle secondary tests
+                                // such as whitespace tests
+                                else if (diagnostic.source) {
+                                    fix.edit.replace(document.uri, range, ` "${diagnostic.source}",`);
+                                }
                                 else {
                                     // add the edit to the fix with appropriate text and range
                                     fix.edit.replace(document.uri, range, ` "${value.defaultValue}",`);
