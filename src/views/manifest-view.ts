@@ -26,7 +26,6 @@ export class ManiGenerationPanel {
     // Handle messages from the webview
     this._panel.webview.onDidReceiveMessage(
       async (message) => {
-        console.log("message", message);
         switch (message.command) {
           case "prompt":
             iconsObject = message.iconsObject
@@ -385,8 +384,6 @@ export class ManiGenerationPanel {
               });
     
               const data = await response.json();
-    
-              console.log("data", data);
     
               resolve(data);
             } catch (err) {

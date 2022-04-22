@@ -155,8 +155,6 @@ export class IconGenerationPanel {
 
             const data = await response.json();
 
-            console.log("data", data);
-
             resolve(data);
           } catch (err) {
             console.error("error", err);

@@ -42,7 +42,7 @@ export function refreshDiagnostics(
 
 
   // diagnostics for manifest.json
-  for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
+  /*for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
 
     maniHoverValues.forEach((testValue) => {
@@ -59,7 +59,7 @@ export function refreshDiagnostics(
         }
       }
     });
-  }
+  }*/
 
   maniDiagnostics.set(doc.uri, diagnostics);
 }
@@ -100,46 +100,103 @@ function createDiagnostic(
 
   // test
   let testResult = undefined;
-  let test: any = undefined;
-  let textToTest: any = undefined;
-  maniHoverValues.forEach((testValue) => {
+  let manifestToTest: any = undefined;
+  /*maniHoverValues.forEach((testValue) => {
     if (testValue.member === testString && testValue.test) {
       try {
-        textToTest = JSON.parse(doc.getText());
+        manifestToTest = JSON.parse(doc.getText());
 
-        testResult = testValue.test(textToTest[testString]);
+        if (testValue.secondaryMember) {
+          console.log('doing secondary');
+          // is array?
+          if (Array.isArray(manifestToTest[testString])) {
+            let result = true;
+            manifestToTest[testString].forEach((item: any) => {
+              // is webp image
+              let testResult2 = testValue.test(item[testValue.secondaryMember]);
+              if (testResult2 === false) {
+                result = false;
+              }
+            });
+
+            testResult = result;
+          }
+        }
+        else {
+          testResult = testValue.test(manifestToTest[testString]);
+        }
+
         test = testValue;
       } catch (err) {
         console.error("Could not parse JSON value", err);
       }
     }
+  });*/
+
+  manifestToTest = JSON.parse(doc.getText());
+
+  // find correct test in maniHoverValues
+  const correctTest = maniHoverValues.find((testValue) => {
+    return testString.includes(testValue.member) && testValue.test;
   });
 
-  // secondary tests
-  if (testResult !== undefined && typeof(testResult) !== "boolean") {
-    const diagnostic = new vscode.Diagnostic(
-      range,
-      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error,
-    );
+  if (correctTest) {
+    console.log('secondary member', correctTest.secondaryMember);
+    if(correctTest.secondaryMember) {
+      console.log('secondary member', correctTest.secondaryMember);
+    }
+    if (correctTest.secondaryMember) {
+      console.log('doing secondary', correctTest.secondaryMember);
+      // is array?
+      console.log('isArray', manifestToTest[correctTest.member], Array.isArray(manifestToTest[correctTest.member]));
 
-    diagnostic.code = test.member;
-    diagnostic.source = testResult;
+      if (Array.isArray(manifestToTest[correctTest.member])) {
+        let result = true;
+        manifestToTest[correctTest.member].forEach((item: any) => {
+          console.log('item', item);
+          // is webp image
+          let testResult2 = correctTest.test(item[correctTest.secondaryMember]);
+          if (testResult2 === false) {
+            result = false;
+          }
+        });
 
-    return diagnostic;
+        testResult = result;
+      }
+    }
+    else {
+      if (correctTest.test) {
+        testResult = correctTest.test(manifestToTest[correctTest.member]);
+      }
+    }
+
+      // secondary tests
+    if (testResult !== undefined && typeof(testResult) !== "boolean") {
+      const diagnostic = new vscode.Diagnostic(
+        range,
+        `PWA Studio - ${testString}: ${correctTest ? correctTest.errorString : "Error"}`,
+        vscode.DiagnosticSeverity.Error,
+      );
+
+      diagnostic.code = correctTest.member;
+      diagnostic.source = testResult;
+
+      return diagnostic;
+    }
+    else if (testResult === false) {
+      const diagnostic = new vscode.Diagnostic(
+        range,
+        `PWA Studio - ${testString}: ${correctTest ? correctTest.errorString : "Error"}`,
+        vscode.DiagnosticSeverity.Error,
+      );
+
+        diagnostic.code = correctTest.member;
+        return diagnostic;
+    }
+    else {
+      return undefined;
+    }
   }
-  else if (testResult === false) {
-    const diagnostic = new vscode.Diagnostic(
-      range,
-      `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error,
-    );
-
-    diagnostic.code = test.member;
-    return diagnostic;
-  }
-
-  return undefined;
 }
 
 export function subscribeToDocumentChanges(
