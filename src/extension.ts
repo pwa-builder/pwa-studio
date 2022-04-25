@@ -52,29 +52,6 @@ export let storageManager: LocalStorageService | undefined = undefined;
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
 
-  // used for web manifest validation
-  const manifestDiagnostics =
-    vscode.languages.createDiagnosticCollection("webmanifest");
-  context.subscriptions.push(manifestDiagnostics);
-
-  subscribeToDocumentChanges(context, manifestDiagnostics);
-
-  context.subscriptions.push(
-    vscode.languages.registerCodeActionsProvider(
-      "json",
-      new ManifestInfoProvider(),
-      {
-        providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
-      }
-    )
-  );
-
-  // web manifest hovers
-  hoversActivate(context);
-
-  // web manifest code actions
-  codeActionsActivate(context);
-
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
     100
@@ -229,6 +206,29 @@ export function activate(context: vscode.ExtensionContext) {
   // init manifest improvement suggestion
   // to-do: integrate into sideview panel
   // initSuggestions();
+
+  // used for web manifest validation
+  const manifestDiagnostics =
+    vscode.languages.createDiagnosticCollection("webmanifest");
+  context.subscriptions.push(manifestDiagnostics);
+
+  subscribeToDocumentChanges(context, manifestDiagnostics);
+
+  context.subscriptions.push(
+    vscode.languages.registerCodeActionsProvider(
+      "json",
+      new ManifestInfoProvider(),
+      {
+        providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
+      }
+    )
+  );
+
+  // web manifest hovers
+  hoversActivate(context);
+
+  // web manifest code actions
+  codeActionsActivate(context);
 
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);
