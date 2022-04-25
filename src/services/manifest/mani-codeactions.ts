@@ -19,20 +19,29 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
             if (
               value.member === diagnostic.source &&
               value.quickFix === true &&
-              value.category === "required"
+              (value.category === "required" || value.category === "recommended")
             ) {
               const fix = new vscode.CodeAction(
-                "Manifest missing a required member",
+                `Manifest missing a ${value.category} member`,
                 vscode.CodeActionKind.QuickFix
               );
               fix.diagnostics = [diagnostic];
               fix.edit = new vscode.WorkspaceEdit();
 
-              fix.edit.insert(
-                document.uri,
-                new vscode.Position(1, 0),
-                `"${diagnostic.source}": "", \n`
-              );
+              if (value.defaultValue) {
+                fix.edit.insert(
+                    document.uri,
+                    new vscode.Position(1, 0),
+                    `"${diagnostic.source}": "${value.defaultValue}", \n`
+                  );
+              }
+              else {
+                fix.edit.insert(
+                    document.uri,
+                    new vscode.Position(1, 0),
+                    `"${diagnostic.source}": "", \n`
+                  );
+              }
 
               resolve([fix]);
             }

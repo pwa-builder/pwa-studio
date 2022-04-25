@@ -22,17 +22,35 @@ export function refreshDiagnostics(
   const mani = JSON.parse(doc.getText());
 
   // check for required fields
-  maniTests.forEach((hoverValue) => {
+  maniTests.forEach((testValue) => {
     if (
-      Object.keys(mani).includes(hoverValue.member) === false &&
-      hoverValue.category === "required"
+      Object.keys(mani).includes(testValue.member) === false &&
+      testValue.category === "required"
     ) {
       let diagnostic = createDiagnostic(
         doc,
         doc.lineAt(1),
         1,
-        hoverValue.member,
-        true
+        testValue.member,
+        true,
+        vscode.DiagnosticSeverity.Error
+      );
+
+      if (diagnostic) {
+        diagnostics.push(diagnostic);
+      }
+    }
+    else if (
+      Object.keys(mani).includes(testValue.member) === false &&
+      testValue.category === "recommended"
+    ) {
+      let diagnostic = createDiagnostic(
+        doc,
+        doc.lineAt(1),
+        1,
+        testValue.member,
+        true,
+        vscode.DiagnosticSeverity.Warning
       );
 
       if (diagnostic) {
@@ -52,7 +70,8 @@ export function refreshDiagnostics(
           lineOfText,
           lineIndex,
           testValue.member,
-          false
+          false,
+          vscode.DiagnosticSeverity.Error
         );
         if (diagnostic) {
           diagnostics.push(diagnostic);
@@ -69,7 +88,8 @@ function createDiagnostic(
   lineOfText: vscode.TextLine,
   lineIndex: number,
   testString: string,
-  globalManifestProblem: boolean
+  globalManifestProblem: boolean,
+  severity: vscode.DiagnosticSeverity = vscode.DiagnosticSeverity.Error
 ): vscode.Diagnostic | undefined {
   // if globalManifestProblem === true, we dont need to find a range, we just want to return a diagnostic
   if (globalManifestProblem === true) {
@@ -80,7 +100,7 @@ function createDiagnostic(
         new vscode.Position(doc.lineCount, 0)
       ),
       `Your Web Manifest is missing the ${testString} field`,
-      vscode.DiagnosticSeverity.Error
+      severity
     );
     diagnostic.code = "global";
     diagnostic.source = testString;
@@ -120,7 +140,7 @@ function createDiagnostic(
     const diagnostic = new vscode.Diagnostic(
       range,
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error
+      severity
     );
 
     diagnostic.code = test.member;
@@ -131,7 +151,7 @@ function createDiagnostic(
     const diagnostic = new vscode.Diagnostic(
       range,
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error
+      severity
     );
 
     diagnostic.code = test.member;

@@ -112,7 +112,7 @@ export const maniTests = [
   {
     infoString:
       "The display member is a string that determines the developers' preferred display mode for the website. The display mode changes how much of browser UI is shown to the user and can range from browser (when the full browser window is shown) to fullscreen (when the app is fullscreened).",
-    category: "recommended",
+    category: "required",
     member: "display",
     defaultValue: "standalone",
     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
@@ -128,7 +128,7 @@ export const maniTests = [
   {
     infoString:
       "The background_color member defines a placeholder background color for the application page to display before its stylesheet is loaded.",
-    category: "recommended",
+    category: "required",
     member: "background_color",
     defaultValue: "#000000",
     docsLink:
@@ -143,7 +143,7 @@ export const maniTests = [
   {
     infoString:
       "The theme_color member is a string that defines the default theme color for the application.",
-    category: "recommended",
+    category: "required",
     member: "theme_color",
     defaultValue: "#000000",
     docsLink:
