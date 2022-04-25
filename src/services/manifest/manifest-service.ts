@@ -4,6 +4,7 @@ import * as vscode from "vscode";
 let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
+  console.log(context);
 
   // ask user where they would like to save their manifest
   const uri = await vscode.window.showSaveDialog({

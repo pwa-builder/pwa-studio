@@ -31,9 +31,8 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                         fix.edit = new vscode.WorkspaceEdit();
 
                         // figure out range of affected member
-                        /*for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
+                        for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
                             const lineOfText = document.lineAt(lineIndex);
-                            console.log("figuring out range", lineOfText.text, value.member);
                             if (lineOfText.text.includes(value.member)) {
                                 // find range after the member + :
                                 const start = lineOfText.text.indexOf(':') + 1;
@@ -42,23 +41,20 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
 
                                 // handle special cases
                                 if (value.member === "icons" || value.member === "screenshots") {
-                                    console.log('special case');
                                     fix.edit.replace(document.uri, range, `${value.defaultValue},`);
                                 }
                                 // handle secondary tests
                                 // such as whitespace tests
                                 else if (diagnostic.source) {
-                                    console.log('secondary test');
                                     fix.edit.replace(document.uri, range, ` "${diagnostic.source}",`);
                                 }
                                 else {
-                                    console.log('main test');
                                     // add the edit to the fix with appropriate text and range
                                     fix.edit.replace(document.uri, range, ` "${value.defaultValue}",`);
                                 }
 
                             }
-                        }*/
+                        }
 
                         resolve([fix]);
                     }

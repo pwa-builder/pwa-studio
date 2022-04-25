@@ -1,8 +1,7 @@
 import { isStandardOrientation } from "./services/validation/validation";
 
 export const maniHoverValues = [
-    // icons check
-    /*{
+    {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         category: "required",
         member: "icons",
@@ -32,33 +31,6 @@ export const maniHoverValues = [
             else {
                 return false;
             }
-        }
-    },*/
-    // icons webp check
-    {
-        infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
-        category: "required",
-        member: "icons",
-        secondaryMember: "type",
-        defaultValue: JSON.stringify([
-            {
-                "src": "https://www.pwabuilder.com/assets/icons/icon_192.png",
-                "sizes": "192x192",
-                "type": "image/png",
-                "purpose": "any"
-            },
-            {
-                "src": "https://www.pwabuilder.com/assets/icons/icon_512.png",
-                "sizes": "512x512",
-                "type": "image/png",
-                "purpose": "maskable"
-            }
-        ]),
-        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-        errorString: "icons should not contain webp images",
-        quickFix: false,
-        test: (value: string) => {
-            return value.includes("webp") ? false : true;
         }
     },
     {
