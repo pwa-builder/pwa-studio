@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { maniHoverValues } from "../../manifest-utils";
+import { maniTests } from "../../manifest-utils";
 
 class ManiHoverProvider implements vscode.HoverProvider {
     public provideHover(
@@ -7,8 +7,8 @@ class ManiHoverProvider implements vscode.HoverProvider {
         Thenable<vscode.Hover | undefined> {
         const lineOfText = document.lineAt(position);
 
-        // search through maniHoverValues for lineOfText.text
-        const hoverInfo = maniHoverValues.find(
+        // search through maniTests for lineOfText.text
+        const hoverInfo = maniTests.find(
             (hoverValue) => {
                 if (lineOfText.text.toLowerCase().includes(hoverValue.member.toLowerCase())) {
                     return hoverValue;

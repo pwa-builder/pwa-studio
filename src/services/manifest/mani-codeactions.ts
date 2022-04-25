@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { maniHoverValues } from "../../manifest-utils";
+import { maniTests } from "../../manifest-utils";
 
 class ManiCodeActionsProvider implements vscode.CodeActionProvider {
     public provideCodeActions(document: vscode.TextDocument, range: vscode.Range | vscode.Selection, context: vscode.CodeActionContext, token: vscode.CancellationToken): vscode.ProviderResult<(vscode.CodeAction | vscode.Command)[]> {
@@ -10,7 +10,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
 
                 // check for a global problem before continuing
                 if (diagnostic.code === "global") {
-                    for (const value of maniHoverValues) {
+                    for (const value of maniTests) {
                         if (value.member === diagnostic.source && value.quickFix === true && value.category === "required") {
                             const fix = new vscode.CodeAction("Manifest missing a required member", vscode.CodeActionKind.QuickFix);
                             fix.diagnostics = [diagnostic];
@@ -23,7 +23,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
                     };
                 }
 
-                for (const value of maniHoverValues) {
+                for (const value of maniTests) {
                     if (diagnostic.code === value.member && value.quickFix === true) {
                         // set up quick fix
                         const fix = new vscode.CodeAction(`${diagnostic.code}`, vscode.CodeActionKind.QuickFix);

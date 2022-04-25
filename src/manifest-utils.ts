@@ -1,6 +1,6 @@
 import { isStandardOrientation } from "./services/validation/validation";
 
-export const maniHoverValues = [
+export const maniTests = [
     {
         infoString: "The icons member specifies an array of objects representing image files that can serve as application icons for different contexts.",
         category: "required",

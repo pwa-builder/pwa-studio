@@ -1,7 +1,7 @@
 import { readFile } from "fs/promises";
 import * as vscode from "vscode";
 import { handleWebhint } from "../../library/handle-webhint";
-import { maniHoverValues } from "../../manifest-utils";
+import { maniTests } from "../../manifest-utils";
 
 let manifestFileRead: string | undefined;
 
@@ -22,7 +22,7 @@ export function refreshDiagnostics(
   const mani = JSON.parse(doc.getText());
 
   // check for required fields
-  maniHoverValues.forEach((hoverValue) => {
+  maniTests.forEach((hoverValue) => {
     if (Object.keys(mani).includes(hoverValue.member) === false && hoverValue.category === "required") {
       let diagnostic = createDiagnostic(
         doc, 
@@ -45,7 +45,7 @@ export function refreshDiagnostics(
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
     const lineOfText = doc.lineAt(lineIndex);
 
-    maniHoverValues.forEach((testValue) => {
+    maniTests.forEach((testValue) => {
       if (lineOfText.text.includes(testValue.member)) {
         let diagnostic = createDiagnostic(
           doc,
@@ -102,7 +102,7 @@ function createDiagnostic(
   let testResult = undefined;
   let test: any = undefined;
   let textToTest: any = undefined;
-  maniHoverValues.forEach((testValue) => {
+  maniTests.forEach((testValue) => {
     if (testValue.member === testString && testValue.test) {
       try {
         textToTest = JSON.parse(doc.getText());
