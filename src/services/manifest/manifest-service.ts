@@ -14,10 +14,7 @@ export async function generateManifest(context: vscode.ExtensionContext) {
 
   if (uri) {
     // write empty manifest file
-    await open(
-      uri.fsPath,
-      "w+"
-    );
+    await open(uri.fsPath, "w+");
 
     // show manifest with vscode
     const editor = await vscode.window.showTextDocument(uri);
@@ -29,57 +26,57 @@ export async function generateManifest(context: vscode.ExtensionContext) {
     const maniSnippet = new vscode.SnippetString(
       "{" +
         "\n" +
-        "\"name\": \"${1:The name of your application}\"," +
+        '"name": "${1:The name of your application}",' +
         "\n" +
-        "\"short_name\": \"${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}\"," +
+        '"short_name": "${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}",' +
         "\n" +
-        "\"start_url\": \"${3:The URL that should be loaded when your application is opened}\"," +
+        '"start_url": "${3:The URL that should be loaded when your application is opened}",' +
         "\n" +
-        "\"display\": \"${4|standalone,fullscreen,minimal-ui,browser|}\"," +
+        '"display": "${4|standalone,fullscreen,minimal-ui,browser|}",' +
         "\n" +
-        "\"description\": \"${5:A description for your application}\"," +
+        '"description": "${5:A description for your application}",' +
         "\n" +
-        "\"lang\": \"${6: The default language of your application}\"," +
+        '"lang": "${6: The default language of your application}",' +
         "\n" +
-        "\"dir\": \"${7|auto, ltr, rtl|}\"," +
+        '"dir": "${7|auto, ltr, rtl|}",' +
         "\n" +
-        "\"theme_color\": \"${8:This controls the color your apps titlebar}\"," +
+        '"theme_color": "${8:This controls the color your apps titlebar}",' +
         "\n" +
-        "\"background_color\": \"${9:This controls the color your apps background and splash screen on supported platforms}\"," +
+        '"background_color": "${9:This controls the color your apps background and splash screen on supported platforms}",' +
         "\n" +
-        "\"orientation\": \"${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}\"," +
+        '"orientation": "${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}",' +
         "\n" +
-        "\"icons\": \"${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}\"," +
+        '"icons": "${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}",' +
         "\n" +
-        "\"related_applications\": [" +
+        '"related_applications": [' +
         "\n" +
         "\t{" +
         "\n" +
-        "\t\t\"platform\":\"${12|windows,play|}\"," +
+        '\t\t"platform":"${12|windows,play|}",' +
         "\n" +
-        "\t\t\"url\": \"${13: The URL to your app in that app store}\"" +
+        '\t\t"url": "${13: The URL to your app in that app store}"' +
         "\n" +
         "\t}" +
         "\n" +
         "]," +
         "\n" +
-        "\"prefer_related_applications\": \"${14|false, true|}\"," +
+        '"prefer_related_applications": "${14|false, true|}",' +
         "\n" +
-        "\"shortcuts\": [" +
+        '"shortcuts": [' +
         "\n" +
         "\t{" +
         "\n" +
-        "\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\"," +
+        '\t\t"name":"${15:The name you would like to be displayed for your shortcut}",' +
         "\n" +
-        "\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\"," +
+        '\t\t"url":"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
         "\n" +
-        "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"" +
+        '\t\t"description":"${17:A description of the functionality of this shortcut}"' +
         "\n" +
-        "\t}"+
+        "\t}" +
         "\n" +
         "]" +
         "\n" +
-      "}",
+        "}"
     );
 
     editor.insertSnippet(maniSnippet);

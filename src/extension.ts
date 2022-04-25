@@ -9,7 +9,10 @@ import {
   handleAdvServiceWorkerCommand,
   updateAdvServiceWorker,
 } from "./services/service-worker";
-import { chooseManifest, generateManifest } from "./services/manifest/manifest-service";
+import {
+  chooseManifest,
+  generateManifest,
+} from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
   MANI_CODE,

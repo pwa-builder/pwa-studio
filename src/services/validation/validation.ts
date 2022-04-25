@@ -23,23 +23,23 @@ export function refreshDiagnostics(
 
   // check for required fields
   maniTests.forEach((hoverValue) => {
-    if (Object.keys(mani).includes(hoverValue.member) === false && hoverValue.category === "required") {
+    if (
+      Object.keys(mani).includes(hoverValue.member) === false &&
+      hoverValue.category === "required"
+    ) {
       let diagnostic = createDiagnostic(
-        doc, 
+        doc,
         doc.lineAt(1),
-        1, 
-        hoverValue.member, 
+        1,
+        hoverValue.member,
         true
       );
 
       if (diagnostic) {
-        diagnostics.push(
-          diagnostic
-        );
+        diagnostics.push(diagnostic);
       }
     }
   });
-
 
   // diagnostics for manifest.json
   for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
@@ -116,23 +116,22 @@ function createDiagnostic(
   });
 
   // secondary tests
-  if (testResult !== undefined && typeof(testResult) !== "boolean") {
+  if (testResult !== undefined && typeof testResult !== "boolean") {
     const diagnostic = new vscode.Diagnostic(
       range,
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error,
+      vscode.DiagnosticSeverity.Error
     );
 
     diagnostic.code = test.member;
     diagnostic.source = testResult;
 
     return diagnostic;
-  }
-  else if (testResult === false) {
+  } else if (testResult === false) {
     const diagnostic = new vscode.Diagnostic(
       range,
       `PWA Studio - ${testString}: ${test ? test.errorString : "Error"}`,
-      vscode.DiagnosticSeverity.Error,
+      vscode.DiagnosticSeverity.Error
     );
 
     diagnostic.code = test.member;
@@ -147,15 +146,21 @@ export function subscribeToDocumentChanges(
   maniDiagnostics: vscode.DiagnosticCollection
 ): void {
   if (vscode.window.activeTextEditor) {
-    if (vscode.window.activeTextEditor.document.fileName.includes("manifest.json") || 
-    vscode.window.activeTextEditor.document.fileName.includes("manifest.webmanifest")) {
+    if (
+      vscode.window.activeTextEditor.document.fileName.includes(
+        "manifest.json"
+      ) ||
+      vscode.window.activeTextEditor.document.fileName.includes(
+        "manifest.webmanifest"
+      )
+    ) {
       refreshDiagnostics(
         vscode.window.activeTextEditor.document,
         maniDiagnostics
       );
     }
   }
-  
+
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
       if (editor) {
