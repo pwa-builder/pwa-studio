@@ -22,7 +22,7 @@ export async function generateManifest(context: vscode.ExtensionContext) {
     // do refreshPackageView command
     await vscode.commands.executeCommand("pwa-studio.refreshEntry");
 
-    // insert interactive manfiest snippet
+    // insert interactive manifest snippet
     const maniSnippet = new vscode.SnippetString(
       "{" +
         "\n" +
