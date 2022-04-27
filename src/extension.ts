@@ -25,12 +25,12 @@ import { ServiceWorkerProvider } from "./services/validation/sw-view";
 import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
-import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
-import { initSuggestions } from "./services/manifest/mani-suggestions";
+import { initAnalytics } from "./services/usage-analytics";
+import path = require("path");
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -49,6 +49,11 @@ const updateADVWorkerCommandID = "pwa-studio.updateAdvWorker";
 const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const helpCommandID = "pwa-studio.help";
+
+require('dotenv').config({path: path.join( __dirname, '.env')});
+
+// init analytics
+initAnalytics();
 
 export let storageManager: LocalStorageService | undefined = undefined;
 

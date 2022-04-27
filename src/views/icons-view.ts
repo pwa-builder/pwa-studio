@@ -7,6 +7,8 @@ import {
 } from "../services/manifest/manifest-service";
 import { getUri } from "../utils";
 
+import { getAnalyticsClient } from "../services/usage-analytics";
+
 export class IconGenerationPanel {
   public static currentPanel: IconGenerationPanel | undefined;
   private readonly _panel: vscode.WebviewPanel;
@@ -28,6 +30,13 @@ export class IconGenerationPanel {
       async (message) => {
         switch (message.command) {
           case "prompt":
+            const analyticsClient = getAnalyticsClient();
+            
+            analyticsClient.trackEvent({ 
+              name: "generate",  
+              properties: { type: "icons"} 
+            });
+
             iconsObject = message.iconsObject;
             const manifest: vscode.Uri = await findManifest();
 
@@ -136,6 +145,7 @@ export class IconGenerationPanel {
 
       async function generateIcons() {
         return new Promise(async (resolve, reject) => {
+
           const url =
             "https://appimagegenerator-prod.azurewebsites.net/api/image/base64";
 
