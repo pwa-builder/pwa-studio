@@ -119,7 +119,7 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
 export function codeActionsActivate(ctx: vscode.ExtensionContext): void {
   ctx.subscriptions.push(
     vscode.languages.registerCodeActionsProvider(
-      { language: "json", scheme: "file" },
+      { language: 'json', pattern: '**/manifest.json' },
       new ManiCodeActionsProvider()
     )
   );

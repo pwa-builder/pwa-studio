@@ -183,16 +183,18 @@ export function subscribeToDocumentChanges(
 
   context.subscriptions.push(
     vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor) {
+      if (editor && editor.document.fileName.includes("manifest.json")) {
         refreshDiagnostics(editor.document, maniDiagnostics);
       }
     })
   );
 
   context.subscriptions.push(
-    vscode.workspace.onDidChangeTextDocument((e) =>
-      refreshDiagnostics(e.document, maniDiagnostics)
-    )
+    vscode.workspace.onDidChangeTextDocument((e) => {
+      if (e.document.fileName.includes("manifest.json")) {
+        refreshDiagnostics(e.document, maniDiagnostics);
+      }
+    })
   );
 
   context.subscriptions.push(
