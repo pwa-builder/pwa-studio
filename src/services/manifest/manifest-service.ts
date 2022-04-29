@@ -48,29 +48,45 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         '"icons": "${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}",' +
         "\n" +
-        '"related_applications": [' +
+        '"screenshots": [' +
         "\n" +
         "\t{" +
         "\n" +
-        '\t\t"platform":"${12|windows,play|}",' +
+        '\t\t"src": "https://www.pwabuilder.com/assets/screenshots/screen1.png",' +
         "\n" +
-        '\t\t"url": "${13: The URL to your app in that app store}"' +
+        '\t\t"sizes": "2880x1800",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"description": "A screenshot of the home page"' +
         "\n" +
         "\t}" +
         "\n" +
         "]," +
         "\n" +
-        '"prefer_related_applications": "${14|false, true|}",' +
+        '"related_applications": [' +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"platform":"${13|windows,play|}",' +
+        "\n" +
+        '\t\t"url": "${14: The URL to your app in that app store}"' +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]," +
+        "\n" +
+        '"prefer_related_applications": "${15|false, true|}",' +
         "\n" +
         '"shortcuts": [' +
         "\n" +
         "\t{" +
         "\n" +
-        '\t\t"name":"${15:The name you would like to be displayed for your shortcut}",' +
+        '\t\t"name":"${16:The name you would like to be displayed for your shortcut}",' +
         "\n" +
-        '\t\t"url":"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
+        '\t\t"url":"${17:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
         "\n" +
-        '\t\t"description":"${17:A description of the functionality of this shortcut}"' +
+        '\t\t"description":"${18:A description of the functionality of this shortcut}"' +
         "\n" +
         "\t}" +
         "\n" +
