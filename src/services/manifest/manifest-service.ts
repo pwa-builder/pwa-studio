@@ -40,13 +40,39 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         '"dir": "${7|auto, ltr, rtl|}",' +
         "\n" +
-        '"theme_color": "${8:This controls the color your apps titlebar}",' +
+        '"theme_color": "#000000",' +
         "\n" +
-        '"background_color": "${9:This controls the color your apps background and splash screen on supported platforms}",' +
+        '"background_color": "#000000",' +
         "\n" +
         '"orientation": "${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}",' +
         "\n" +
-        '"icons": "${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}",' +
+        '"icons": [' +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_512.png",' +
+        "\n" +
+        '\t\t"sizes": "512x512",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"purpose": "maskable"' +
+        "\n" +
+        "\t}," +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_192.png",' +
+        "\n" +
+        '\t\t"sizes": "192x192",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"purpose": "any"' +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]," +
         "\n" +
         '"screenshots": [' +
         "\n" +
