@@ -19,68 +19,74 @@ export function refreshDiagnostics(
 ): void {
   const diagnostics: vscode.Diagnostic[] = [];
 
-  const mani = JSON.parse(doc.getText());
+  try {
+    const mani = JSON.parse(doc.getText());
 
-  // check for required fields
-  maniTests.forEach((testValue) => {
-    if (
-      Object.keys(mani).includes(testValue.member) === false &&
-      testValue.category === "required"
-    ) {
-      let diagnostic = createDiagnostic(
-        doc,
-        doc.lineAt(1),
-        1,
-        testValue.member,
-        true,
-        vscode.DiagnosticSeverity.Error
-      );
-
-      if (diagnostic) {
-        diagnostics.push(diagnostic);
-      }
-    }
-    else if (
-      Object.keys(mani).includes(testValue.member) === false &&
-      testValue.category === "recommended"
-    ) {
-      let diagnostic = createDiagnostic(
-        doc,
-        doc.lineAt(1),
-        1,
-        testValue.member,
-        true,
-        vscode.DiagnosticSeverity.Warning
-      );
-
-      if (diagnostic) {
-        diagnostics.push(diagnostic);
-      }
-    }
-  });
-
-  // diagnostics for manifest.json
-  for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
-    const lineOfText = doc.lineAt(lineIndex);
-
+    // check for required fields
     maniTests.forEach((testValue) => {
-      if (lineOfText.text.includes(testValue.member)) {
+      if (
+        Object.keys(mani).includes(testValue.member) === false &&
+        testValue.category === "required"
+      ) {
         let diagnostic = createDiagnostic(
           doc,
-          lineOfText,
-          lineIndex,
+          doc.lineAt(1),
+          1,
           testValue.member,
-          false,
+          true,
           vscode.DiagnosticSeverity.Error
         );
+
+        if (diagnostic) {
+          diagnostics.push(diagnostic);
+        }
+      }
+      else if (
+        Object.keys(mani).includes(testValue.member) === false &&
+        testValue.category === "recommended"
+      ) {
+        let diagnostic = createDiagnostic(
+          doc,
+          doc.lineAt(1),
+          1,
+          testValue.member,
+          true,
+          vscode.DiagnosticSeverity.Warning
+        );
+
         if (diagnostic) {
           diagnostics.push(diagnostic);
         }
       }
     });
-  }
 
-  maniDiagnostics.set(doc.uri, diagnostics);
+    // diagnostics for manifest.json
+    for (let lineIndex = 0; lineIndex < doc.lineCount; lineIndex++) {
+      const lineOfText = doc.lineAt(lineIndex);
+
+      maniTests.forEach((testValue) => {
+        if (lineOfText.text.includes(testValue.member)) {
+          let diagnostic = createDiagnostic(
+            doc,
+            lineOfText,
+            lineIndex,
+            testValue.member,
+            false,
+            vscode.DiagnosticSeverity.Error
+          );
+          if (diagnostic) {
+            diagnostics.push(diagnostic);
+          }
+        }
+      });
+    }
+
+    maniDiagnostics.set(doc.uri, diagnostics);
+  }
+  catch (err) {
+    // the manifest.json file is most likely empty
+    return;
+  }
 }
 
 function createDiagnostic(
@@ -96,7 +102,7 @@ function createDiagnostic(
     const diagnostic = new vscode.Diagnostic(
       // range for the last line of the document
       new vscode.Range(
-        new vscode.Position(doc.lineCount -1, 0),
+        new vscode.Position(doc.lineCount - 1, 0),
         new vscode.Position(doc.lineCount, 0)
       ),
       `Your Web Manifest is missing the ${testString} field`,
@@ -256,8 +262,9 @@ export async function handleValidation(
     if (manifestFile) {
       manifestFileRead = await readFile(manifestFile[0].fsPath, "utf8");
       const results = await testManifest(manifestFile);
-
-      await gatherResults(results, manifestFile, context);
+      if (results) {
+        await gatherResults(results, manifestFile, context);
+      }
     } else {
       await vscode.window.showErrorMessage("Please select a Web Manifest");
       return;
@@ -435,145 +442,149 @@ async function gatherResults(
   }
 }
 
-export async function testManifest(manifestFile: any): Promise<any[]> {
-  const manifest = JSON.parse(manifestFile);
-
-  return [
-    {
-      infoString: "Lists icons for add to home screen",
-      result: manifest.icons && manifest.icons.length > 0 ? true : false,
-      category: "required",
-      member: "icons",
-      defaultValue: [],
-      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-    },
-    {
-      infoString: "Contains name property",
-      result: manifest.name && manifest.name.length > 1 ? true : false,
-      category: "required",
-      member: "name",
-      defaultValue: "placeholder name",
-      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
-    },
-    {
-      infoString: "Contains short_name property",
-      result:
-        manifest.short_name && manifest.short_name.length > 1 ? true : false,
-      category: "required",
-      member: "short_name",
-      defaultValue: "placeholder",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
-    },
-    {
-      infoString: "Designates a start_url",
-      result:
-        manifest.start_url && manifest.start_url.length > 0 ? true : false,
-      category: "required",
-      member: "start_url",
-      defaultValue: "/",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
-    },
-    {
-      infoString: "Specifies a display mode",
-      result:
-        manifest.display &&
-        ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
-          manifest.display
-        )
-          ? true
-          : false,
-      category: "recommended",
-      member: "display",
-      defaultValue: "standalone",
-      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
-    },
-    {
-      infoString: "Has a background color",
-      result: manifest.background_color ? true : false,
-      category: "recommended",
-      member: "background_color",
-      defaultValue: "black",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
-    },
-    {
-      infoString: "Has a theme color",
-      result: manifest.theme_color ? true : false,
-      category: "recommended",
-      member: "theme_color",
-      defaultValue: "black",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
-    },
-    {
-      infoString: "Specifies an orientation mode",
-      result:
-        manifest.orientation && isStandardOrientation(manifest.orientation)
-          ? true
-          : false,
-      category: "recommended",
-      member: "orientation",
-      defaultValue: "any",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
-    },
-    {
-      infoString: "Contains screenshots for app store listings",
-      result:
-        manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
-      category: "recommended",
-      member: "screenshots",
-      defaultValue: [],
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
-    },
-    {
-      infoString: "Lists shortcuts for quick access",
-      result:
-        manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
-      category: "recommended",
-      member: "shortcuts",
-      defaultValue: [],
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
-    },
-    {
-      infoString: "Icons specify their type",
-      result: !!manifest.icons && manifest.icons.every((i: any) => !!i.type),
-      category: "recommended",
-      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-    },
-    {
-      infoString: "Icons specify their size",
-      result: !!manifest.icons && manifest.icons.every((i: any) => !!i.sizes),
-      category: "recommended",
-      docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
-    },
-    {
-      infoString: "Contains an IARC ID",
-      result: manifest.iarc_rating_id ? true : false,
-      category: "optional",
-      member: "iarc_rating_id",
-      defaultValue: "",
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
-    },
-    {
-      infoString: "Specifies related_applications",
-      result:
-        manifest.related_applications &&
-        manifest.related_applications.length > 0
-          ? true
-          : false,
-      category: "optional",
-      member: "related_applications",
-      defaultValue: [],
-      docsLink:
-        "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
-    },
-  ];
+export async function testManifest(manifestFile: any): Promise<any[] | undefined> {
+  try {
+    const manifest = JSON.parse(manifestFile);
+    return [
+      {
+        infoString: "Lists icons for add to home screen",
+        result: manifest.icons && manifest.icons.length > 0 ? true : false,
+        category: "required",
+        member: "icons",
+        defaultValue: [],
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+      },
+      {
+        infoString: "Contains name property",
+        result: manifest.name && manifest.name.length > 1 ? true : false,
+        category: "required",
+        member: "name",
+        defaultValue: "placeholder name",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/name",
+      },
+      {
+        infoString: "Contains short_name property",
+        result:
+          manifest.short_name && manifest.short_name.length > 1 ? true : false,
+        category: "required",
+        member: "short_name",
+        defaultValue: "placeholder",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/short_name",
+      },
+      {
+        infoString: "Designates a start_url",
+        result:
+          manifest.start_url && manifest.start_url.length > 0 ? true : false,
+        category: "required",
+        member: "start_url",
+        defaultValue: "/",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/start_url",
+      },
+      {
+        infoString: "Specifies a display mode",
+        result:
+          manifest.display &&
+            ["fullscreen", "standalone", "minimal-ui", "browser"].includes(
+              manifest.display
+            )
+            ? true
+            : false,
+        category: "recommended",
+        member: "display",
+        defaultValue: "standalone",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/display",
+      },
+      {
+        infoString: "Has a background color",
+        result: manifest.background_color ? true : false,
+        category: "recommended",
+        member: "background_color",
+        defaultValue: "black",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/background_color",
+      },
+      {
+        infoString: "Has a theme color",
+        result: manifest.theme_color ? true : false,
+        category: "recommended",
+        member: "theme_color",
+        defaultValue: "black",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/theme_color",
+      },
+      {
+        infoString: "Specifies an orientation mode",
+        result:
+          manifest.orientation && isStandardOrientation(manifest.orientation)
+            ? true
+            : false,
+        category: "recommended",
+        member: "orientation",
+        defaultValue: "any",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/orientation",
+      },
+      {
+        infoString: "Contains screenshots for app store listings",
+        result:
+          manifest.screenshots && manifest.screenshots.length > 0 ? true : false,
+        category: "recommended",
+        member: "screenshots",
+        defaultValue: [],
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
+      },
+      {
+        infoString: "Lists shortcuts for quick access",
+        result:
+          manifest.shortcuts && manifest.shortcuts.length > 0 ? true : false,
+        category: "recommended",
+        member: "shortcuts",
+        defaultValue: [],
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
+      },
+      {
+        infoString: "Icons specify their type",
+        result: !!manifest.icons && manifest.icons.every((i: any) => !!i.type),
+        category: "recommended",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+      },
+      {
+        infoString: "Icons specify their size",
+        result: !!manifest.icons && manifest.icons.every((i: any) => !!i.sizes),
+        category: "recommended",
+        docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
+      },
+      {
+        infoString: "Contains an IARC ID",
+        result: manifest.iarc_rating_id ? true : false,
+        category: "optional",
+        member: "iarc_rating_id",
+        defaultValue: "",
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/iarc_rating_id",
+      },
+      {
+        infoString: "Specifies related_applications",
+        result:
+          manifest.related_applications &&
+            manifest.related_applications.length > 0
+            ? true
+            : false,
+        category: "optional",
+        member: "related_applications",
+        defaultValue: [],
+        docsLink:
+          "https://developer.mozilla.org/en-US/docs/Web/Manifest/related_applications",
+      },
+    ];
+  }
+  catch (err) {
+    return undefined;
+  }
 }
 
 function containsStandardCategory(categories: string[]): boolean {
