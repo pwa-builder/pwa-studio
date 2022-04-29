@@ -2,7 +2,6 @@ import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
 import {
   convertBaseToFile,
-  findManifest,
 } from "../services/manifest/manifest-service";
 import { captureUsage } from "../services/usage-analytics";
 import { getUri } from "../utils";

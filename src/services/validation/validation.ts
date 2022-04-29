@@ -363,6 +363,10 @@ function setupFileWatcher(): void {
     await testManifest(manifestFileRead);
     await vscode.commands.executeCommand("pwa-studio.refreshEntry");
   });
+
+  watcher.onDidDelete(async (manifestFile) => {
+    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
+  });
 }
 
 async function gatherResults(
