@@ -94,9 +94,9 @@ function createDiagnostic(
   // if globalManifestProblem === true, we dont need to find a range, we just want to return a diagnostic
   if (globalManifestProblem === true) {
     const diagnostic = new vscode.Diagnostic(
-      // range for whole document
+      // range for the last line of the document
       new vscode.Range(
-        new vscode.Position(0, 0),
+        new vscode.Position(doc.lineCount -1, 0),
         new vscode.Position(doc.lineCount, 0)
       ),
       `Your Web Manifest is missing the ${testString} field`,
