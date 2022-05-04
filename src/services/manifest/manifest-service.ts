@@ -48,37 +48,79 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "\n" +
         '"dir": "${7|auto, ltr, rtl|}",' +
         "\n" +
-        '"theme_color": "${8:This controls the color your apps titlebar}",' +
+        '"theme_color": "#000000",' +
         "\n" +
-        '"background_color": "${9:This controls the color your apps background and splash screen on supported platforms}",' +
+        '"background_color": "#000000",' +
         "\n" +
         '"orientation": "${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}",' +
         "\n" +
-        '"icons": "${11:Run PWA Studio: Generate Icons in your command pallete (ctrl + p)}",' +
-        "\n" +
-        '"related_applications": [' +
+        '"icons": [' +
         "\n" +
         "\t{" +
         "\n" +
-        '\t\t"platform":"${12|windows,play|}",' +
+        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_512.png",' +
         "\n" +
-        '\t\t"url": "${13: The URL to your app in that app store}"' +
+        '\t\t"sizes": "512x512",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"purpose": "maskable"' +
+        "\n" +
+        "\t}," +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_192.png",' +
+        "\n" +
+        '\t\t"sizes": "192x192",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"purpose": "any"' +
         "\n" +
         "\t}" +
         "\n" +
         "]," +
         "\n" +
-        '"prefer_related_applications": "${14|false, true|}",' +
+        '"screenshots": [' +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"src": "https://www.pwabuilder.com/assets/screenshots/screen1.png",' +
+        "\n" +
+        '\t\t"sizes": "2880x1800",' +
+        "\n" +
+        '\t\t"type": "image/png",' +
+        "\n" +
+        '\t\t"description": "A screenshot of the home page"' +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]," +
+        "\n" +
+        '"related_applications": [' +
+        "\n" +
+        "\t{" +
+        "\n" +
+        '\t\t"platform":"${13|windows,play|}",' +
+        "\n" +
+        '\t\t"url": "${14: The URL to your app in that app store}"' +
+        "\n" +
+        "\t}" +
+        "\n" +
+        "]," +
+        "\n" +
+        '"prefer_related_applications": "${15|false, true|}",' +
         "\n" +
         '"shortcuts": [' +
         "\n" +
         "\t{" +
         "\n" +
-        '\t\t"name":"${15:The name you would like to be displayed for your shortcut}",' +
+        '\t\t"name":"${16:The name you would like to be displayed for your shortcut}",' +
         "\n" +
-        '\t\t"url":"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
+        '\t\t"url":"${17:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
         "\n" +
-        '\t\t"description":"${17:A description of the functionality of this shortcut}"' +
+        '\t\t"description":"${18:A description of the functionality of this shortcut}"' +
         "\n" +
         "\t}" +
         "\n" +
@@ -169,32 +211,39 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
   if (manifestFile && manifestFile.length > 0) {
     manifest = manifestFile[0];
   } else {
-    const mani = await vscode.workspace.findFiles(
-      "**/manifest.json",
-      "/node_modules/"
-    );
-
-    if (mani.length > 0) {
-      manifest = mani[0];
-    } else {
-      const maniTryTwo = await vscode.workspace.findFiles(
-        "**/web-manifest.json",
+    const rootFolder = vscode.workspace.workspaceFolders?.[0];
+    if (rootFolder) {
+    
+      const mani = await vscode.workspace.findFiles(
+        new vscode.RelativePattern(rootFolder, 'manifest.json'),
         "/node_modules/"
       );
 
-      if (maniTryTwo.length > 0) {
-        manifest = maniTryTwo[0];
+      if (mani.length > 0) {
+        // check if file actually exists
+        const info = await vscode.workspace;
+        manifest = mani[0];
       } else {
-        const maniTryThree = await vscode.workspace.findFiles(
-          "**/*.webmanifest",
+        const maniTryTwo = await vscode.workspace.findFiles(
+          new vscode.RelativePattern(rootFolder, 'web-manifest.json'),
           "/node_modules/"
         );
-
-        if (maniTryThree.length > 0) {
-          manifest = maniTryThree[0];
+  
+        if (maniTryTwo.length > 0) {
+          manifest = maniTryTwo[0];
+        } else {
+          const maniTryThree = await vscode.workspace.findFiles(
+            new vscode.RelativePattern(rootFolder, "*.webmanifest"),
+            "/node_modules/"
+          );
+  
+          if (maniTryThree.length > 0) {
+            manifest = maniTryThree[0];
+          }
         }
       }
     }
+
   }
 
   if (manifest) {

@@ -175,7 +175,7 @@ export const maniTests = [
       "The screenshots member defines an array of screenshots intended to showcase the application.",
     category: "recommended",
     member: "screenshots",
-    defaultValue: JSON.stringify([
+    defaultValue: [
       {
         src: "https://www.pwabuilder.com/assets/screenshots/screen1.png",
         sizes: "2880x1800",
@@ -194,7 +194,7 @@ export const maniTests = [
         type: "image/png",
         description: "Manifest information on the Report Card",
       },
-    ]),
+    ],
     docsLink:
       "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
     errorString:

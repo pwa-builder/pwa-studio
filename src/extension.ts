@@ -223,8 +223,9 @@ export function activate(context: vscode.ExtensionContext) {
   subscribeToDocumentChanges(context, manifestDiagnostics);
 
   context.subscriptions.push(
+    // only on web manifest files
     vscode.languages.registerCodeActionsProvider(
-      "json",
+      { language: 'json', pattern: '**/manifest.json' },
       new ManifestInfoProvider(),
       {
         providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
