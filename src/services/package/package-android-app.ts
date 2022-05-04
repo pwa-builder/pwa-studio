@@ -7,18 +7,14 @@ import {
 } from "../../android-interfaces";
 import { getURL } from "../web-publish";
 
-import { getAnalyticsClient } from "../usage-analytics";
+import { trackEvent } from "../usage-analytics";
 
 export async function packageForAndroid(options: any): Promise<any> {
   const responseData = await buildAndroidPackage(options);
 
   if (responseData) {
     const appUrl = getURL();
-    const analyticsClient = getAnalyticsClient();
-    analyticsClient.trackEvent({ 
-      name: "package",  
-      properties: { packageType: "Android", url: appUrl, stage: "complete" } 
-    });
+    trackEvent("package", { packageType: "Android", url: appUrl, stage: "complete" });
 
     return await responseData.blob();
   }

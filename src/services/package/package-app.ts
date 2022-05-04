@@ -27,7 +27,7 @@ import {
   validateAndroidOptions,
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
-import { getAnalyticsClient } from "../usage-analytics";
+import { trackEvent } from "../usage-analytics";
 
 /*
  * To-do Justin: More re-use
@@ -105,11 +105,7 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "package",  
-    properties: { packageType: packageType, url: url,  stage: "init" } 
-  });
+  trackEvent("package", { packageType: packageType, url: url,  stage: "init" });
 
   if (packageType === "iOS") {
     try {
@@ -247,11 +243,8 @@ async function packageWithPwaBuilder(): Promise<any> {
 
   if (packageData) {
     const url = getURL();
-    const analyticsClient = getAnalyticsClient();
-    analyticsClient.trackEvent({ 
-      name: "package",  
-      properties: { packageType: "Windows", url: url, stage: "complete" } 
-    });
+
+    trackEvent("package", { packageType: "Windows", url: url, stage: "complete" });
 
     return packageData.blob();
   }

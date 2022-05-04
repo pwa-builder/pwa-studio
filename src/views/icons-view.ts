@@ -7,7 +7,7 @@ import {
 } from "../services/manifest/manifest-service";
 import { getUri } from "../utils";
 
-import { getAnalyticsClient } from "../services/usage-analytics";
+import { trackEvent } from "../services/usage-analytics";
 
 export class IconGenerationPanel {
   public static currentPanel: IconGenerationPanel | undefined;
@@ -30,12 +30,7 @@ export class IconGenerationPanel {
       async (message) => {
         switch (message.command) {
           case "prompt":
-            const analyticsClient = getAnalyticsClient();
-            
-            analyticsClient.trackEvent({ 
-              name: "generate",  
-              properties: { type: "icons"} 
-            });
+            trackEvent("generate", { type: "icons" } );
 
             iconsObject = message.iconsObject;
             const manifest: vscode.Uri = await findManifest();

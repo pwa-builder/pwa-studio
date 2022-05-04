@@ -299,7 +299,7 @@
     "esbuild-base": "esbuild ./src/extension.ts --bundle --platform=node --external:./node_modules/* --outfile=out/main.js --external:vscode --format=cjs --platform=node",
     "esbuild": "npm run esbuild-base -- --sourcemap",
     "esbuild-watch": "npm run esbuild-base -- --sourcemap --watch",
-    "test-compile": "tsc -p ./"
+    "test-compile": "tsc -p ./",
     "compile": "tsc -p ./ && npm run copy",
     "watch": "npm run copy && tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
