@@ -1,9 +1,8 @@
 import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
 import {
-  convertBaseToFile,
+  convertBaseToFile
 } from "../services/manifest/manifest-service";
-import { captureUsage } from "../services/usage-analytics";
 import { getUri } from "../utils";
 
 export class ManiGenerationPanel {
@@ -30,12 +29,6 @@ export class ManiGenerationPanel {
             iconsObject = message.iconsObject
               ? message.iconsObject.icons
               : message.manifestObject.icons;
-
-            if (message.iconsObject) {
-              captureUsage("generate-icons");
-            } else {
-              captureUsage("generate-manifest");
-            }
 
             if (message.manifestObject && iconsObject) {
               const newIconsData = await convertBaseToFile(iconsObject);

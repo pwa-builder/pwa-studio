@@ -7,6 +7,9 @@ import * as vscode from "vscode";
 import { AndroidPackageOptions } from "../android-interfaces";
 import { URL } from "url";
 
+import { getAnalyticsClient } from "../services/usage-analytics";
+import { getURL } from "../services/web-publish";
+
 export const WindowsDocsURL =
   "https://blog.pwabuilder.com/docs/windows-platform/";
 
@@ -170,6 +173,13 @@ export async function packageForIOS(options: any): Promise<any> {
   const responseData = await buildIOSPackage(options);
 
   if (responseData) {
+    const appUrl = getURL();
+    // trying to get analytics working
+    const analyticsClient = getAnalyticsClient();
+    analyticsClient.trackEvent({ 
+      name: "package",  
+      properties: { packageType: "iOS", url: appUrl, stage: "complete" } 
+    });
     return await responseData.blob();
   }
 }
