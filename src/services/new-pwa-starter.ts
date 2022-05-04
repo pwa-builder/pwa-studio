@@ -4,8 +4,7 @@ const shell = require("shelljs");
 
 const repositoryInputPrompt: string =
   "Enter the name you would like to use for your PWA's repository.";
-const directoryInputPrompt: string = 
-  "Where would you like your PWA to live?";
+const directoryInputPrompt: string = "Where would you like your PWA to live?";
 const repositoryInputPlaceholder: string = "Enter your repository name here.";
 const noNameSelectedWarning: string =
   "No repository name provided. New PWA Starter process cancelled.";
@@ -66,28 +65,27 @@ async function getRepositoryInfoFromInput(): Promise<void> {
 }
 
 async function getRepositoryNameFromInputBox(): Promise<void> {
-
-  return new Promise<void>( async (resolve, reject) => {
+  return new Promise<void>(async (resolve, reject) => {
     repositoryName = await vscode.window.showInputBox({
       prompt: repositoryInputPrompt,
       placeHolder: repositoryInputPlaceholder,
     });
-  
+
     repositoryName ? resolve() : reject();
   });
-  
 }
 
 async function getRepositoryDirectoryFromDialog(): Promise<void> {
   return new Promise<void>(async (resolve, reject) => {
-    let directories: vscode.Uri[] | undefined = await vscode.window.showOpenDialog({
-      canSelectFolders: true,
-      canSelectFiles: false,
-      canSelectMany: false,
-      title: directoryInputPrompt 
-    });
+    let directories: vscode.Uri[] | undefined =
+      await vscode.window.showOpenDialog({
+        canSelectFolders: true,
+        canSelectFiles: false,
+        canSelectMany: false,
+        title: directoryInputPrompt,
+      });
 
-    if(directories) {
+    if (directories) {
       repositoryParentURI = directories[0];
       resolve();
     } else {

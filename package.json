@@ -175,7 +175,7 @@
       {
         "command": "pwa-studio.updateAdvWorker",
         "title": "PWA Studio: Update Service Worker",
-        "icon": "$(refresh)"
+        "icon": "$(sync)"
       },
       {
         "command": "pwa-studio.help",

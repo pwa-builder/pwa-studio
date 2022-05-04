@@ -13,5 +13,4 @@ suite("Extension Test Suite", () => {
     assert.strictEqual([1, 2, 3].indexOf(5), -1);
     assert.strictEqual([1, 2, 3].indexOf(0), -1);
   });
-  
 });
