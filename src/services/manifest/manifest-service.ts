@@ -1,9 +1,13 @@
 import { open } from "fs/promises";
 import * as vscode from "vscode";
 
+import { trackEvent } from "../usage-analytics";
+
 let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
+  trackEvent("generate", { type: "manifest" });
+
   // ask user where they would like to save their manifest
   const uri = await vscode.window.showSaveDialog({
     defaultUri: vscode.Uri.file(
