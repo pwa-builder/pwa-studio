@@ -5,11 +5,17 @@ import {
   AndroidPackageValidationError,
   AndroidSigningOptions,
 } from "../../android-interfaces";
+import { getURL } from "../web-publish";
+
+import { trackEvent } from "../usage-analytics";
 
 export async function packageForAndroid(options: any): Promise<any> {
   const responseData = await buildAndroidPackage(options);
 
   if (responseData) {
+    const appUrl = getURL();
+    trackEvent("package", { packageType: "Android", url: appUrl, stage: "complete" });
+
     return await responseData.blob();
   }
 }
