@@ -6,7 +6,16 @@ export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup().start();
+      setup().start()
+      .setAutoDependencyCorrelation(false)
+      .setAutoCollectRequests(false)
+      .setAutoCollectPerformance(false, false)
+      .setAutoCollectExceptions(false)
+      .setAutoCollectDependencies(false)
+      .setAutoCollectConsole(false)
+      .setUseDiskRetryCaching(false)
+      .setSendLiveMetrics(false)
+      .start();
     }
   }
   catch (err) {
