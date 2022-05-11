@@ -19,7 +19,7 @@ export const maniTests = [
         type: "image/png",
         purpose: "maskable",
       },
-    ]),
+    ], null, 2),
     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
     errorString: "icons should be an array with a length > 0",
     quickFix: true,
@@ -216,7 +216,7 @@ export const maniTests = [
         "url": "/?startLive",
         "icons": [{ "src": "https://pwabuilder.com/assets/icons/icon_192.png", "sizes": "192x192" }]
       }
-    ]),
+    ], null, 2),
     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
     errorString:
       "shortcuts should be an array with a length > 0 and should not include webp images",
