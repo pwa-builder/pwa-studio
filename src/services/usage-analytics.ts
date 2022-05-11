@@ -40,6 +40,6 @@ export function trackEvent(name: string, properties: any) {
   }
   catch (err) {
     console.error("Error tracking event", err);
-    throw new Error(`Error tracking event: ${err}`);
+    // throw new Error(`Error tracking event: ${err}`);
   }
 }

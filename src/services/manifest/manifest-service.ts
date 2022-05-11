@@ -5,16 +5,25 @@ import { trackEvent } from "../usage-analytics";
 
 let manifest: any | undefined;
 
-export async function generateManifest(context: vscode.ExtensionContext) {
+export async function generateManifest(initialUri?: vscode.Uri): Promise<vscode.SnippetString | undefined> {
   trackEvent("generate", { type: "manifest" });
 
-  // ask user where they would like to save their manifest
-  const uri = await vscode.window.showSaveDialog({
-    defaultUri: vscode.Uri.file(
-      `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
-    ),
-    saveLabel: "Generate Web Manifest",
-  });
+  let uri: vscode.Uri | undefined;
+
+  if (initialUri) {
+    uri = initialUri;
+  }
+  else {
+    // ask user where they would like to save their manifest
+    uri = await vscode.window.showSaveDialog({
+      defaultUri: vscode.Uri.file(
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
+      ),
+      saveLabel: "Generate Web Manifest",
+    });
+  }
+
+  let maniSnippet: vscode.SnippetString | undefined;
 
   if (uri) {
     // write empty manifest file
@@ -23,110 +32,109 @@ export async function generateManifest(context: vscode.ExtensionContext) {
     // show manifest with vscode
     const editor = await vscode.window.showTextDocument(uri);
 
-    // do refreshPackageView command
-    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
-
     // insert interactive manifest snippet
-    const maniSnippet = new vscode.SnippetString(
+    maniSnippet = new vscode.SnippetString(
       "{" +
-        "\n" +
-        '"name": "${1:The name of your application}",' +
-        "\n" +
-        '"short_name": "${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}",' +
-        "\n" +
-        '"start_url": "${3:The URL that should be loaded when your application is opened}",' +
-        "\n" +
-        '"display": "${4|standalone,fullscreen,minimal-ui,browser|}",' +
-        "\n" +
-        '"description": "${5:A description for your application}",' +
-        "\n" +
-        '"lang": "${6: The default language of your application}",' +
-        "\n" +
-        '"dir": "${7|auto, ltr, rtl|}",' +
-        "\n" +
-        '"theme_color": "#000000",' +
-        "\n" +
-        '"background_color": "#000000",' +
-        "\n" +
-        '"orientation": "${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}",' +
-        "\n" +
-        '"icons": [' +
-        "\n" +
-        "\t{" +
-        "\n" +
-        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_512.png",' +
-        "\n" +
-        '\t\t"sizes": "512x512",' +
-        "\n" +
-        '\t\t"type": "image/png",' +
-        "\n" +
-        '\t\t"purpose": "maskable"' +
-        "\n" +
-        "\t}," +
-        "\n" +
-        "\t{" +
-        "\n" +
-        '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_192.png",' +
-        "\n" +
-        '\t\t"sizes": "192x192",' +
-        "\n" +
-        '\t\t"type": "image/png",' +
-        "\n" +
-        '\t\t"purpose": "any"' +
-        "\n" +
-        "\t}" +
-        "\n" +
-        "]," +
-        "\n" +
-        '"screenshots": [' +
-        "\n" +
-        "\t{" +
-        "\n" +
-        '\t\t"src": "https://www.pwabuilder.com/assets/screenshots/screen1.png",' +
-        "\n" +
-        '\t\t"sizes": "2880x1800",' +
-        "\n" +
-        '\t\t"type": "image/png",' +
-        "\n" +
-        '\t\t"description": "A screenshot of the home page"' +
-        "\n" +
-        "\t}" +
-        "\n" +
-        "]," +
-        "\n" +
-        '"related_applications": [' +
-        "\n" +
-        "\t{" +
-        "\n" +
-        '\t\t"platform":"${13|windows,play|}",' +
-        "\n" +
-        '\t\t"url": "${14: The URL to your app in that app store}"' +
-        "\n" +
-        "\t}" +
-        "\n" +
-        "]," +
-        "\n" +
-        '"prefer_related_applications": "${15|false, true|}",' +
-        "\n" +
-        '"shortcuts": [' +
-        "\n" +
-        "\t{" +
-        "\n" +
-        '\t\t"name":"${16:The name you would like to be displayed for your shortcut}",' +
-        "\n" +
-        '\t\t"url":"${17:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
-        "\n" +
-        '\t\t"description":"${18:A description of the functionality of this shortcut}"' +
-        "\n" +
-        "\t}" +
-        "\n" +
-        "]" +
-        "\n" +
-        "}"
+      "\n" +
+      '"name": "${1:The name of your application}",' +
+      "\n" +
+      '"short_name": "${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}",' +
+      "\n" +
+      '"start_url": "${3:The URL that should be loaded when your application is opened}",' +
+      "\n" +
+      '"display": "${4|standalone,fullscreen,minimal-ui,browser|}",' +
+      "\n" +
+      '"description": "${5:A description for your application}",' +
+      "\n" +
+      '"lang": "${6: The default language of your application}",' +
+      "\n" +
+      '"dir": "${7|auto, ltr, rtl|}",' +
+      "\n" +
+      '"theme_color": "#000000",' +
+      "\n" +
+      '"background_color": "#000000",' +
+      "\n" +
+      '"orientation": "${10|any,natural,landscape,landscape-primary,landscape-secondary,portrait,portrait-primary,portrait-secondary|}",' +
+      "\n" +
+      '"icons": [' +
+      "\n" +
+      "\t{" +
+      "\n" +
+      '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_512.png",' +
+      "\n" +
+      '\t\t"sizes": "512x512",' +
+      "\n" +
+      '\t\t"type": "image/png",' +
+      "\n" +
+      '\t\t"purpose": "maskable"' +
+      "\n" +
+      "\t}," +
+      "\n" +
+      "\t{" +
+      "\n" +
+      '\t\t"src": "https://www.pwabuilder.com/assets/icons/icon_192.png",' +
+      "\n" +
+      '\t\t"sizes": "192x192",' +
+      "\n" +
+      '\t\t"type": "image/png",' +
+      "\n" +
+      '\t\t"purpose": "any"' +
+      "\n" +
+      "\t}" +
+      "\n" +
+      "]," +
+      "\n" +
+      '"screenshots": [' +
+      "\n" +
+      "\t{" +
+      "\n" +
+      '\t\t"src": "https://www.pwabuilder.com/assets/screenshots/screen1.png",' +
+      "\n" +
+      '\t\t"sizes": "2880x1800",' +
+      "\n" +
+      '\t\t"type": "image/png",' +
+      "\n" +
+      '\t\t"description": "A screenshot of the home page"' +
+      "\n" +
+      "\t}" +
+      "\n" +
+      "]," +
+      "\n" +
+      '"related_applications": [' +
+      "\n" +
+      "\t{" +
+      "\n" +
+      '\t\t"platform":"${13|windows,play|}",' +
+      "\n" +
+      '\t\t"url": "${14: The URL to your app in that app store}"' +
+      "\n" +
+      "\t}" +
+      "\n" +
+      "]," +
+      "\n" +
+      '"prefer_related_applications": "${15|false, true|}",' +
+      "\n" +
+      '"shortcuts": [' +
+      "\n" +
+      "\t{" +
+      "\n" +
+      '\t\t"name":"${16:The name you would like to be displayed for your shortcut}",' +
+      "\n" +
+      '\t\t"url":"${17:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}",' +
+      "\n" +
+      '\t\t"description":"${18:A description of the functionality of this shortcut}"' +
+      "\n" +
+      "\t}" +
+      "\n" +
+      "]" +
+      "\n" +
+      "}"
     );
 
     editor.insertSnippet(maniSnippet);
   }
+
+  return maniSnippet;
 }
 
 export async function convertBaseToFile(
@@ -209,7 +217,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
   } else {
     const rootFolder = vscode.workspace.workspaceFolders?.[0];
     if (rootFolder) {
-    
+
       const mani = await vscode.workspace.findFiles(
         new vscode.RelativePattern(rootFolder, 'manifest.json'),
         "/node_modules/"
@@ -224,7 +232,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
           new vscode.RelativePattern(rootFolder, 'web-manifest.json'),
           "/node_modules/"
         );
-  
+
         if (maniTryTwo.length > 0) {
           manifest = maniTryTwo[0];
         } else {
@@ -232,11 +240,11 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
             new vscode.RelativePattern(rootFolder, "*.webmanifest"),
             "/node_modules/"
           );
-  
+
           if (maniTryThree.length > 0) {
             manifest = maniTryThree[0];
           }
-          else  {
+          else {
             // dont use RelativePattern here
             const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
 
