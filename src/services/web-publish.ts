@@ -1,6 +1,6 @@
-import { create } from "domain";
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
+import { validateUrl } from "./package/package-android-app";
 
 let url: string | undefined = undefined;
 
@@ -11,9 +11,17 @@ export function getURL(): string | undefined {
 
 export async function setURL(url: string | undefined): Promise<void> {
   if (url && url.length > 0) {
-    storageManager?.setValue<any>("urlData", {
-      url: url,
-    });
+    const isValidURL = validateUrl(url);
+    if (isValidURL) {
+      storageManager?.setValue<any>("urlData", {
+        url: url,
+      });
+    }
+    else {
+      vscode.window.showErrorMessage(
+        "Invalid URL. Please enter a valid URL."
+      );
+    }
 
     await vscode.commands.executeCommand("pwa-studio.refreshPackageView");
   }

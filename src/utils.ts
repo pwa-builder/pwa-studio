@@ -7,3 +7,8 @@ export function getUri(
 ) {
   return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
 }
+
+export function validateURL(url: string): boolean {
+  const validity = /^(ftp|http|https):\/\/[^ "]+$/.test(url);
+  return validity;
+}
