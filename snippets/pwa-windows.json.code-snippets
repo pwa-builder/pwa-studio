@@ -2,7 +2,7 @@
 	// Icons
 	"Icons": {
 		"scope": "json",
-		"prefix": "pwa-icons",
+		"prefix": "icons",
 		"body": [
 			"\"icons\": [",
 			"\t{",
@@ -33,7 +33,7 @@
 	// Theme color
 	"Theme Color": {
 		"scope": "json",
-		"prefix": "pwa-theme-color",
+		"prefix": "theme-color",
 		"body": [
 			"\"theme_color\": \"${0:#0d4c73}\""
 		],
@@ -43,7 +43,7 @@
 	// Handle files
 	"File Handlers": {
 		"scope": "json",
-		"prefix": "pwa-file-handlers",
+		"prefix": "file-handlers",
 		"body": [
 			"\"file_handlers\": [",
 			"\t{",
@@ -56,5 +56,34 @@
 			"\t}",
 			"]"
 		],
+	},
+
+	"Shortcuts" : {
+		"scope": "json",
+		"prefix": "shortcuts",
+		"body": [
+			"\"shortcuts\": [",
+            "\t{",
+            "\t\t\"name\":\"${15:The name you would like to be displayed for your shortcut}\",",
+            "\t\t\"url\":\"${16:The url you would like to open when the user chooses this shortcut. This must be a URL local to your PWA. For example: If my start_url is /, this URL must be something like /shortcut}\",",
+            "\t\t\"description\":\"${17:A description of the functionality of this shortcut}\"",
+            "\t}",
+            "]",
+		]
+	},
+
+	"Screenshots" : {
+		"scope": "json",
+		"prefix": "screenshots",
+		"body": [
+			"\"screenshots\": [",
+            "\t{",
+            "\t\t\"src\":\"${15:The src to your screenshot}\",",
+            "\t\t\"sizes\":\"${16:The size of your screenshot, such as 2880x1800}\",",
+			"\t\t\"type\":\"${17:The type of your image, such as image/png}\"",
+            "\t\t\"description\":\"${17:A description of the screenshot}\"",
+            "\t}",
+            "]",
+		]
 	}
 }
