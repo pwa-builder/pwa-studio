@@ -18,9 +18,5 @@
 	"exclude": [
 		"node_modules",
 		".vscode-test"
-	],
-	"include": [
-		".env",
-		"src"
 	]
 }
