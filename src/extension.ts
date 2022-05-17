@@ -9,7 +9,10 @@ import {
   handleAdvServiceWorkerCommand,
   updateAdvServiceWorker,
 } from "./services/service-worker";
-import { chooseManifest } from "./services/manifest/manifest-service";
+import {
+  chooseManifest,
+  generateManifest,
+} from "./services/manifest/manifest-service";
 import { packageApp } from "./services/package/package-app";
 import {
   MANI_CODE,
@@ -22,9 +25,12 @@ import { ServiceWorkerProvider } from "./services/validation/sw-view";
 import { PackageViewProvider } from "./services/package/package-view";
 import { LocalStorageService } from "./library/local-storage";
 import { askForUrl } from "./services/web-publish";
-import { ManiGenerationPanel } from "./views/manifest-view";
 import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
+import { hoversActivate } from "./services/manifest/mani-hovers";
+import { codeActionsActivate } from "./services/manifest/mani-codeactions";
+import { initAnalytics } from "./services/usage-analytics";
+import path = require("path");
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -44,27 +50,15 @@ const setAppURLCommandID = "pwa-studio.setWebURL";
 const handleIconsCommmandID = "pwa-studio.generateIcons";
 const helpCommandID = "pwa-studio.help";
 
+require('dotenv').config({path: path.join( __dirname, '.env')});
+
+// init analytics
+initAnalytics();
+
 export let storageManager: LocalStorageService | undefined = undefined;
 
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
-
-  // used for web manifest validation
-  const manifestDiagnostics =
-    vscode.languages.createDiagnosticCollection("webmanifest");
-  context.subscriptions.push(manifestDiagnostics);
-
-  subscribeToDocumentChanges(context, manifestDiagnostics);
-
-  context.subscriptions.push(
-    vscode.languages.registerCodeActionsProvider(
-      "json",
-      new ManifestInfoProvider(),
-      {
-        providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
-      }
-    )
-  );
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,
@@ -206,7 +200,7 @@ export function activate(context: vscode.ExtensionContext) {
   let manifestCommand = vscode.commands.registerCommand(
     manifestCommandID,
     async () => {
-      ManiGenerationPanel.render(context.extensionUri);
+      await generateManifest(context);
     }
   );
 
@@ -216,6 +210,34 @@ export function activate(context: vscode.ExtensionContext) {
       await askForUrl();
     }
   );
+
+  // init manifest improvement suggestion
+  // to-do: integrate into sideview panel
+  // initSuggestions();
+
+  // used for web manifest validation
+  const manifestDiagnostics =
+    vscode.languages.createDiagnosticCollection("webmanifest");
+  context.subscriptions.push(manifestDiagnostics);
+
+  subscribeToDocumentChanges(context, manifestDiagnostics);
+
+  context.subscriptions.push(
+    // only on web manifest files
+    vscode.languages.registerCodeActionsProvider(
+      { language: 'json', pattern: '**/manifest.json' },
+      new ManifestInfoProvider(),
+      {
+        providedCodeActionKinds: ManifestInfoProvider.providedCodeActionKinds,
+      }
+    )
+  );
+
+  // web manifest hovers
+  hoversActivate(context);
+
+  // web manifest code actions
+  codeActionsActivate(context);
 
   context.subscriptions.push(manifestCommand);
   context.subscriptions.push(newPwaStarterCommand);

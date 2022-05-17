@@ -37,25 +37,28 @@ export class PWAValidationProvider implements vscode.TreeDataProvider<any> {
         (manifestPath as any).fsPath
       );
 
-      return Promise.resolve(
-        this.handleTestResults(
-          testResults,
-          vscode.TreeItemCollapsibleState.None,
-          true
-        )
-      );
+      if (testResults) {
+        return Promise.resolve(
+          this.handleTestResults(
+            testResults,
+            vscode.TreeItemCollapsibleState.None,
+            true
+          )
+        );
+      }
     } else if (manifestPath && manifestExists) {
       const testResults = await this.loadAndTestManifest(
         (manifestPath as any).fsPath
       );
 
       let requiredTestsFailed: any = [];
-
-      testResults.map((result) => {
-        if (result.category === "required" && result.result === false) {
-          requiredTestsFailed.push(result);
-        }
-      });
+      if (testResults) {
+        testResults.map((result) => {
+          if (result.category === "required" && result.result === false) {
+            requiredTestsFailed.push(result);
+          }
+        });
+      }
 
       return Promise.resolve(
         this.handleTestResults(
@@ -144,6 +147,12 @@ class ValidationItem extends vscode.TreeItem {
     super(label, collapsibleState);
     this.tooltip = `${this.label}-${this.version}`;
     this.description = this.version;
+
+    this.command = {
+      command: "vscode.open",
+      title: "Open Web Manifest",
+      arguments: [getManifest()],
+    };
   }
 
   iconPath =

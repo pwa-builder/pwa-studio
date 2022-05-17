@@ -320,6 +320,7 @@
   },
   "dependencies": {
     "@vscode/webview-ui-toolkit": "^0.9.0",
+    "applicationinsights": "^2.3.3",
     "formdata-node": "^4.3.2",
     "formdata-polyfill": "^4.0.10",
     "node-fetch": "^2.6.6",
