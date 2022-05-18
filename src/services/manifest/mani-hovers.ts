@@ -36,7 +36,7 @@ class ManiHoverProvider implements vscode.HoverProvider {
 export function hoversActivate(ctx: vscode.ExtensionContext): void {
   ctx.subscriptions.push(
     vscode.languages.registerHoverProvider(
-      { language: 'json', pattern: '**/manifest.json' },
+      { language: 'json', pattern: 'manifest.json' },
       new ManiHoverProvider()
     )
   );

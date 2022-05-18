@@ -232,6 +232,14 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
           if (maniTryThree.length > 0) {
             manifest = maniTryThree[0];
           }
+          else {
+             // dont use RelativePattern here
+             const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
+
+             if (maniTryFour.length > 0) {
+               manifest = maniTryFour[0];
+             }
+          }
         }
       }
     }

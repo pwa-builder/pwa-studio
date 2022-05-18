@@ -106,7 +106,12 @@ export class ServiceWorkerProvider implements vscode.TreeDataProvider<any> {
           "Service Worker",
           "https://docs.microsoft.com/en-us/microsoft-edge/progressive-web-apps-chromium/how-to/service-workers",
           "true",
-          vscode.TreeItemCollapsibleState.Expanded
+          vscode.TreeItemCollapsibleState.Expanded,
+          {
+            command: "vscode.open",
+            title: "Open Service Worker",
+            arguments: [serviceWorkerId],
+          }
         ),
       ]);
     } else {

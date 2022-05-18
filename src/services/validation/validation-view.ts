@@ -147,7 +147,14 @@ class ValidationItem extends vscode.TreeItem {
     super(label, collapsibleState);
     this.tooltip = `${this.label}-${this.version}`;
     this.description = this.version;
+
+    this.command = {
+      command: "vscode.open",
+      title: "Open Web Manifest",
+      arguments: [getManifest()],
+    };
   }
+  
 
   iconPath =
     this.version === "true"

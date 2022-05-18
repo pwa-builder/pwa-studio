@@ -19,7 +19,7 @@ export const maniTests = [
         type: "image/png",
         purpose: "maskable",
       },
-    ]),
+    ], null, 2),
     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/icons",
     errorString: "icons should be an array with a length > 0",
     quickFix: true,
@@ -175,7 +175,7 @@ export const maniTests = [
       "The screenshots member defines an array of screenshots intended to showcase the application.",
     category: "recommended",
     member: "screenshots",
-    defaultValue: [
+    defaultValue: JSON.stringify([
       {
         src: "https://www.pwabuilder.com/assets/screenshots/screen1.png",
         sizes: "2880x1800",
@@ -194,7 +194,7 @@ export const maniTests = [
         type: "image/png",
         description: "Manifest information on the Report Card",
       },
-    ],
+    ], null, 2),
     docsLink:
       "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
     errorString:
