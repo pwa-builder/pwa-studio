@@ -29,11 +29,20 @@ class ManiCodeActionsProvider implements vscode.CodeActionProvider {
               fix.edit = new vscode.WorkspaceEdit();
 
               if (value.defaultValue) {
-                fix.edit.insert(
+                if (value.member === "icons" || value.member === "screenshots") {
+                  fix.edit.insert(
+                    document.uri,
+                    new vscode.Position(1, 0),
+                    `"${diagnostic.source}": ${value.defaultValue}, \n`
+                  );
+                }
+                else {
+                  fix.edit.insert(
                     document.uri,
                     new vscode.Position(1, 0),
                     `"${diagnostic.source}": "${value.defaultValue}", \n`
                   );
+                }
               }
               else {
                 fix.edit.insert(

@@ -27,7 +27,7 @@ import {
   validateAndroidOptions,
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
-import { captureUsage } from "../usage-analytics";
+// import { captureUsage } from "../usage-analytics";
 
 /*
  * To-do Justin: More re-use
@@ -105,7 +105,7 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  captureUsage(
+  /*captureUsage(
     "package",
     true,
     true,
@@ -117,7 +117,7 @@ export async function packageApp(): Promise<void> {
     },
     undefined,
     packageType.includes("Windows Production") ? "StorePackage" : "TestPackage"
-  );
+  );*/
 
   if (packageType === "iOS") {
     try {
