@@ -3,4 +3,4 @@ dist
 node_modules
 .vscode-test/
 *.vsix
-src/services/usage-analytics.ts
+.env
