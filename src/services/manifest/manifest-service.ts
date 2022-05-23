@@ -1,9 +1,16 @@
 import { open } from "fs/promises";
 import * as vscode from "vscode";
+import { getAnalyticsClient } from "../usage-analytics";
 
 let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "generate",  
+    properties: { type: "manifest"} 
+  });
+
   // ask user where they would like to save their manifest
   const uri = await vscode.window.showSaveDialog({
     defaultUri: vscode.Uri.file(

@@ -30,7 +30,7 @@ import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
 // import path = require("path");
-// import { initAnalytics } from "./services/usage-analytics";
+import { initAnalytics } from "./services/usage-analytics";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
 const generateWorkerCommandId = "pwa-studio.generateWorker";
@@ -57,7 +57,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   // require('dotenv').config({path: path.join( __dirname, '.env')});
 
-  // initAnalytics();
+  initAnalytics();
 
   const packageStatusBarItem = vscode.window.createStatusBarItem(
     vscode.StatusBarAlignment.Left,

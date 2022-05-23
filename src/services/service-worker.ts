@@ -2,6 +2,7 @@ import { writeFile } from "fs/promises";
 import * as vscode from "vscode";
 import { injectManifest } from "workbox-build";
 import { isNpmInstalled, noNpmInstalledWarning } from "./new-pwa-starter";
+import { getAnalyticsClient } from "./usage-analytics";
 // import { captureUsage } from "./usage-analytics";
 
 const vsTerminal = vscode.window.createTerminal();
@@ -129,6 +130,12 @@ export async function handleAdvServiceWorkerCommand(): Promise<void> {
 
 export async function handleServiceWorkerCommand(): Promise<void> {
   // captureUsage("generate-service-worker");
+
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "generate",  
+    properties: { type: "service-worker" }
+  });
 
   //setup file watcher for workbox config file
   const watcher = vscode.workspace.createFileSystemWatcher(

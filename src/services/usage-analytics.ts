@@ -2,7 +2,7 @@ import { setup, defaultClient } from 'applicationinsights';
 
 export function initAnalytics() {
   try {
-    setup().start();
+    setup("#{ANALYTICS_CODE}#").start();
   }
   catch (err) {
     console.error("Error initializing analytics", err);

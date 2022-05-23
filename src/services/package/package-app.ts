@@ -27,6 +27,7 @@ import {
   validateAndroidOptions,
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
+import { getAnalyticsClient } from "../usage-analytics";
 // import { captureUsage } from "../usage-analytics";
 
 /*
@@ -118,6 +119,12 @@ export async function packageApp(): Promise<void> {
     undefined,
     packageType.includes("Windows Production") ? "StorePackage" : "TestPackage"
   );*/
+
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "package",  
+    properties: { packageType: packageType, url: url,  stage: "init" } 
+  });
 
   if (packageType === "iOS") {
     try {
@@ -254,6 +261,13 @@ async function platformQuestionQuickPick(): Promise<string> {
 
 async function packageWithPwaBuilder(): Promise<any> {
   const packageData = await packageForWindows(packageInfo);
+
+  const url = getURL();
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "package",  
+    properties: { packageType: "Windows", url: url, stage: "complete" } 
+  });
 
   if (packageData) {
     return packageData.blob();
