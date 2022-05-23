@@ -37,7 +37,7 @@ jobs:
           tokenSuffix: $
           files: '["**/usage-analytics.ts"]'
         env: 
-          __ANALYTICS_CODE__: ${{secrets.ANALYTICS_CODE}}
+          ANALYTICS_CODE: ${{secrets.ANALYTICS_CODE}}
 
       - name: Build
         run: |
