@@ -28,8 +28,6 @@ import {
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
 import { getAnalyticsClient } from "../usage-analytics";
-// import { captureUsage } from "../usage-analytics";
-
 /*
  * To-do Justin: More re-use
  */
@@ -106,26 +104,12 @@ export async function packageApp(): Promise<void> {
   didInputFail = false;
   const packageType = await getPackageInputFromUser();
 
-  /*captureUsage(
-    "package",
-    true,
-    true,
-    {
-      androidPackage: packageType === "Android",
-      iOSPackage: packageType === "iOS",
-      windowsPackage: packageType.includes("Windows"),
-      oculusPackage: packageType === "Oculus",
-    },
-    undefined,
-    packageType.includes("Windows Production") ? "StorePackage" : "TestPackage"
-  );*/
-
   const analyticsClient = getAnalyticsClient();
   analyticsClient.trackEvent({ 
     name: "package",  
     properties: { packageType: packageType, url: url,  stage: "init" } 
   });
-
+  
   if (packageType === "iOS") {
     try {
       vscode.window.withProgress(
@@ -166,8 +150,7 @@ export async function packageApp(): Promise<void> {
       );
     } catch (err: any) {
       vscode.window.showErrorMessage(
-        `There was an error packaging your app: ${
-          err && err.message ? err.message : err
+        `There was an error packaging your app: ${err && err.message ? err.message : err
         }`
       );
     }
@@ -205,8 +188,7 @@ export async function packageApp(): Promise<void> {
       );
     } catch (err: any) {
       vscode.window.showErrorMessage(
-        `There was an error packaging your app: ${
-          err && err.message ? err.message : err
+        `There was an error packaging your app: ${err && err.message ? err.message : err
         }`
       );
     }
@@ -270,6 +252,10 @@ async function packageWithPwaBuilder(): Promise<any> {
   });
 
   if (packageData) {
+    const url = getURL();
+
+    trackEvent("package", { packageType: "Windows", url: url, stage: "complete" });
+
     return packageData.blob();
   }
 }
@@ -353,8 +339,8 @@ async function writeMSIXToFile(responseData: any, name: string): Promise<void> {
       title: "Save your package",
       defaultUri: vscode.workspace.workspaceFolders
         ? vscode.Uri.file(
-            `${vscode.workspace.workspaceFolders[0].uri.fsPath}/${name}.zip`
-          )
+          `${vscode.workspace.workspaceFolders[0].uri.fsPath}/${name}.zip`
+        )
         : undefined,
     });
 

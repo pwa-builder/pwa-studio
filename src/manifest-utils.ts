@@ -208,7 +208,15 @@ export const maniTests = [
       "The shortcuts member defines an array of shortcuts or links to key tasks or pages within a web app. Shortcuts will show as jumplists on Windows and on the home screen on Android.",
     category: "recommended",
     member: "shortcuts",
-    defaultValue: [],
+    defaultValue: JSON.stringify([
+      {
+        "name": "Start Live Session",
+        "short_name": "Start Live",
+        "description": "Jump direction into starting or joining a live session",
+        "url": "/?startLive",
+        "icons": [{ "src": "https://pwabuilder.com/assets/icons/icon_192.png", "sizes": "192x192" }]
+      }
+    ], null, 2),
     docsLink: "https://developer.mozilla.org/en-US/docs/Web/Manifest/shortcuts",
     errorString:
       "shortcuts should be an array with a length > 0 and should not include webp images",

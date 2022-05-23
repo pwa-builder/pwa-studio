@@ -29,7 +29,6 @@ import { IconGenerationPanel } from "./views/icons-view";
 import { HelpViewPanel } from "./views/help-view";
 import { hoversActivate } from "./services/manifest/mani-hovers";
 import { codeActionsActivate } from "./services/manifest/mani-codeactions";
-// import path = require("path");
 import { initAnalytics } from "./services/usage-analytics";
 
 const serviceWorkerCommandId = "pwa-studio.serviceWorker";
@@ -54,8 +53,6 @@ export let storageManager: LocalStorageService | undefined = undefined;
 
 export function activate(context: vscode.ExtensionContext) {
   storageManager = new LocalStorageService(context.workspaceState);
-
-  // require('dotenv').config({path: path.join( __dirname, '.env')});
 
   initAnalytics();
 
