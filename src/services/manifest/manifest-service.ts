@@ -1,12 +1,17 @@
 import { open } from "fs/promises";
 import * as vscode from "vscode";
+import { getAnalyticsClient } from "../usage-analytics";
 
 import { trackEvent } from "../usage-analytics";
 
 let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
-  trackEvent("generate", { type: "manifest" });
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "generate",  
+    properties: { type: "manifest"} 
+  });
 
   // ask user where they would like to save their manifest
   const uri = await vscode.window.showSaveDialog({
@@ -236,13 +241,13 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
           if (maniTryThree.length > 0) {
             manifest = maniTryThree[0];
           }
-          else  {
-            // dont use RelativePattern here
-            const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
+          else {
+             // dont use RelativePattern here
+             const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
 
-            if (maniTryFour.length > 0) {
-              manifest = maniTryFour[0];
-            }
+             if (maniTryFour.length > 0) {
+               manifest = maniTryFour[0];
+             }
           }
         }
       }

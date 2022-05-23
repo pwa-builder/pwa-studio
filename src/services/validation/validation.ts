@@ -101,7 +101,7 @@ function createDiagnostic(
   if (globalManifestProblem === true) {
     const diagnostic = new vscode.Diagnostic(
       // range for the first line of the document
-      new vscode.Range(0, 0, 0, 0),
+      new vscode.Range(0, 0, 2, 0),
       `Your Web Manifest is missing the ${testString} field`,
       severity
     );

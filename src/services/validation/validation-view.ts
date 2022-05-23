@@ -154,6 +154,7 @@ class ValidationItem extends vscode.TreeItem {
       arguments: [getManifest()],
     };
   }
+  
 
   iconPath =
     this.version === "true"

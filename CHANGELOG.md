@@ -2,6 +2,20 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v1.0.3]
+
+- New Web Manifest editing and auditing experience: https://github.com/pwa-builder/pwa-studio/pull/68
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2671
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2395
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2403
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2629
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2400
+    - Fixes https://github.com/pwa-builder/PWABuilder/issues/2384
+- Extension is now bundled to reduce startup time: https://github.com/pwa-builder/pwa-studio/pull/67
+- New snippets: https://github.com/pwa-builder/pwa-studio/pull/70
+- New usage analytics: https://github.com/pwa-builder/pwa-studio/pull/72
+
+
 ## [v0.3.1]
 
 - Fixed: https://github.com/pwa-builder/PWABuilder/issues/2635 

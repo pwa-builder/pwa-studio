@@ -1,4 +1,3 @@
-
 import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
