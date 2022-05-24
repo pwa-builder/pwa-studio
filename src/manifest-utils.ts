@@ -194,7 +194,7 @@ export const maniTests = [
         type: "image/png",
         description: "Manifest information on the Report Card",
       },
-    ]),
+    ], null, 2),
     docsLink:
       "https://developer.mozilla.org/en-US/docs/Web/Manifest/screenshots",
     errorString:

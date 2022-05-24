@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
-import { trackEvent } from "../services/usage-analytics";
-
+import { getAnalyticsClient } from "./usage-analytics";
 const shell = require("shelljs");
 
 const repositoryInputPrompt: string =
@@ -25,7 +24,11 @@ const gitFileWatcher = vscode.workspace.createFileSystemWatcher(
 );
 
 export async function setUpLocalPwaStarterRepository(): Promise<void> {
-  trackEvent("generate", { type: "starter"} );
+  const analyticsClient = getAnalyticsClient();
+  analyticsClient.trackEvent({ 
+    name: "generate",  
+    properties: { type: "starter"} 
+  });
 
   return new Promise(async (resolve, reject) => {
     await getRepositoryInfoFromInput();

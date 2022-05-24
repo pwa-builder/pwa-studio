@@ -1,4 +1,3 @@
-
 import { setup, defaultClient } from 'applicationinsights';
 import { getFlag } from '../flags';
 
@@ -6,7 +5,7 @@ export function initAnalytics() {
   try {
     // check flag first
     if (getFlag("analytics") === true) {
-      setup().start()
+      setup("#{ANALYTICS_CODE}#")
       .setAutoDependencyCorrelation(false)
       .setAutoCollectRequests(false)
       .setAutoCollectPerformance(false, false)
@@ -20,7 +19,6 @@ export function initAnalytics() {
   }
   catch (err) {
     console.error("Error initializing analytics", err);
-    throw new Error(`Error initializing analytics: ${err}`);
   }
 }
 
