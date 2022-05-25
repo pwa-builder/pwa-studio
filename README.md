@@ -13,7 +13,7 @@ PWA Studio makes VSCode the BEST developer environment for building Progressive 
 * Generate ALL the correct sized Icons for a PWA
 * Use our snippets to upgrade the user experience of your PWA
 
-[Our documentation](https://github.com/pwa-builder/pwabuilder-vscode/wiki) contains all the info you need for working with the extension, including tutorials and more!
+[Our documentation](https://docs.pwabuilder.com/#/studio/quick-start) contains all the info you need for working with the extension, including tutorials and more!
 
 [Found a bug?](https://github.com/pwa-builder/PWABuilder/issues/new/choose)
 
@@ -24,15 +24,15 @@ Here are a few places to check out in the documentation if you are using the ext
 <br>
 **Looking to build a new PWA from scratch?**
 <br>
-Check out how to [clone the PWA Starter application](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Start-building-a-new-PWA) with the extension.
+Check out how to [clone the PWA Starter application](https://docs.pwabuilder.com/#/studio/create-new) with the extension.
 
 **Want to convert your web app into a PWA?**
 <br>
-Take a look at [adding a web manifest](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Make-a-Web-App-a-Progressive-Web-App) to your existing web applicatioon.
+Take a look at [adding a web manifest](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-web-manifest), a [service worker](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-service-worker) and [generating icons](https://docs.pwabuilder.com/#/studio/existing-app?id=generate-icons) to your existing web applicatioon.
 
 **Have a PWA already and want to get it Store-ready?**
 <br>
-Learn how to [validate your PWA](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Validate-your-PWA) and then [package it for stores.](https://github.com/pwa-builder/pwabuilder-vscode/wiki/Package-your-PWA-for-the-app-stores!)
+Learn how to [validate your PWA](https://docs.pwabuilder.com/#/studio/package?id=validate-your-pwa) and then [package it for stores.](https://docs.pwabuilder.com/#/studio/package?id=packaging-for-stores)
 
 ---
 
