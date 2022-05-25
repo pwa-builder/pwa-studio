@@ -8,38 +8,56 @@ let manifest: any | undefined;
 
 export async function generateManifest(context: vscode.ExtensionContext) {
   const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "generate",  
-    properties: { type: "manifest"} 
+  analyticsClient.trackEvent({
+    name: "generate",
+    properties: { type: "manifest" }
   });
 
-  // ask user where they would like to save their manifest
-  const uri = await vscode.window.showSaveDialog({
-    defaultUri: vscode.Uri.file(
-      `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
-    ),
-    saveLabel: "Generate Web Manifest",
-  });
+  // open information message about generating manifest
+  // with an ok button
+  const maniAnswer = await vscode.window.showInformationMessage(
+    "PWA Studio will generate your Web Manifest, first, you will need to choose where to save your manifest.json file.",
+    {
+      title: "Ok",
+    },
+    {
+      title: "Cancel",
+    }
+  );
 
-  if (uri) {
-    // write empty manifest file
-    await open(uri.fsPath, "w+");
+  if (maniAnswer && maniAnswer.title === "Ok") {
+    // ask user where they would like to save their manifest
+    const uri = await vscode.window.showSaveDialog({
+      defaultUri: vscode.Uri.file(
+        `${vscode.workspace.workspaceFolders?.[0].uri.fsPath}/manifest.json`
+      ),
+      saveLabel: "Generate Web Manifest",
+    });
 
-    // show manifest with vscode
-    const editor = await vscode.window.showTextDocument(uri);
+    if (uri) {
+      // write empty manifest file
+      await open(uri.fsPath, "w+");
 
-    // do refreshPackageView command
-    await vscode.commands.executeCommand("pwa-studio.refreshEntry");
+      // show manifest with vscode
+      const editor = await vscode.window.showTextDocument(uri);
 
-    // insert interactive manifest snippet
-    const maniSnippet = new vscode.SnippetString(
-      "{" +
+      // do refreshPackageView command
+      await vscode.commands.executeCommand("pwa-studio.refreshEntry");
+
+      // open information message about manifest snippet
+      vscode.window.showInformationMessage(
+        "Your Web Manifest file has been generated, follow the guided snippet to fill out your new manifest"
+      );
+
+      // insert interactive manifest snippet
+      const maniSnippet = new vscode.SnippetString(
+        "{" +
         "\n" +
         '"name": "${1:The name of your application}",' +
         "\n" +
         '"short_name": "${2:This name will show in your Windows taskbar, in the start menu, and Android homescreen}",' +
         "\n" +
-        '"start_url": "${3:The URL that should be loaded when your application is opened}",' +
+        '"start_url": "${3:The URL that should be loaded when your application is opened}",' + 
         "\n" +
         '"display": "${4|standalone,fullscreen,minimal-ui,browser|}",' +
         "\n" +
@@ -128,9 +146,10 @@ export async function generateManifest(context: vscode.ExtensionContext) {
         "]" +
         "\n" +
         "}"
-    );
+      );
 
-    editor.insertSnippet(maniSnippet);
+      editor.insertSnippet(maniSnippet);
+    }
   }
 }
 
@@ -214,7 +233,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
   } else {
     const rootFolder = vscode.workspace.workspaceFolders?.[0];
     if (rootFolder) {
-    
+
       const mani = await vscode.workspace.findFiles(
         new vscode.RelativePattern(rootFolder, 'manifest.json'),
         "/node_modules/"
@@ -229,7 +248,7 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
           new vscode.RelativePattern(rootFolder, 'web-manifest.json'),
           "/node_modules/"
         );
-  
+
         if (maniTryTwo.length > 0) {
           manifest = maniTryTwo[0];
         } else {
@@ -237,17 +256,17 @@ export async function findManifest(manifestFile?: vscode.Uri[] | undefined) {
             new vscode.RelativePattern(rootFolder, "*.webmanifest"),
             "/node_modules/"
           );
-  
+
           if (maniTryThree.length > 0) {
             manifest = maniTryThree[0];
           }
           else {
-             // dont use RelativePattern here
-             const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
+            // dont use RelativePattern here
+            const maniTryFour = await vscode.workspace.findFiles("public/manifest.json", "/node_modules/");
 
-             if (maniTryFour.length > 0) {
-               manifest = maniTryFour[0];
-             }
+            if (maniTryFour.length > 0) {
+              manifest = maniTryFour[0];
+            }
           }
         }
       }
