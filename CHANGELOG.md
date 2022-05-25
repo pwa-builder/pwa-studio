@@ -2,6 +2,9 @@
 
 All notable changes to the "pwa-studio" extension will be documented in this file.
 
+## [v1.0.4]
+- New snippets for screenshots and shortcuts + remove pwa prefix from snippets for better discoverability: https://github.com/pwa-builder/pwa-studio/pull/75
+
 ## [v1.0.3]
 
 - New Web Manifest editing and auditing experience: https://github.com/pwa-builder/pwa-studio/pull/68
