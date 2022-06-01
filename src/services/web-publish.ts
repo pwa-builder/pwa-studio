@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import { storageManager } from "../extension";
-import { validateURL } from "../utils";
 
 let url: string | undefined = undefined;
 
