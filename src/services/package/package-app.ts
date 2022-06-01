@@ -252,10 +252,6 @@ async function packageWithPwaBuilder(): Promise<any> {
   });
 
   if (packageData) {
-    const url = getURL();
-
-    trackEvent("package", { packageType: "Windows", url: url, stage: "complete" });
-
     return packageData.blob();
   }
 }
