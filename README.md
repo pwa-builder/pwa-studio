@@ -1,3 +1,10 @@
+# Notice
+This project can now be found in our [monorepo](https://github.com/pwa-builder/PWABuilder)
+
+----
+----
+---
+
 ## Welcome!
 
 ![](https://raw.githubusercontent.com/pwa-builder/pwa-studio/main/store_assets/intro-gif-new-app.gif)
