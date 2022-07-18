@@ -4,7 +4,7 @@ export const packageQuestion: Question = {
   type: "list",
   name: "platform",
   message: "Which platform did you want to package your app for?",
-  choices: ["Windows Development", "Windows Production", "Android", "iOS"],
+  choices: ["Windows Development", "Windows Production", "Android", "iOS", "Meta Quest"],
   default: "Windows Development",
 };
 

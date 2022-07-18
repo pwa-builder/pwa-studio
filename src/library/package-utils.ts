@@ -9,11 +9,14 @@ import { URL } from "url";
 
 import { trackEvent } from "../services/usage-analytics";
 import { getURL } from "../services/web-publish";
+import { MetaPackageOptions } from "../services/package/meta-interfaces";
 
 export const WindowsDocsURL =
   "https://blog.pwabuilder.com/docs/windows-platform/";
 
 export const iosDocsURL = "https://blog.pwabuilder.com/docs/ios-platform/";
+
+export const metaDocsURL = "https://docs.pwabuilder.com/#/builder/meta";
 
 /*
  * To-Do: More code re-use
@@ -146,6 +149,28 @@ export async function buildAndroidPackage(options: AndroidPackageOptions) {
   return response;
 }
 
+export async function packageForMeta(options: MetaPackageOptions) {
+  const generateAppUrl = `https://pwabuilder-oculus-linux-docker-app.azurewebsites.net/packages/create`;
+
+  let response: Response | undefined;
+
+  try {
+    response = await fetch(generateAppUrl, {
+      method: "POST",
+      body: JSON.stringify(options),
+      headers: new Headers({ "content-type": "application/json" }),
+    });
+  } catch (err) {
+    vscode.window.showErrorMessage(
+      `
+        There was an error packaging for Meta: ${err}
+      `
+    );
+  }
+
+  return response;
+}
+
 export async function buildIOSPackage(options: IOSAppPackageOptions) {
   const generateAppUrl =
     "https://pwabuilder-ios.azurewebsites.net/packages/create";
@@ -249,6 +274,99 @@ export async function buildIOSOptions(): Promise<any | undefined> {
   } else {
     return undefined;
   }
+}
+
+export async function buildMetaOptions(): Promise<MetaPackageOptions | undefined> {
+  const appUrl = await vscode.window.showInputBox({
+    prompt: "Enter the URL to your app",
+  });
+
+  if (!appUrl) {
+    await vscode.window.showErrorMessage("Please enter a URL");
+    return;
+  };
+
+  const manifestUrl = await vscode.window.showInputBox({
+    prompt: "Enter the URL to your manifest",
+  });
+
+  const packageId = await vscode.window.showInputBox({
+    prompt: "Enter the package ID",
+  });
+
+  const version = await vscode.window.showInputBox({
+    prompt: "Enter your app's version number",
+    placeHolder: "1.0.0.0",
+  });
+
+  if (manifestUrl && packageId) {
+    // fetch manifest from manifestUrl using node-fetch
+
+    let manifestData: Manifest | undefined;
+    let manifest: Manifest | undefined;
+    try {
+      manifestData = await (await fetch(manifestUrl)).json();
+
+      if (manifestData) {
+        manifest = manifestData;
+      }
+    } catch (err) {
+      // show error message
+      vscode.window.showErrorMessage(
+        `Error generating package: The Web Manifest could not be found at the URL entered.
+          This most likely means that the URL you entered for your Web Manifest is incorrect.
+          However, it can also mean that your Web Manifest is being served with the incorrect mimetype by
+          your web server or hosting service. More info: ${err}
+        `
+      );
+    }
+
+    // find icon with a size of 512x512 from manifest.icons
+    const icon = manifest?.icons?.find((icon: any) => {
+      if (icon.sizes && icon.sizes.includes("512x512")) {
+        return icon;
+      }
+    });
+
+    const maskableIcon = manifest?.icons?.find((icon: any) => {
+      if (icon.purpose && icon.purpose.includes("maskable")) {
+        return icon;
+      }
+    });
+
+    if (!icon) {
+      await vscode.window.showErrorMessage(
+        "Your app cannot be packaged, please add an icon with a size of 512x512"
+      );
+
+      return;
+    }
+
+    if (!maskableIcon) {
+      await vscode.window.showWarningMessage(
+        "We highly recommend adding a maskable icon to your app, however your app can still be packaged without one"
+      );
+    }
+
+    let packageResults: MetaPackageOptions | undefined = undefined;
+
+    if (manifest && icon && version) {
+      packageResults = {
+        name: manifest.short_name || manifest.name || "My PWA",
+        packageId: packageId,
+        versionCode: parseInt(version),
+        versionName: version,
+        url: appUrl,
+        manifestUrl,
+        manifest,
+        existingSigningKey: null,
+        signingMode: 1
+      };
+    }
+
+    return packageResults;
+  }
+
 }
 
 export async function buildAndroidOptions(): Promise<
@@ -545,6 +663,44 @@ export function emptyIOSPackageOptions(): IOSAppPackageOptions {
     manifestUrl: "",
     manifest: {},
   };
+}
+
+export function validateMetaOptions(options: MetaPackageOptions): string[] {
+  const errors: string[] = [];
+
+  if (!options.name) {
+    errors.push("Name required");
+  }
+
+  if (!options.versionCode) {
+    errors.push("Version code required");
+  }
+
+  if (!options.versionName) {
+    errors.push("Version name required");
+  }
+
+  if (!options.manifestUrl) {
+    errors.push("Manifest URL required");
+  }
+
+  if (!options.manifest) {
+    errors.push("Manifest required");
+  }
+
+  if (!options.packageId) {
+    errors.push("Package ID required");
+  }
+
+  if (!options.url) {
+    errors.push("URL required");
+  }
+
+  if (!options.signingMode) {
+    errors.push("Signing mode required");
+  }
+
+  return errors;
 }
 
 function tryGetHost(url: string): string | null {

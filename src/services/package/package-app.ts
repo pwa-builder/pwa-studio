@@ -5,12 +5,16 @@ import { MsixInfo, Question } from "../../interfaces";
 import {
   buildAndroidOptions,
   buildIOSOptions,
+  buildMetaOptions,
   getPublisherMsixFromArray,
   getSimpleMsixFromArray,
   iosDocsURL,
+  metaDocsURL,
   packageForIOS,
+  packageForMeta,
   packageForWindows,
   validateIOSOptions,
+  validateMetaOptions,
   WindowsDocsURL,
 } from "../../library/package-utils";
 import {
@@ -28,6 +32,7 @@ import {
 } from "./package-android-app";
 import { AndroidPackageOptions } from "../../android-interfaces";
 import { getAnalyticsClient } from "../usage-analytics";
+import { MetaPackageOptions } from "./meta-interfaces";
 /*
  * To-do Justin: More re-use
  */
@@ -105,11 +110,11 @@ export async function packageApp(): Promise<void> {
   const packageType = await getPackageInputFromUser();
 
   const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "package",  
-    properties: { packageType: packageType, url: url,  stage: "init" } 
+  analyticsClient.trackEvent({
+    name: "package",
+    properties: { packageType: packageType, url: url, stage: "init" }
   });
-  
+
   if (packageType === "iOS") {
     try {
       vscode.window.withProgress(
@@ -192,7 +197,47 @@ export async function packageApp(): Promise<void> {
         }`
       );
     }
-  } else {
+  }
+  else if (packageType === "Meta Quest") {
+    try {
+      vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+        },
+        async (progress) => {
+          progress.report({ message: "Packaging your app..." });
+          const options = await getMetaQuestPackageOptions();
+          if (options) {
+            const optionsValidation = await validateMetaOptions(options);
+
+            if (optionsValidation.length === 0) {
+              // no validation errors
+              const responseData = await packageForMeta(options);
+              progress.report({ message: "Converting to zip..." });
+              await convertPackageToZip(responseData, options.packageId);
+
+              // open android docs
+              await vscode.env.openExternal(vscode.Uri.parse(metaDocsURL));
+            } else {
+              // validation errors
+              await vscode.window.showErrorMessage(
+                `There are some problems with your manifest that have prevented us from packaging: ${optionsValidation.join(
+                  "\n"
+                )}`
+              );
+              return;
+            }
+          }
+        }
+      );
+    } catch (err: any) {
+      vscode.window.showErrorMessage(
+        `There was an error packaging your app: ${err && err.message ? err.message : err
+        }`
+      );
+    }
+  }
+  else {
     await getMsixInputs();
     if (!didInputFail) {
       vscode.window.withProgress(
@@ -211,6 +256,11 @@ export async function packageApp(): Promise<void> {
       );
     }
   }
+}
+
+async function getMetaQuestPackageOptions(): Promise<MetaPackageOptions | undefined> {
+  const options = await buildMetaOptions();
+  return options;
 }
 
 async function getAndroidPackageOptions(): Promise<
@@ -246,9 +296,9 @@ async function packageWithPwaBuilder(): Promise<any> {
 
   const url = getURL();
   const analyticsClient = getAnalyticsClient();
-  analyticsClient.trackEvent({ 
-    name: "package",  
-    properties: { packageType: "Windows", url: url, stage: "complete" } 
+  analyticsClient.trackEvent({
+    name: "package",
+    properties: { packageType: "Windows", url: url, stage: "complete" }
   });
 
   if (packageData) {
