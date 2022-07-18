@@ -28,7 +28,7 @@ Check out how to [clone the PWA Starter application](https://docs.pwabuilder.com
 
 **Want to convert your web app into a PWA?**
 <br>
-Take a look at [adding a web manifest](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-web-manifest), a [service worker](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-service-worker) and [generating icons](https://docs.pwabuilder.com/#/studio/existing-app?id=generate-icons) to your existing web applicatioon.
+Take a look at [adding a web manifest](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-web-manifest), a [service worker](https://docs.pwabuilder.com/#/studio/existing-app?id=add-a-service-worker) and [generating icons](https://docs.pwabuilder.com/#/studio/existing-app?id=generate-icons) to your existing web application.
 
 **Have a PWA already and want to get it Store-ready?**
 <br>
